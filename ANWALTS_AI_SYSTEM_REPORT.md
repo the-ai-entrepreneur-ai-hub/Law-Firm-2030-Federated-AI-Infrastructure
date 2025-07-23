@@ -123,7 +123,6 @@ When you upload an 8-page PDF, here's exactly what happens:
 **Step 1: Document Upload** 🚀
 ```
 YOU:   Upload 8-page legal PDF
-WHERE: http://localhost:5004/pii_interface.html
 WHAT:  Contract, invoice, letter, or any legal document
 SIZE:  Any size PDF (system handles multi-page documents)
 ```
@@ -197,18 +196,6 @@ MODEL OUTPUT: Professional legal response in German
 **The Result:**
 Your AI assistant now understands German legal documents as well as a trained legal professional, but with perfect privacy protection built in.
 
-### The Complete User Experience
-
-**What You Do:**
-```
-1. Open web browser
-2. Go to: http://localhost:5004/pii_interface.html
-3. Click "Choose File" 
-4. Select your 8-page PDF
-5. Click "Process Document"
-6. Wait 30 seconds
-7. Read professional German legal response
-```
 
 **What Happens Behind the Scenes:**
 ```
@@ -531,30 +518,6 @@ class AnwaltsBackend {
 └─────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 🎨 User Experience Design
-
-### Simple Three-Step Process
-
-**Step 1: Upload Your Document** 📄
-- Open the Anwalts AI interface
-- Click "Choose File" and select your legal document
-- Any format: PDF, Word, or text files
-- Any length: Single page or multi-page documents
-
-**Step 2: Automatic Processing** ⚡
-- Anwalts AI reads your entire document
-- Privacy Shield removes all personal information
-- AI analyzes the content and context
-- Professional response is generated
-
-**Step 3: Get Your Response** ✅
-- Receive a professional German legal response
-- Context-appropriate and legally sound
-- Completely privacy-safe
-- Ready to use immediately
-
 ### What You'll See
 
 **Your Interface:**
@@ -582,10 +545,10 @@ class AnwaltsBackend {
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Why Choose Anwalts AI?
+### Why Anwalts AI?
 
 **🔒 Complete Privacy Protection**
-- Your personal information is automatically detected and protected
+- Personal information is automatically detected and protected
 - Names, addresses, phone numbers, and financial details are secured
 - Documents are processed safely without exposing sensitive data
 
@@ -599,7 +562,7 @@ class AnwaltsBackend {
 - No waiting, no delays, no complications
 - Professional results immediately available
 
-**🏠 Your Private System**
+**🏠 Private System**
 - Everything runs on your secure infrastructure
 - No data sent to external services
 - Complete control over your information
@@ -645,12 +608,12 @@ Your Original Document:
 ### Security Features
 
 **🔒 Zero Data Retention**
-- Your documents are processed immediately
+- Documents are processed immediately
 - No personal information is stored anywhere
 - Processing happens in real-time and then data is discarded
 
 **🏠 Local Processing**
-- Everything runs on your own infrastructure
+- Everything runs on localley owned infrastructure
 - No data transmitted to external servers
 - Complete control over your information
 
@@ -664,7 +627,7 @@ Your Original Document:
 - No internet connectivity required for processing
 - Air-gapped from external networks
 
-### Your Data Journey
+### Data Journey
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -771,7 +734,7 @@ ID Numbers             99.5%              0.3%
 **Minimum Hardware:**
 - **CPU**: 4 cores, 2.4GHz
 - **RAM**: 8GB (16GB recommended)
-- **Storage**: 20GB available space
+- **Storage**: 500GB available space
 - **Network**: 100Mbps connection
 - **GPU**: Optional (NVIDIA compatible for faster processing)
 
