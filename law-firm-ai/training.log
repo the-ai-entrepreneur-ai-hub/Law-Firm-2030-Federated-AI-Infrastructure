@@ -1,0 +1,126 @@
+2025-07-22 17:07:09,767 - INFO - 🚀 Starting complete training pipeline for anonymized legal documents
+2025-07-22 17:07:09,820 - INFO - ✅ Dataset validation passed: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law_firm_dataset.jsonl
+2025-07-22 17:07:09,820 - INFO - 🔄 Preparing training data for anonymized legal documents...
+2025-07-22 17:07:09,822 - INFO - 📂 Loading JSONL dataset: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law_firm_dataset.jsonl
+2025-07-22 17:07:09,851 - INFO - 📊 Loaded 500 training examples
+2025-07-22 17:07:09,851 - INFO - 🔧 Enhancing responses for anonymized content...
+2025-07-22 17:07:09,852 - INFO - 📝 Enhanced 10/500 examples
+2025-07-22 17:07:09,852 - INFO - 📝 Enhanced 20/500 examples
+2025-07-22 17:07:09,853 - INFO - 📝 Enhanced 30/500 examples
+2025-07-22 17:07:09,854 - INFO - 📝 Enhanced 40/500 examples
+2025-07-22 17:07:09,855 - INFO - 📝 Enhanced 50/500 examples
+2025-07-22 17:07:09,855 - INFO - 📝 Enhanced 60/500 examples
+2025-07-22 17:07:09,856 - INFO - 📝 Enhanced 70/500 examples
+2025-07-22 17:07:09,857 - INFO - 📝 Enhanced 80/500 examples
+2025-07-22 17:07:09,858 - INFO - 📝 Enhanced 90/500 examples
+2025-07-22 17:07:09,859 - INFO - 📝 Enhanced 100/500 examples
+2025-07-22 17:07:09,863 - INFO - 📝 Enhanced 110/500 examples
+2025-07-22 17:07:09,865 - INFO - 📝 Enhanced 120/500 examples
+2025-07-22 17:07:09,866 - INFO - 📝 Enhanced 130/500 examples
+2025-07-22 17:07:09,867 - INFO - 📝 Enhanced 140/500 examples
+2025-07-22 17:07:09,870 - INFO - 📝 Enhanced 150/500 examples
+2025-07-22 17:07:09,871 - INFO - 📝 Enhanced 160/500 examples
+2025-07-22 17:07:09,873 - INFO - 📝 Enhanced 170/500 examples
+2025-07-22 17:07:09,873 - INFO - 📝 Enhanced 180/500 examples
+2025-07-22 17:07:09,874 - INFO - 📝 Enhanced 190/500 examples
+2025-07-22 17:07:09,876 - INFO - 📝 Enhanced 200/500 examples
+2025-07-22 17:07:09,879 - INFO - 📝 Enhanced 210/500 examples
+2025-07-22 17:07:09,880 - INFO - 📝 Enhanced 220/500 examples
+2025-07-22 17:07:09,882 - INFO - 📝 Enhanced 230/500 examples
+2025-07-22 17:07:09,883 - INFO - 📝 Enhanced 240/500 examples
+2025-07-22 17:07:09,887 - INFO - 📝 Enhanced 250/500 examples
+2025-07-22 17:07:09,888 - INFO - 📝 Enhanced 260/500 examples
+2025-07-22 17:07:09,889 - INFO - 📝 Enhanced 270/500 examples
+2025-07-22 17:07:09,890 - INFO - 📝 Enhanced 280/500 examples
+2025-07-22 17:07:09,890 - INFO - 📝 Enhanced 290/500 examples
+2025-07-22 17:07:09,892 - INFO - 📝 Enhanced 300/500 examples
+2025-07-22 17:07:09,895 - INFO - 📝 Enhanced 310/500 examples
+2025-07-22 17:07:09,898 - INFO - 📝 Enhanced 320/500 examples
+2025-07-22 17:07:09,899 - INFO - 📝 Enhanced 330/500 examples
+2025-07-22 17:07:09,906 - INFO - 📝 Enhanced 340/500 examples
+2025-07-22 17:07:09,909 - INFO - 📝 Enhanced 350/500 examples
+2025-07-22 17:07:09,911 - INFO - 📝 Enhanced 360/500 examples
+2025-07-22 17:07:09,913 - INFO - 📝 Enhanced 370/500 examples
+2025-07-22 17:07:09,915 - INFO - 📝 Enhanced 380/500 examples
+2025-07-22 17:07:09,917 - INFO - 📝 Enhanced 390/500 examples
+2025-07-22 17:07:09,918 - INFO - 📝 Enhanced 400/500 examples
+2025-07-22 17:07:09,918 - INFO - 📝 Enhanced 410/500 examples
+2025-07-22 17:07:09,920 - INFO - 📝 Enhanced 420/500 examples
+2025-07-22 17:07:09,923 - INFO - 📝 Enhanced 430/500 examples
+2025-07-22 17:07:09,924 - INFO - 📝 Enhanced 440/500 examples
+2025-07-22 17:07:09,925 - INFO - 📝 Enhanced 450/500 examples
+2025-07-22 17:07:09,929 - INFO - 📝 Enhanced 460/500 examples
+2025-07-22 17:07:09,930 - INFO - 📝 Enhanced 470/500 examples
+2025-07-22 17:07:09,931 - INFO - 📝 Enhanced 480/500 examples
+2025-07-22 17:07:09,933 - INFO - 📝 Enhanced 490/500 examples
+2025-07-22 17:07:09,936 - INFO - 📝 Enhanced 500/500 examples
+2025-07-22 17:07:10,036 - INFO - ✅ Enhanced training data saved: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/enhanced_anonymized_training.jsonl
+2025-07-22 17:07:10,037 - INFO - 📈 Enhanced 500 examples
+2025-07-22 17:07:10,040 - INFO - 🚀 Starting training with model: meta-llama/Llama-3.1-8B-Instruct-Turbo
+2025-07-22 17:07:10,046 - INFO - 📁 Training data: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/enhanced_anonymized_training.jsonl
+2025-07-22 17:07:10,050 - INFO - 📤 Uploading training data...
+2025-07-22 17:07:10,075 - ERROR - ❌ Training failed: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'BufferedReader'
+2025-07-22 17:07:10,075 - ERROR - ❌ Training pipeline failed: argument should be a str or an os.PathLike object where __fspath__ returns a str, not 'BufferedReader'
+2025-07-22 17:07:25,355 - INFO - 🚀 Starting complete training pipeline for anonymized legal documents
+2025-07-22 17:07:25,359 - INFO - ✅ Dataset validation passed: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law_firm_dataset.jsonl
+2025-07-22 17:07:25,359 - INFO - 🔄 Preparing training data for anonymized legal documents...
+2025-07-22 17:07:25,361 - INFO - 📂 Loading JSONL dataset: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law_firm_dataset.jsonl
+2025-07-22 17:07:25,384 - INFO - 📊 Loaded 500 training examples
+2025-07-22 17:07:25,385 - INFO - 🔧 Enhancing responses for anonymized content...
+2025-07-22 17:07:25,385 - INFO - 📝 Enhanced 10/500 examples
+2025-07-22 17:07:25,386 - INFO - 📝 Enhanced 20/500 examples
+2025-07-22 17:07:25,387 - INFO - 📝 Enhanced 30/500 examples
+2025-07-22 17:07:25,387 - INFO - 📝 Enhanced 40/500 examples
+2025-07-22 17:07:25,388 - INFO - 📝 Enhanced 50/500 examples
+2025-07-22 17:07:25,389 - INFO - 📝 Enhanced 60/500 examples
+2025-07-22 17:07:25,389 - INFO - 📝 Enhanced 70/500 examples
+2025-07-22 17:07:25,390 - INFO - 📝 Enhanced 80/500 examples
+2025-07-22 17:07:25,391 - INFO - 📝 Enhanced 90/500 examples
+2025-07-22 17:07:25,391 - INFO - 📝 Enhanced 100/500 examples
+2025-07-22 17:07:25,392 - INFO - 📝 Enhanced 110/500 examples
+2025-07-22 17:07:25,393 - INFO - 📝 Enhanced 120/500 examples
+2025-07-22 17:07:25,393 - INFO - 📝 Enhanced 130/500 examples
+2025-07-22 17:07:25,394 - INFO - 📝 Enhanced 140/500 examples
+2025-07-22 17:07:25,395 - INFO - 📝 Enhanced 150/500 examples
+2025-07-22 17:07:25,395 - INFO - 📝 Enhanced 160/500 examples
+2025-07-22 17:07:25,396 - INFO - 📝 Enhanced 170/500 examples
+2025-07-22 17:07:25,397 - INFO - 📝 Enhanced 180/500 examples
+2025-07-22 17:07:25,398 - INFO - 📝 Enhanced 190/500 examples
+2025-07-22 17:07:25,399 - INFO - 📝 Enhanced 200/500 examples
+2025-07-22 17:07:25,399 - INFO - 📝 Enhanced 210/500 examples
+2025-07-22 17:07:25,400 - INFO - 📝 Enhanced 220/500 examples
+2025-07-22 17:07:25,401 - INFO - 📝 Enhanced 230/500 examples
+2025-07-22 17:07:25,402 - INFO - 📝 Enhanced 240/500 examples
+2025-07-22 17:07:25,402 - INFO - 📝 Enhanced 250/500 examples
+2025-07-22 17:07:25,403 - INFO - 📝 Enhanced 260/500 examples
+2025-07-22 17:07:25,403 - INFO - 📝 Enhanced 270/500 examples
+2025-07-22 17:07:25,404 - INFO - 📝 Enhanced 280/500 examples
+2025-07-22 17:07:25,405 - INFO - 📝 Enhanced 290/500 examples
+2025-07-22 17:07:25,406 - INFO - 📝 Enhanced 300/500 examples
+2025-07-22 17:07:25,406 - INFO - 📝 Enhanced 310/500 examples
+2025-07-22 17:07:25,407 - INFO - 📝 Enhanced 320/500 examples
+2025-07-22 17:07:25,407 - INFO - 📝 Enhanced 330/500 examples
+2025-07-22 17:07:25,408 - INFO - 📝 Enhanced 340/500 examples
+2025-07-22 17:07:25,409 - INFO - 📝 Enhanced 350/500 examples
+2025-07-22 17:07:25,410 - INFO - 📝 Enhanced 360/500 examples
+2025-07-22 17:07:25,410 - INFO - 📝 Enhanced 370/500 examples
+2025-07-22 17:07:25,411 - INFO - 📝 Enhanced 380/500 examples
+2025-07-22 17:07:25,411 - INFO - 📝 Enhanced 390/500 examples
+2025-07-22 17:07:25,412 - INFO - 📝 Enhanced 400/500 examples
+2025-07-22 17:07:25,413 - INFO - 📝 Enhanced 410/500 examples
+2025-07-22 17:07:25,414 - INFO - 📝 Enhanced 420/500 examples
+2025-07-22 17:07:25,414 - INFO - 📝 Enhanced 430/500 examples
+2025-07-22 17:07:25,415 - INFO - 📝 Enhanced 440/500 examples
+2025-07-22 17:07:25,415 - INFO - 📝 Enhanced 450/500 examples
+2025-07-22 17:07:25,416 - INFO - 📝 Enhanced 460/500 examples
+2025-07-22 17:07:25,417 - INFO - 📝 Enhanced 470/500 examples
+2025-07-22 17:07:25,418 - INFO - 📝 Enhanced 480/500 examples
+2025-07-22 17:07:25,418 - INFO - 📝 Enhanced 490/500 examples
+2025-07-22 17:07:25,419 - INFO - 📝 Enhanced 500/500 examples
+2025-07-22 17:07:25,501 - INFO - ✅ Enhanced training data saved: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/enhanced_anonymized_training.jsonl
+2025-07-22 17:07:25,502 - INFO - 📈 Enhanced 500 examples
+2025-07-22 17:07:25,503 - INFO - 🚀 Starting training with model: meta-llama/Llama-3.1-8B-Instruct-Turbo
+2025-07-22 17:07:25,503 - INFO - 📁 Training data: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/enhanced_anonymized_training.jsonl
+2025-07-22 17:07:25,504 - INFO - 📤 Uploading training data...
+2025-07-22 17:07:26,612 - ERROR - ❌ Training failed: This job would exceed your free trial credits. Please upgrade to a paid account through Settings -> Billing on api.together.ai to continue.
+2025-07-22 17:07:26,613 - ERROR - ❌ Training pipeline failed: This job would exceed your free trial credits. Please upgrade to a paid account through Settings -> Billing on api.together.ai to continue.

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Firm AI - Debug Monitor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .session-list {
+            display: grid;
+            gap: 15px;
+        }
+        .session-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .session-item:hover {
+            background: #f0f0f0;
+            border-color: #667eea;
+        }
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .processing-id {
+            font-family: monospace;
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-completed { background: #4caf50; color: white; }
+        .status-started { background: #ff9800; color: white; }
+        .status-error { background: #f44336; color: white; }
+        .details {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .step {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .step-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .translation-box {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 5px;
+            border-left: 3px solid #2196f3;
+        }
+        .pii-analysis {
+            background: #fff3e0;
+            border-left: 3px solid #ff9800;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .llm-interaction {
+            background: #f3e5f5;
+            border-left: 3px solid #9c27b0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .refresh-btn:hover {
+            background: #5a67d8;
+        }
+        .translator-box {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .translator-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+        }
+        .translate-btn {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Law Firm AI - Debug Monitor</h1>
+            <p>Real-time monitoring with German-to-English translation for debugging</p>
+        </div>
+
+        <!-- Standalone Translator -->
+        <div class="card translator-box">
+            <h3>🔄 German Text Translator</h3>
+            <p>Translate German text to English for debugging purposes:</p>
+            <textarea class="translator-input" id="germanText" placeholder="Enter German text here..."></textarea>
+            <br>
+            <button class="translate-btn" onclick="translateText()">Translate to English</button>
+            <div id="translationResult" class="translation-box hidden">
+                <h4>English Translation:</h4>
+                <div id="englishText"></div>
+            </div>
+        </div>
+
+        <!-- Session Monitor -->
+        <div class="card">
+            <h3>📊 Processing Sessions</h3>
+            <button class="refresh-btn" onclick="loadSessions()">🔄 Refresh Sessions</button>
+            <div id="sessionsList" class="session-list">
+                <p>Loading sessions...</p>
+            </div>
+        </div>
+
+        <!-- Session Details -->
+        <div id="sessionDetails" class="card hidden">
+            <h3>🔍 Session Details</h3>
+            <div id="detailsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        let sessions = [];
+        let selectedSession = null;
+
+        // Load all sessions
+        async function loadSessions() {
+            try {
+                const response = await fetch('/debug/sessions');
+                const data = await response.json();
+                sessions = data.sessions || [];
+                renderSessions();
+            } catch (error) {
+                document.getElementById('sessionsList').innerHTML = 
+                    '<p style="color: red;">Error loading sessions: ' + error.message + '</p>';
+            }
+        }
+
+        // Render sessions list
+        function renderSessions() {
+            const container = document.getElementById('sessionsList');
+            
+            if (sessions.length === 0) {
+                container.innerHTML = '<p>No processing sessions found. Process a document to see debug data.</p>';
+                return;
+            }
+
+            container.innerHTML = sessions.map(session => `
+                <div class="session-item" onclick="loadSessionDetails('${session.processing_id}')">
+                    <div class="session-header">
+                        <div>
+                            <div class="processing-id">${session.processing_id}</div>
+                            <strong>${session.filename}</strong>
+                        </div>
+                        <div>
+                            <span class="status-badge status-${session.status}">${session.status}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>Started:</strong> ${new Date(session.start_time).toLocaleString()}<br>
+                        <strong>Steps:</strong> ${session.steps_completed} | 
+                        <strong>PII Found:</strong> ${session.pii_entities_found}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load detailed session data
+        async function loadSessionDetails(processingId) {
+            try {
+                const response = await fetch(`/debug/session/${processingId}`);
+                const data = await response.json();
+                selectedSession = data.debug_session;
+                renderSessionDetails();
+                document.getElementById('sessionDetails').classList.remove('hidden');
+            } catch (error) {
+                alert('Error loading session details: ' + error.message);
+            }
+        }
+
+        // Render session details with translations
+        function renderSessionDetails() {
+            if (!selectedSession) return;
+
+            const content = document.getElementById('detailsContent');
+            let html = `
+                <h4>📄 ${selectedSession.filename} (${selectedSession.processing_id})</h4>
+                <p><strong>Started:</strong> ${new Date(selectedSession.start_time).toLocaleString()}</p>
+            `;
+
+            // Processing Steps
+            if (selectedSession.steps && selectedSession.steps.length > 0) {
+                html += '<h4>📋 Processing Steps</h4>';
+                selectedSession.steps.forEach(step => {
+                    html += `
+                        <div class="step">
+                            <div class="step-title">${step.step_name.replace('_', ' ').toUpperCase()}</div>
+                            <small>${new Date(step.timestamp).toLocaleString()}</small>
+                            ${renderStepData(step.data)}
+                        </div>
+                    `;
+                });
+            }
+
+            // PII Analysis
+            if (selectedSession.pii_analysis) {
+                const pii = selectedSession.pii_analysis;
+                html += `
+                    <div class="pii-analysis">
+                        <h4>🔒 PII Detection Results</h4>
+                        <p><strong>Entities Found:</strong> ${pii.entities_found}</p>
+                        <p><strong>Text Length:</strong> ${pii.total_text_length} characters</p>
+                        
+                        <h5>Original Text (German):</h5>
+                        <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                            ${pii.original_text_german || 'N/A'}
+                        </div>
+                        
+                        <div class="translation-box">
+                            <h5>Original Text (English Translation):</h5>
+                            ${pii.original_text_english || 'N/A'}
+                        </div>
+                        
+                        <h5>Anonymized Text (German):</h5>
+                        <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                            ${pii.anonymized_text_german || 'N/A'}
+                        </div>
+                        
+                        <div class="translation-box">
+                            <h5>Anonymized Text (English Translation):</h5>
+                            ${pii.anonymized_text_english || 'N/A'}
+                        </div>
+
+                        ${renderPIISamples(pii.pii_samples_english)}
+                    </div>
+                `;
+            }
+
+            // LLM Interaction
+            if (selectedSession.llm_interaction) {
+                const llm = selectedSession.llm_interaction;
+                html += `
+                    <div class="llm-interaction">
+                        <h4>🤖 LLM Analysis Results</h4>
+                        <p><strong>Processing Time:</strong> ${new Date(llm.timestamp).toLocaleString()}</p>
+                        
+                        <h5>Input to LLM (German):</h5>
+                        <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                            ${llm.input_text_german || 'N/A'}
+                        </div>
+                        
+                        <div class="translation-box">
+                            <h5>Input to LLM (English Translation):</h5>
+                            ${llm.input_text_english || 'N/A'}
+                        </div>
+                        
+                        <h5>LLM Response (German):</h5>
+                        <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 5px 0;">
+                            ${llm.llm_response_german || 'N/A'}
+                        </div>
+                        
+                        <div class="translation-box">
+                            <h5>LLM Response (English Translation):</h5>
+                            ${llm.llm_response_english || 'N/A'}
+                        </div>
+                    </div>
+                `;
+            }
+
+            content.innerHTML = html;
+        }
+
+        // Render step data
+        function renderStepData(data) {
+            let html = '';
+            for (const [key, value] of Object.entries(data)) {
+                if (key.endsWith('_english')) {
+                    html += `
+                        <div class="translation-box">
+                            <strong>🇺🇸 ${key.replace('_english', '').replace('_', ' ')}:</strong><br>
+                            ${value}
+                        </div>
+                    `;
+                } else if (!data[key + '_english']) {
+                    html += `<div><strong>${key.replace('_', ' ')}:</strong> ${value}</div>`;
+                }
+            }
+            return html;
+        }
+
+        // Render PII samples
+        function renderPIISamples(samples) {
+            if (!samples || Object.keys(samples).length === 0) return '';
+            
+            let html = '<h5>🔍 PII Samples with English Translations:</h5>';
+            for (const [type, entities] of Object.entries(samples)) {
+                html += `<div><strong>${type}:</strong><ul>`;
+                entities.forEach(entity => {
+                    html += `
+                        <li>
+                            <strong>German:</strong> ${entity.original_german}<br>
+                            <strong>English:</strong> ${entity.english_translation}<br>
+                            <small>Type: ${entity.type}</small>
+                        </li>
+                    `;
+                });
+                html += '</ul></div>';
+            }
+            return html;
+        }
+
+        // Translate text using the standalone endpoint
+        async function translateText() {
+            const germanText = document.getElementById('germanText').value.trim();
+            if (!germanText) {
+                alert('Please enter German text to translate');
+                return;
+            }
+
+            try {
+                const response = await fetch('/debug/translate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: germanText, context: 'legal' })
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('englishText').textContent = data.english_translation;
+                document.getElementById('translationResult').classList.remove('hidden');
+            } catch (error) {
+                alert('Translation failed: ' + error.message);
+            }
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(loadSessions, 30000);
+
+        // Initial load
+        loadSessions();
+    </script>
+</body>
+</html>

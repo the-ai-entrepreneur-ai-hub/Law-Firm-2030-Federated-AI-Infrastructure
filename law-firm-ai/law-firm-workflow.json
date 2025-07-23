@@ -1,0 +1,380 @@
+{
+  "name": "Law Firm Vision 2030 - Secure Document Processing",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "/webhook/document-upload",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "5d8a91b8-0d7f-4c8e-9b0a-1c2d3e4f5a6b",
+      "name": "Document Upload Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "webhookId": "law-firm-document-upload"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:5001/process-document",
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": true,
+        "bodyContentType": "form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "file",
+              "value": "={{ $node['Document Upload Webhook'].binary.data }}"
+            }
+          ]
+        }
+      },
+      "id": "7f8e9d0c-1a2b-3c4d-5e6f-7g8h9i0j1k2l",
+      "name": "Process Document API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c1a2b3c4-d5e6-f7g8-h9i0-j1k2l3m4n5o6",
+              "leftValue": "={{ $node['Process Document API'].json.success }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "9a0b1c2d-3e4f-5g6h-7i8j-9k0l1m2n3o4p",
+      "name": "Success Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        600,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assignment1",
+              "name": "legal_analysis",
+              "value": "={{ $node['Process Document API'].json.final_response }}",
+              "type": "string"
+            },
+            {
+              "id": "assignment2", 
+              "name": "processing_stats",
+              "value": "={{ $node['Process Document API'].json.processing_stats }}",
+              "type": "object"
+            },
+            {
+              "id": "assignment3",
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "assignment4",
+              "name": "document_id",
+              "value": "={{ $node['Process Document API'].json.processing_stats.processing_id }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "b1c2d3e4-f5g6-h7i8-j9k0-l1m2n3o4p5q6",
+      "name": "Extract Analysis Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        800,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "table": "legal_document_analysis",
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "document_id": "={{ $json.document_id }}",
+            "legal_analysis": "={{ $json.legal_analysis }}",
+            "processing_time": "={{ $json.processing_stats.timing.total_time }}",
+            "file_size_mb": "={{ $json.processing_stats.file_size_mb }}",
+            "entities_found": "={{ $json.processing_stats.entities_found }}",
+            "created_at": "={{ $json.timestamp }}",
+            "status": "processed"
+          }
+        }
+      },
+      "id": "c2d3e4f5-g6h7-i8j9-k0l1-m2n3o4p5q6r7",
+      "name": "Store Analysis in Database",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "subject": "🏛️ Legal Document Analysis Complete - {{ $node['Extract Analysis Data'].json.document_id }}",
+        "emailType": "html",
+        "message": "<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: Arial, sans-serif; margin: 20px; }\n        .header { background-color: #2c3e50; color: white; padding: 20px; border-radius: 5px; }\n        .content { background-color: #ecf0f1; padding: 20px; border-radius: 5px; margin: 20px 0; }\n        .analysis { background-color: white; padding: 15px; border-left: 4px solid #3498db; }\n        .stats { background-color: #f8f9fa; padding: 15px; border-radius: 5px; }\n        .footer { text-align: center; color: #7f8c8d; margin-top: 30px; }\n    </style>\n</head>\n<body>\n    <div class=\"header\">\n        <h1>🏛️ Law Firm Vision 2030</h1>\n        <h2>Secure Document Analysis Complete</h2>\n    </div>\n    \n    <div class=\"content\">\n        <p><strong>Document ID:</strong> {{ $node['Extract Analysis Data'].json.document_id }}</p>\n        <p><strong>Processed:</strong> {{ $node['Extract Analysis Data'].json.timestamp }}</p>\n        \n        <div class=\"stats\">\n            <h3>📊 Processing Statistics</h3>\n            <ul>\n                <li><strong>Total Processing Time:</strong> {{ $node['Extract Analysis Data'].json.processing_stats.timing.total_time }}s</li>\n                <li><strong>File Size:</strong> {{ $node['Extract Analysis Data'].json.processing_stats.file_size_mb }}MB</li>\n                <li><strong>Entities Found:</strong> {{ $node['Extract Analysis Data'].json.processing_stats.entities_found }}</li>\n                <li><strong>OCR Time:</strong> {{ $node['Extract Analysis Data'].json.processing_stats.timing.ocr_time }}s</li>\n                <li><strong>Anonymization Time:</strong> {{ $node['Extract Analysis Data'].json.processing_stats.timing.anonymization_time }}s</li>\n                <li><strong>LLM Analysis Time:</strong> {{ $node['Extract Analysis Data'].json.processing_stats.timing.llm_time }}s</li>\n            </ul>\n        </div>\n        \n        <div class=\"analysis\">\n            <h3>⚖️ Legal Analysis</h3>\n            <div style=\"white-space: pre-wrap; font-size: 14px; line-height: 1.5;\">{{ $node['Extract Analysis Data'].json.legal_analysis }}</div>\n        </div>\n    </div>\n    \n    <div class=\"footer\">\n        <p>🔐 <strong>Security Notice:</strong> This document was processed using our secure anonymization pipeline. All personal data was protected during AI analysis.</p>\n        <p>Generated by Law Firm Vision 2030 AI System</p>\n    </div>\n</body>\n</html>",
+        "options": {
+          "allowUnauthorizedCerts": false,
+          "replyTo": "noreply@lawfirm.com"
+        }
+      },
+      "id": "d3e4f5g6-h7i8-j9k0-l1m2-n3o4p5q6r7s8",
+      "name": "Send Analysis Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "channel": "#legal-analysis",
+        "text": "🏛️ **Legal Document Analysis Complete**\n\n📄 **Document ID:** {{ $node['Extract Analysis Data'].json.document_id }}\n⏱️ **Processing Time:** {{ $node['Extract Analysis Data'].json.processing_stats.timing.total_time }}s\n📊 **File Size:** {{ $node['Extract Analysis Data'].json.processing_stats.file_size_mb }}MB\n🔍 **Entities Found:** {{ $node['Extract Analysis Data'].json.processing_stats.entities_found }}\n\n**🔒 Security Status:** ✅ Fully Anonymized Processing\n\n**📋 Analysis Summary:**\n```\n{{ $node['Extract Analysis Data'].json.legal_analysis.substring(0, 500) }}...\n```\n\n*Full analysis stored in database with ID: {{ $node['Extract Analysis Data'].json.document_id }}*"
+      },
+      "id": "e4f5g6h7-i8j9-k0l1-m2n3-o4p5q6r7s8t9",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        1400,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "error_assignment1",
+              "name": "error_message",
+              "value": "={{ $node['Process Document API'].json.error || 'Unknown error occurred' }}",
+              "type": "string"
+            },
+            {
+              "id": "error_assignment2",
+              "name": "timestamp",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "f5g6h7i8-j9k0-l1m2-n3o4-p5q6r7s8t9u0",
+      "name": "Extract Error Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        800,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "channel": "#legal-analysis",
+        "text": "🚨 **Legal Document Processing Failed**\n\n❌ **Error:** {{ $json.error_message }}\n⏱️ **Time:** {{ $json.timestamp }}\n\n**Action Required:** Please check the document format and try again.",
+        "otherOptions": {
+          "mrkdwn": true
+        }
+      },
+      "id": "g6h7i8j9-k0l1-m2n3-o4p5-q6r7s8t9u0v1",
+      "name": "Slack Error Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Document processed successfully\",\n  \"document_id\": \"{{ $node['Extract Analysis Data'].json.document_id }}\",\n  \"analysis_preview\": \"{{ $node['Extract Analysis Data'].json.legal_analysis.substring(0, 200) }}...\",\n  \"processing_stats\": {{ JSON.stringify($node['Extract Analysis Data'].json.processing_stats) }}\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "h7i8j9k0-l1m2-n3o4-p5q6-r7s8t9u0v1w2",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": false,\n  \"message\": \"Document processing failed\",\n  \"error\": \"{{ $node['Extract Error Data'].json.error_message }}\",\n  \"timestamp\": \"{{ $node['Extract Error Data'].json.timestamp }}\"\n}",
+        "options": {
+          "responseCode": 500
+        }
+      },
+      "id": "i8j9k0l1-m2n3-o4p5-q6r7-s8t9u0v1w2x3",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        400
+      ]
+    }
+  ],
+  "connections": {
+    "Document Upload Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Document API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Document API": {
+      "main": [
+        [
+          {
+            "node": "Success Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Check": {
+      "main": [
+        [
+          {
+            "node": "Extract Analysis Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Error Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Analysis Data": {
+      "main": [
+        [
+          {
+            "node": "Store Analysis in Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Analysis in Database": {
+      "main": [
+        [
+          {
+            "node": "Send Analysis Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Analysis Email": {
+      "main": [
+        [
+          {
+            "node": "Slack Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Notification": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Error Data": {
+      "main": [
+        [
+          {
+            "node": "Slack Error Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Error Notification": {
+      "main": [
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-01-18T17:55:00.000Z",
+      "updatedAt": "2025-01-18T17:55:00.000Z",
+      "id": "legal-ai",
+      "name": "Legal AI Processing"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-01-18T17:55:00.000Z",
+  "versionId": "1"
+}

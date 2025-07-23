@@ -1,0 +1,38 @@
+# FILE: docker-compose.yml
+
+version: '3.8'
+
+services:
+  # This is our custom Python service that does all the work
+  sanitizer:
+    build: .
+    container_name: pii_sanitizer_service
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # --- UPDATE THIS SECTION ---
+    environment:
+      - TOGETHER_API_KEY=REDACTED
+      - LLM_MODEL_NAME=deepseek-ai/DeepSeek-V3
+      - DEBUG=false
+      - PYTHONUNBUFFERED=1
+    # --- END OF UPDATE ---
+
+  # The official n8n service, still available for other workflows
+  n8n:
+    # ... (no changes needed for the n8n section) ...
+    image: n8nio/n8n
+    container_name: n8n_workflow_engine
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    environment:
+      - TZ=Europe/Berlin
+      - N8N_CORS_ALLOW_ORIGIN=http://localhost:5500,http://127.0.0.1:5500
+
+volumes:
+  n8n_data:

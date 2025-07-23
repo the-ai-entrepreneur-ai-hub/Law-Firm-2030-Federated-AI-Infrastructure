@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Firm AI - Document Processor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .status-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .status-link {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .status-link:hover {
+            background: #667eea;
+            color: white;
+        }
+        .upload-section {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .upload-section:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        .file-input {
+            margin: 20px 0;
+        }
+        .upload-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .upload-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        .upload-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        .result-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .result-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .metric-card {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .metric-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+        }
+        .debug-info {
+            background: #fff3e0;
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .preview-text {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ Law Firm AI Document Processor with Translation</h1>
+            <p>German legal documents → PII detection → AI analysis → English translation</p>
+            
+            <div class="status-links">
+                <a href="http://localhost:5001/health" target="_blank" class="status-link">📊 Main App Status</a>
+                <a href="http://localhost:5002" target="_blank" class="status-link">🔍 Debug Monitor</a>
+                <a href="http://localhost:5002/health" target="_blank" class="status-link">🔄 Translation Service</a>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <h3>📄 Upload Legal Document</h3>
+            <p>Upload a PDF, DOC, or text file for PII detection and legal analysis</p>
+            
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="file-input">
+                    <input type="file" id="fileInput" name="file" accept=".pdf,.doc,.docx,.txt" required>
+                </div>
+                <button type="submit" class="upload-btn" id="uploadBtn">
+                    🚀 Process Document
+                </button>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">
+            <h3>⏳ Processing Document...</h3>
+            <p>Performing OCR, PII detection, and legal analysis. Check the debug monitor for real-time updates!</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="results" id="results">
+            <h3>📋 Processing Results</h3>
+            
+            <div class="metrics" id="metrics">
+                <!-- Metrics will be populated here -->
+            </div>
+
+            <div class="result-section">
+                <div class="result-title">🤖 Legal Analysis (English Translation)</div>
+                <div id="analysisResult" class="preview-text"></div>
+            </div>
+
+            <div class="debug-info">
+                <div class="result-title">🔍 Processing Information</div>
+                <p><strong>Processing ID:</strong> <span id="processingId"></span></p>
+                <p><strong>PII Entities Detected:</strong> <span id="entitiesDetected"></span></p>
+                <div class="result-title" style="margin-top: 15px;">📝 Original German Text Preview</div>
+                <div id="originalPreview" class="preview-text"></div>
+                <div class="result-title" style="margin-top: 15px;">🔒 Anonymized Text (English Translation)</div>
+                <div id="anonymizedPreview" class="preview-text"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="http://localhost:5002" target="_blank" class="upload-btn" style="text-decoration: none; display: inline-block;">
+                    🔍 View Full Debug Details with English Translation
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showError('Please select a file');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('uploadBtn').disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const response = await fetch('http://localhost:5001/process-document', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    showError(data.error || 'Processing failed');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('uploadBtn').disabled = false;
+            }
+        });
+
+        function displayResults(data) {
+            console.log('Response data:', data); // Debug log
+            
+            // Handle both success and failure cases
+            if (!data.success) {
+                if (data.requires_human_review) {
+                    showError(`Document requires human review. Risk score: ${data.risk_assessment.total_risk_score}`);
+                } else {
+                    showError(data.message || 'Processing failed');
+                }
+                return;
+            }
+
+            // Populate metrics using correct data structure
+            const stats = data.processing_stats;
+            const metricsHtml = `
+                <div class="metric-card">
+                    <div class="metric-value">${stats.timing.total_time.toFixed(2)}s</div>
+                    <div class="metric-label">Processing Time</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${stats.entities_found}</div>
+                    <div class="metric-label">PII Entities Found</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${stats.file_size_mb}MB</div>
+                    <div class="metric-label">File Size</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${data.final_response.detected_pii_entities ? data.final_response.detected_pii_entities.length : 0}</div>
+                    <div class="metric-label">PII Types</div>
+                </div>
+            `;
+            document.getElementById('metrics').innerHTML = metricsHtml;
+
+            // Populate results with English translations
+            document.getElementById('analysisResult').textContent = data.final_response.llm_analysis_english || 'No analysis available';
+            document.getElementById('processingId').textContent = stats.processing_id;
+            
+            // Display detected PII entities
+            const entities = data.final_response.detected_pii_entities || [];
+            const entityTypes = entities.map(e => `${e.type} (${(e.confidence * 100).toFixed(0)}%)`);
+            document.getElementById('entitiesDetected').textContent = entityTypes.join(', ') || 'None detected';
+            
+            document.getElementById('originalPreview').textContent = data.final_response.original_text_preview || 'No preview available';
+            document.getElementById('anonymizedPreview').textContent = data.final_response.anonymized_text_english || 'No anonymized text available';
+
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function showError(message) {
+            document.getElementById('error').textContent = message;
+            document.getElementById('error').style.display = 'block';
+        }
+
+        // Check service status on page load
+        window.addEventListener('load', async function() {
+            try {
+                const mainResponse = await fetch('http://localhost:5001/health');
+                const debugResponse = await fetch('http://localhost:5002/health');
+                
+                console.log('Main App:', mainResponse.ok ? '✅ Online' : '❌ Offline');
+                console.log('Debug Server:', debugResponse.ok ? '✅ Online' : '❌ Offline');
+            } catch (error) {
+                console.log('Service check failed:', error.message);
+            }
+        });
+    </script>
+</body>
+</html>

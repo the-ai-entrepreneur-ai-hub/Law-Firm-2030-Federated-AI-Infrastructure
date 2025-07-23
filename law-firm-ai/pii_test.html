@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PII Remover - Real Time Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .panel h3 {
+            margin-top: 0;
+            color: #343a40;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        #originalText {
+            background-color: #fff3cd;
+        }
+        #anonymizedText {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .controls input[type="file"] {
+            margin: 10px 0;
+        }
+        .controls button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        .controls button:hover {
+            background: #0056b3;
+        }
+        .controls button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+            display: block;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .entities {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .entity-type {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+        .entity-header {
+            font-weight: bold;
+            color: #343a40;
+            margin-bottom: 10px;
+        }
+        .entity-item {
+            background: #e9ecef;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .replacement {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .original {
+            color: #dc3545;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .loading { background-color: #d1ecf1; color: #0c5460; }
+        .hidden { display: none; }
+        
+        /* Sample text button */
+        .sample-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .sample-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔒 German Legal Document PII Remover</h1>
+        <p>Real-time anonymization of German legal documents</p>
+        <div id="connection-status">Checking connection...</div>
+    </div>
+
+    <div class="controls">
+        <h3>📝 Input Options</h3>
+        <input type="file" id="fileInput" accept=".txt,.pdf" />
+        <button onclick="loadSampleText()" class="sample-btn">📄 Load Sample German Legal Document</button>
+        <button onclick="processText()" id="processBtn">🚀 Remove PII</button>
+        <button onclick="clearAll()">🗑️ Clear All</button>
+        
+        <div id="status" class="status hidden"></div>
+    </div>
+
+    <div class="container">
+        <div class="panel">
+            <h3>📋 Original German Text</h3>
+            <textarea id="originalText" placeholder="Paste German legal document text here or load a file..."></textarea>
+        </div>
+        <div class="panel">
+            <h3>🔒 Anonymized Text (PII Removed)</h3>
+            <textarea id="anonymizedText" placeholder="Anonymized text will appear here..." readonly></textarea>
+        </div>
+    </div>
+
+    <div id="stats" class="stats hidden">
+        <div class="stat-card">
+            <span class="stat-value" id="entitiesFound">0</span>
+            <div class="stat-label">PII Entities Found</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value" id="processingTime">0.0s</span>
+            <div class="stat-label">Processing Time</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value" id="originalLength">0</span>
+            <div class="stat-label">Original Characters</div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-value" id="anonymizedLength">0</span>
+            <div class="stat-label">Anonymized Characters</div>
+        </div>
+    </div>
+
+    <div id="entities" class="entities hidden">
+        <h3>🔍 Detected PII Entities</h3>
+        <div id="entityList"></div>
+    </div>
+
+    <script>
+        // Sample German legal text
+        const sampleText = `Rechtsanwaltskanzlei Müller & Partner GmbH
+Berliner Straße 123
+10115 Berlin
+
+Betreff: Rechtssache gegen Hans Schmidt
+Aktenzeichen: 4 C 2156/2024
+Telefon: +49 30 12345678
+Mobil: 0171 9876543
+E-Mail: info@mueller-partner.de
+IBAN: DE89 3704 0044 0532 0130 00
+
+Sehr geehrte Damen und Herren,
+
+hiermit teilen wir Ihnen mit, dass unser Mandant Hans Schmidt, wohnhaft in der Hauptstraße 45, 12345 Musterstadt, eine Klage gegen Ihre Versicherungsgesellschaft einreichen wird.
+
+Unser Mandant wurde am 15. März 2024 bei einem Verkehrsunfall schwer verletzt. Die Schadenshöhe beläuft sich auf 25.000,00 EUR.
+
+Weitere beteiligte Personen:
+- Maria Schmidt (Ehefrau des Mandanten)
+- Dr. Weber (behandelnder Arzt)
+- Versicherungsnehmer: Klaus Mustermann, Steuer-ID: 12 345 678 901
+
+Wir bitten um Ihre umgehende Stellungnahme.
+
+Mit freundlichen Grüßen
+Dr. jur. Andrea Müller
+Rechtsanwältin
+
+Kontakt: a.mueller@mueller-partner.de
+Telefon: +49 30 98765432`;
+
+        function loadSampleText() {
+            document.getElementById('originalText').value = sampleText;
+            showStatus('Sample German legal document loaded', 'success');
+        }
+
+        function clearAll() {
+            document.getElementById('originalText').value = '';
+            document.getElementById('anonymizedText').value = '';
+            document.getElementById('stats').classList.add('hidden');
+            document.getElementById('entities').classList.add('hidden');
+            hideStatus();
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.classList.remove('hidden');
+        }
+
+        function hideStatus() {
+            document.getElementById('status').classList.add('hidden');
+        }
+
+        async function processText() {
+            const text = document.getElementById('originalText').value.trim();
+            if (!text) {
+                showStatus('Please enter some text or load a file first', 'error');
+                return;
+            }
+
+            const processBtn = document.getElementById('processBtn');
+            processBtn.disabled = true;
+            processBtn.textContent = 'Processing...';
+            showStatus('Detecting and removing PII...', 'loading');
+
+            try {
+                const response = await fetch('http://localhost:5002/detect-pii', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+
+                const result = await response.json();
+                console.log('PII Detection Result:', result);
+
+                if (result.success) {
+                    displayResults(result);
+                    showStatus(`✅ Found and anonymized ${result.entities_found} PII entities in ${result.processing_time}s`, 'success');
+                } else {
+                    showStatus(`❌ Error: ${result.error}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus(`❌ Network Error: ${error.message}`, 'error');
+            } finally {
+                processBtn.disabled = false;
+                processBtn.textContent = '🚀 Remove PII';
+            }
+        }
+
+        function displayResults(result) {
+            // Show anonymized text
+            document.getElementById('anonymizedText').value = result.anonymized_text;
+
+            // Show stats
+            document.getElementById('entitiesFound').textContent = result.entities_found;
+            document.getElementById('processingTime').textContent = result.processing_time + 's';
+            document.getElementById('originalLength').textContent = result.stats.original_length.toLocaleString();
+            document.getElementById('anonymizedLength').textContent = result.stats.anonymized_length.toLocaleString();
+            document.getElementById('stats').classList.remove('hidden');
+
+            // Show entity details
+            const entityList = document.getElementById('entityList');
+            entityList.innerHTML = '';
+
+            if (result.entity_summary && Object.keys(result.entity_summary).length > 0) {
+                for (const [type, info] of Object.entries(result.entity_summary)) {
+                    const entityDiv = document.createElement('div');
+                    entityDiv.className = 'entity-type';
+                    
+                    const header = document.createElement('div');
+                    header.className = 'entity-header';
+                    header.innerHTML = `${info.icon} ${info.description} (${info.count} found)`;
+                    entityDiv.appendChild(header);
+
+                    // Show specific instances
+                    const instancesForType = result.detailed_entities.filter(e => e.type === type);
+                    instancesForType.forEach(entity => {
+                        const item = document.createElement('div');
+                        item.className = 'entity-item';
+                        item.innerHTML = `<span class="original">"${entity.original}"</span> → <span class="replacement">${entity.replacement}</span> <small>(${(entity.confidence * 100).toFixed(0)}% confidence)</small>`;
+                        entityDiv.appendChild(item);
+                    });
+
+                    entityList.appendChild(entityDiv);
+                }
+                document.getElementById('entities').classList.remove('hidden');
+            }
+        }
+
+        // File upload handler
+        document.getElementById('fileInput').addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                try {
+                    const text = await file.text();
+                    document.getElementById('originalText').value = text;
+                    showStatus(`File "${file.name}" loaded successfully`, 'success');
+                } catch (error) {
+                    showStatus(`Error loading file: ${error.message}`, 'error');
+                }
+            }
+        });
+
+        // Check connection on load
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch('http://localhost:5002/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('connection-status').innerHTML = 
+                        `✅ Connected to ${data.service} - Status: ${data.status}`;
+                    document.getElementById('connection-status').style.color = '#155724';
+                } else {
+                    document.getElementById('connection-status').innerHTML = 
+                        '⚠️ PII Service not responding';
+                    document.getElementById('connection-status').style.color = '#856404';
+                }
+            } catch (error) {
+                document.getElementById('connection-status').innerHTML = 
+                    '❌ Cannot connect to PII service. Start the server: python3 simple_pii_remover.py';
+                document.getElementById('connection-status').style.color = '#721c24';
+            }
+        });
+    </script>
+</body>
+</html>

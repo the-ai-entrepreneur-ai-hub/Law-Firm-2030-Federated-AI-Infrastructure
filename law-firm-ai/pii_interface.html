@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 PII Anonymizer - Law Firm Vision 2030</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        .connection-status {
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .connected { background: #2ecc71; color: white; }
+        .disconnected { background: #e74c3c; color: white; }
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+        .input-section, .output-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+        }
+        .section-title {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px 0;
+            width: 100%;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        .btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .stat-number { font-size: 2em; font-weight: bold; color: #3498db; }
+        .stat-label { font-size: 0.9em; color: #7f8c8d; margin-top: 5px; }
+        .entities-list {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .entity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 5px 0;
+            background: #f1f3f4;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        .example-btn {
+            background: #95a5a6;
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 14px;
+            width: auto;
+        }
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        @media (max-width: 768px) {
+            .main-content { grid-template-columns: 1fr; }
+            .header h1 { font-size: 2em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 PII Anonymizer</h1>
+            <p>Real-time German Legal Document Processing</p>
+        </div>
+        
+        <div id="connectionStatus" class="connection-status disconnected">
+            🔄 Connecting to PII service...
+        </div>
+        
+        <div class="instructions">
+            <strong>📋 Instructions:</strong>
+            <ol>
+                <li>Make sure the PII service is running on port 5003</li>
+                <li>If not running, execute: <code>cd "Law Firm Vision 2030/law-firm-ai" && source pii_env/bin/activate && python3 pii_web_app.py</code></li>
+                <li>Once connected, paste your German legal document and click "Detect & Anonymize PII"</li>
+                <li>Use the example button to load sample text</li>
+            </ol>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <div class="section-title">
+                    📝 Input Text
+                </div>
+                <textarea id="inputText" placeholder="Paste your German legal document here..."></textarea>
+                
+                <div class="examples">
+                    <button class="btn example-btn" onclick="loadExample()">📄 Load Example</button>
+                    <button class="btn example-btn" onclick="clearText()">🗑️ Clear</button>
+                </div>
+                
+                <button class="btn" id="processBtn" onclick="processText()" disabled>🔍 Detect & Anonymize PII</button>
+            </div>
+            
+            <div class="output-section">
+                <div class="section-title">
+                    🔒 Anonymized Result
+                </div>
+                <textarea id="outputText" readonly placeholder="Anonymized text will appear here..."></textarea>
+                
+                <div class="stats" id="stats" style="display: none;">
+                    <div class="stat-box">
+                        <div class="stat-number" id="entitiesCount">0</div>
+                        <div class="stat-label">PII Entities</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="processingTime">0</div>
+                        <div class="stat-label">Processing (ms)</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="originalLength">0</div>
+                        <div class="stat-label">Original Chars</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="anonymizedLength">0</div>
+                        <div class="stat-label">Anonymized Chars</div>
+                    </div>
+                </div>
+                
+                <div class="entities-list" id="entitiesList" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5003';
+        let serviceConnected = false;
+        
+        // Check service connection
+        async function checkConnection() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    serviceConnected = true;
+                    document.getElementById('connectionStatus').className = 'connection-status connected';
+                    document.getElementById('connectionStatus').textContent = '✅ Connected to PII service';
+                    document.getElementById('processBtn').disabled = false;
+                } else {
+                    throw new Error('Service not healthy');
+                }
+            } catch (error) {
+                serviceConnected = false;
+                document.getElementById('connectionStatus').className = 'connection-status disconnected';
+                document.getElementById('connectionStatus').textContent = '❌ PII service not available - Please start the server';
+                document.getElementById('processBtn').disabled = true;
+            }
+        }
+        
+        // Check connection on load and periodically
+        checkConnection();
+        setInterval(checkConnection, 5000);
+        
+        function loadExample() {
+            const example = `Rechtsanwaltskanzlei Müller & Partner GmbH
+Berliner Straße 123
+10115 Berlin
+
+Betreff: Rechtssache gegen Hans Schmidt
+Aktenzeichen: 4 C 2156/2024
+Telefon: +49 30 12345678
+E-Mail: info@mueller-partner.de
+IBAN: DE89 3704 0044 0532 0130 00
+
+Sehr geehrte Damen und Herren,
+
+hiermit teilen wir Ihnen mit, dass unser Mandant Hans Schmidt, 
+wohnhaft in der Hauptstraße 45, 12345 Musterstadt, eine Klage 
+gegen Ihre Versicherungsgesellschaft einreichen wird.
+
+Die Schadenshöhe beläuft sich auf 25.000,00 EUR.
+
+Weitere beteiligte Personen:
+- Maria Schmidt (Ehefrau des Mandanten)
+- Dr. Weber (behandelnder Arzt)  
+- Klaus Mustermann (Zeuge)
+- Steuer-ID: 12 345 678 901
+
+Mit freundlichen Grüßen
+Dr. Andrea Müller
+Rechtsanwältin
+
+Kontakt: a.mueller@firma.de
+Mobil: 0171 9876543`;
+            document.getElementById('inputText').value = example;
+        }
+        
+        function clearText() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputText').value = '';
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('entitiesList').style.display = 'none';
+        }
+        
+        async function processText() {
+            if (!serviceConnected) {
+                alert('PII service is not connected. Please start the server first.');
+                return;
+            }
+            
+            const inputText = document.getElementById('inputText').value.trim();
+            if (!inputText) {
+                alert('Please enter some text to process');
+                return;
+            }
+            
+            // Show loading state
+            document.getElementById('outputText').value = '🔍 Processing...';
+            document.getElementById('processBtn').disabled = true;
+            document.getElementById('stats').style.display = 'none';
+            document.getElementById('entitiesList').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE}/detect-pii`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: inputText })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Update output
+                document.getElementById('outputText').value = data.anonymized_text;
+                
+                // Update stats
+                document.getElementById('entitiesCount').textContent = data.entities_found;
+                document.getElementById('processingTime').textContent = Math.round(data.processing_time * 1000);
+                document.getElementById('originalLength').textContent = data.stats.original_length.toLocaleString();
+                document.getElementById('anonymizedLength').textContent = data.stats.anonymized_length.toLocaleString();
+                document.getElementById('stats').style.display = 'grid';
+                
+                // Update entities list
+                const entitiesList = document.getElementById('entitiesList');
+                if (data.entity_summary && Object.keys(data.entity_summary).length > 0) {
+                    let html = '<h4>🎯 Detected PII Types:</h4>';
+                    for (const [type, info] of Object.entries(data.entity_summary)) {
+                        html += `
+                            <div class="entity-item">
+                                <span>${info.icon} ${info.description}</span>
+                                <span><strong>${info.count}</strong> found</span>
+                            </div>
+                        `;
+                    }
+                    entitiesList.innerHTML = html;
+                    entitiesList.style.display = 'block';
+                } else {
+                    entitiesList.innerHTML = '<p>✅ No PII entities detected in the text.</p>';
+                    entitiesList.style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('outputText').value = '❌ Error processing text: ' + error.message;
+            } finally {
+                document.getElementById('processBtn').disabled = false;
+            }
+        }
+        
+        // Auto-process on Enter (Ctrl+Enter)
+        document.getElementById('inputText').addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'Enter' && serviceConnected) {
+                processText();
+            }
+        });
+    </script>
+</body>
+</html>

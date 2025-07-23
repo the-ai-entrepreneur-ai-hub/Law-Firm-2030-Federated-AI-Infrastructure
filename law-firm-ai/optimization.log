@@ -1,0 +1,42 @@
+2025-07-22 17:09:16,443 - INFO - 📊 Loaded 500 training examples for analysis
+2025-07-22 17:09:16,444 - INFO - 🚀 Starting optimization pipeline for anonymized legal documents
+2025-07-22 17:09:16,444 - INFO - 🔍 Analyzing anonymization patterns...
+2025-07-22 17:09:16,453 - INFO - ✅ Found 10 PII token types
+2025-07-22 17:09:16,454 - INFO - 📋 Document types: {'salary_claim': 123, 'copyright_warning': 120, 'employment_termination': 136, 'payment_reminder': 121}
+2025-07-22 17:09:16,455 - INFO - 🎯 Creating optimized prompt template...
+2025-07-22 17:09:16,455 - INFO - 📝 Creating response templates...
+2025-07-22 17:09:16,456 - INFO - 🧪 Testing optimized prompts...
+2025-07-22 17:09:16,456 - INFO - 🧪 Testing sample 1/2
+2025-07-22 17:10:06,538 - INFO - ✅ Generated response for sample 1:
+2025-07-22 17:10:06,540 - INFO - 📝 Type: salary_claim
+2025-07-22 17:10:06,541 - INFO - 📄 Response: **[BIC_7]**  
+Musterstraße 1  
+[PLZ_2] [LOC_2]  
+
+**Stellungnahme zur Klageerhebung**  
+
+**Betreff:** Klage wegen ausstehender Gehaltszahlungen – [ORG_1] gegen [BIC_6]  
+**Aktenzeichen:** [MISC_1]  
+
+...
+2025-07-22 17:10:06,543 - INFO - ✅ Sample 1 passed quality check
+2025-07-22 17:10:06,547 - INFO - 🧪 Testing sample 2/2
+2025-07-22 17:11:00,892 - INFO - ✅ Generated response for sample 2:
+2025-07-22 17:11:00,893 - INFO - 📝 Type: copyright_warning
+2025-07-22 17:11:00,894 - INFO - 📄 Response: **Stellungnahme zur Abmahnung wegen angeblicher Urheberrechtsverletzung**  
+
+**An**  
+[PER_2]  
+Löchelstraße 54  
+[PLZ_1] [LOC_1]  
+
+**Betreff:** Ihre Abmahnung vom [GEBURTSDATUM_1] – Aktenzeichen [BI...
+2025-07-22 17:11:00,895 - INFO - ✅ Sample 2 passed quality check
+2025-07-22 17:11:00,895 - INFO - 📊 Test Results: 2/2 passed (100.0%)
+2025-07-22 17:11:00,896 - INFO - 🐳 Updating Docker sanitizer with optimized prompts...
+2025-07-22 17:11:01,004 - INFO - ✅ Sanitizer updated with optimization
+2025-07-22 17:11:01,004 - INFO - 💾 Backup created: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/secure_sanitizer.py.backup.20250722_171100
+2025-07-22 17:11:01,006 - INFO - 📄 Config saved: /mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/anonymized_optimization_config.json
+2025-07-22 17:11:01,007 - INFO - 🎉 Optimization pipeline completed successfully!
+2025-07-22 17:11:01,008 - INFO - 📋 Docker sanitizer optimized for anonymized documents
+2025-07-22 17:11:01,008 - INFO - 🔄 Restart Docker container to apply changes
