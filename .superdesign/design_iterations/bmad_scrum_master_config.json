@@ -1,0 +1,286 @@
+{
+  "agent_configuration": {
+    "name": "bmad-scrum-master",
+    "version": "1.0.0",
+    "description": "Advanced Scrum Master AI Agent for BMAD-METHOD Framework",
+    "framework_integration": true
+  },
+  
+  "sprint_settings": {
+    "sprint_duration_weeks": 2,
+    "story_point_scale": [1, 2, 3, 5, 8, 13, 21],
+    "velocity_calculation_sprints": 3,
+    "capacity_buffer_percentage": 10,
+    "risk_threshold": 0.7,
+    "quality_gate_enforcement": true
+  },
+  
+  "estimation_ai_model": {
+    "confidence_threshold": 0.6,
+    "complexity_factors": {
+      "ui_complexity": {"weight": 1.2, "max_impact": 5},
+      "backend_complexity": {"weight": 1.5, "max_impact": 8},
+      "integration_complexity": {"weight": 2.0, "max_impact": 13},
+      "data_complexity": {"weight": 1.3, "max_impact": 5},
+      "research_complexity": {"weight": 1.8, "max_impact": 8}
+    },
+    "team_experience_modifiers": {
+      "expert": 0.8,
+      "senior": 0.9,
+      "intermediate": 1.0,
+      "junior": 1.3,
+      "novice": 1.6
+    }
+  },
+  
+  "quality_gates": {
+    "code_review": {
+      "required": true,
+      "min_reviewers": 1,
+      "automated_checks": true
+    },
+    "automated_tests": {
+      "required": true,
+      "min_coverage": 80,
+      "types": ["unit", "integration"]
+    },
+    "security_scan": {
+      "required": true,
+      "vulnerability_threshold": "medium"
+    },
+    "performance_test": {
+      "required": false,
+      "baseline_threshold": "10% degradation"
+    },
+    "accessibility_check": {
+      "required": true,
+      "wcag_level": "AA"
+    }
+  },
+  
+  "ceremonies": {
+    "daily_standup": {
+      "duration_minutes": 15,
+      "time": "09:00",
+      "automated_agenda": true,
+      "blocker_escalation": true
+    },
+    "sprint_planning": {
+      "duration_hours": 4,
+      "capacity_planning": true,
+      "risk_assessment": true,
+      "dependency_analysis": true
+    },
+    "sprint_review": {
+      "duration_hours": 2,
+      "stakeholder_feedback": true,
+      "demo_automation": false
+    },
+    "retrospective": {
+      "duration_hours": 1.5,
+      "ai_insights": true,
+      "action_item_tracking": true,
+      "sentiment_analysis": true
+    },
+    "backlog_grooming": {
+      "frequency": "weekly",
+      "duration_hours": 1,
+      "estimation_sessions": true,
+      "priority_adjustment": true
+    }
+  },
+  
+  "integration_endpoints": {
+    "bmad_agents": {
+      "planning_requirements": {
+        "endpoint": "/api/v1/planning",
+        "auth_required": true,
+        "timeout_seconds": 30
+      },
+      "context_engineering": {
+        "endpoint": "/api/v1/context",
+        "auth_required": true,
+        "timeout_seconds": 30
+      },
+      "quality_assurance": {
+        "endpoint": "/api/v1/quality",
+        "auth_required": true,
+        "timeout_seconds": 30
+      },
+      "architectural_design": {
+        "endpoint": "/api/v1/architecture",
+        "auth_required": true,
+        "timeout_seconds": 30
+      }
+    },
+    "external_tools": {
+      "jira": {
+        "enabled": false,
+        "api_url": "https://your-domain.atlassian.net",
+        "project_key": "PROJECT",
+        "auth_method": "token"
+      },
+      "azure_devops": {
+        "enabled": false,
+        "organization": "your-org",
+        "project": "your-project",
+        "auth_method": "pat"
+      },
+      "linear": {
+        "enabled": false,
+        "api_url": "https://api.linear.app",
+        "team_id": "your-team-id",
+        "auth_method": "api_key"
+      },
+      "slack": {
+        "enabled": true,
+        "webhook_url": "https://hooks.slack.com/services/...",
+        "channels": {
+          "standup": "#daily-standup",
+          "alerts": "#project-alerts",
+          "retrospective": "#retrospective"
+        }
+      },
+      "github": {
+        "enabled": true,
+        "repository": "your-org/your-repo",
+        "auth_method": "token",
+        "integration_features": ["pr_tracking", "issue_sync"]
+      }
+    }
+  },
+  
+  "ai_capabilities": {
+    "natural_language_processing": {
+      "sentiment_analysis": true,
+      "meeting_summarization": true,
+      "action_item_extraction": true
+    },
+    "predictive_analytics": {
+      "velocity_forecasting": true,
+      "risk_prediction": true,
+      "capacity_optimization": true,
+      "delivery_estimation": true
+    },
+    "automated_insights": {
+      "performance_trends": true,
+      "bottleneck_detection": true,
+      "team_health_monitoring": true,
+      "stakeholder_communication": true
+    }
+  },
+  
+  "reporting_configuration": {
+    "automated_reports": {
+      "daily_summary": {
+        "enabled": true,
+        "recipients": ["team", "stakeholders"],
+        "time": "17:00"
+      },
+      "weekly_health": {
+        "enabled": true,
+        "recipients": ["management", "stakeholders"],
+        "day": "friday",
+        "time": "16:00"
+      },
+      "sprint_completion": {
+        "enabled": true,
+        "recipients": ["all"],
+        "trigger": "sprint_end"
+      }
+    },
+    "dashboard_metrics": {
+      "real_time_burndown": true,
+      "velocity_charts": true,
+      "team_capacity": true,
+      "quality_metrics": true,
+      "risk_indicators": true
+    }
+  },
+  
+  "notification_settings": {
+    "escalation_rules": {
+      "blocked_story": {
+        "immediate": ["assignee", "scrum_master"],
+        "after_24h": ["team_lead", "product_owner"],
+        "after_48h": ["management"]
+      },
+      "sprint_risk": {
+        "threshold": 0.7,
+        "recipients": ["scrum_master", "product_owner"]
+      },
+      "velocity_deviation": {
+        "threshold": 0.2,
+        "recipients": ["team_lead", "management"]
+      }
+    },
+    "communication_channels": {
+      "urgent": "slack",
+      "daily": "email",
+      "weekly": "dashboard"
+    }
+  },
+  
+  "team_management": {
+    "capacity_calculation": {
+      "working_hours_per_day": 8,
+      "story_points_per_hour": 1,
+      "focus_factor": 0.75,
+      "meeting_overhead": 0.15
+    },
+    "skill_matrix": {
+      "frontend": ["React", "Vue.js", "Angular", "HTML/CSS", "JavaScript"],
+      "backend": ["Python", "Node.js", "Java", "C#", ".NET", "Go"],
+      "database": ["PostgreSQL", "MongoDB", "MySQL", "Redis", "Elasticsearch"],
+      "cloud": ["AWS", "Azure", "GCP", "Docker", "Kubernetes"],
+      "ai_ml": ["TensorFlow", "PyTorch", "scikit-learn", "NLP", "Computer Vision"],
+      "devops": ["CI/CD", "Jenkins", "GitHub Actions", "Terraform", "Ansible"]
+    },
+    "performance_tracking": {
+      "velocity_per_member": true,
+      "quality_contributions": true,
+      "collaboration_metrics": true,
+      "growth_indicators": true
+    }
+  },
+  
+  "risk_management": {
+    "risk_categories": {
+      "technical": {
+        "complexity": "high",
+        "dependencies": "medium",
+        "unknowns": "high"
+      },
+      "resource": {
+        "availability": "medium",
+        "skill_gaps": "high",
+        "capacity": "medium"
+      },
+      "external": {
+        "stakeholder_changes": "medium",
+        "regulatory": "high",
+        "vendor_dependencies": "medium"
+      }
+    },
+    "mitigation_strategies": {
+      "technical_spikes": "time_boxed_research",
+      "skill_development": "pairing_and_training",
+      "external_dependencies": "early_engagement"
+    }
+  },
+  
+  "continuous_improvement": {
+    "retrospective_ai": {
+      "pattern_recognition": true,
+      "action_item_tracking": true,
+      "improvement_suggestions": true,
+      "trend_analysis": true
+    },
+    "process_optimization": {
+      "ceremony_efficiency": true,
+      "workflow_analysis": true,
+      "automation_opportunities": true,
+      "best_practice_recommendations": true
+    }
+  }
+}

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMAD Context Engineering Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: oklch(0.0500 0 0);
+            --foreground: oklch(0.9500 0 0);
+            --card: oklch(0.0800 0 0);
+            --card-foreground: oklch(0.9300 0 0);
+            --primary: oklch(0.7000 0.2000 120);
+            --primary-foreground: oklch(0.0500 0 0);
+            --secondary: oklch(0.1500 0 0);
+            --secondary-foreground: oklch(0.8500 0 0);
+            --muted: oklch(0.1200 0 0);
+            --muted-foreground: oklch(0.6500 0 0);
+            --accent: oklch(0.6500 0.2200 200);
+            --accent-foreground: oklch(0.0500 0 0);
+            --border: oklch(0.2000 0 0);
+            --input: oklch(0.1200 0 0);
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+            --shadow-glow: 0 0 20px oklch(0.7000 0.2000 120 / 0.3);
+        }
+        
+        body {
+            font-family: var(--font-sans) !important;
+            background: var(--background) !important;
+            color: var(--foreground) !important;
+        }
+        
+        .glow-border {
+            border: 1px solid oklch(0.7000 0.2000 120 / 0.5);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .code-font {
+            font-family: var(--font-mono) !important;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(45deg, oklch(0.7000 0.2000 120), oklch(0.6500 0.2200 200));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .cyber-grid {
+            background-image: 
+                linear-gradient(rgba(112, 255, 144, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(112, 255, 144, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 20px oklch(0.7000 0.2000 120 / 0.3); }
+            to { box-shadow: 0 0 30px oklch(0.7000 0.2000 120 / 0.6); }
+        }
+        
+        .slide-in {
+            animation: slide-in 0.6s ease-out;
+        }
+        
+        @keyframes slide-in {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen cyber-grid">
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-black/50 backdrop-blur-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 rounded-lg glow-border flex items-center justify-center pulse-glow">
+                        <i data-lucide="brain-circuit" class="w-6 h-6 text-green-400"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold gradient-text">BMAD Context Engineering</h1>
+                        <p class="text-sm text-gray-400">Context-Engineered Development Agent</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-400 code-font">v2.1.0</span>
+                    <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span class="text-xs text-green-400">ACTIVE</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Agent Overview -->
+        <section class="mb-12 slide-in">
+            <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-8 glow-border">
+                <div class="flex items-start space-x-6">
+                    <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-400 to-blue-400 flex items-center justify-center">
+                        <i data-lucide="workflow" class="w-8 h-8 text-black"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl font-bold mb-4 gradient-text">BMAD Context Engineering Agent</h2>
+                        <p class="text-gray-300 text-lg mb-6">
+                            Transforms comprehensive architectural designs into hyper-detailed development stories with complete implementation guidance. 
+                            Eliminates context loss through AI-optimized development contexts.
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="layers" class="w-4 h-4 text-green-400"></i>
+                                    <span class="text-sm font-medium text-green-400">Context Transformation</span>
+                                </div>
+                                <p class="text-xs text-gray-400">Convert architectural designs into detailed development contexts</p>
+                            </div>
+                            <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="map" class="w-4 h-4 text-blue-400"></i>
+                                    <span class="text-sm font-medium text-blue-400">Story Generation</span>
+                                </div>
+                                <p class="text-xs text-gray-400">Create hyper-detailed user stories with implementation guidance</p>
+                            </div>
+                            <div class="bg-gray-800/50 border border-gray-700 rounded-lg p-4">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="git-branch" class="w-4 h-4 text-purple-400"></i>
+                                    <span class="text-sm font-medium text-purple-400">Cross-File Coordination</span>
+                                </div>
+                                <p class="text-xs text-gray-400">Ensure consistency across multiple files and components</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Capabilities -->
+        <section class="mb-12 slide-in">
+            <h3 class="text-xl font-bold mb-6 text-white">Core Capabilities</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Context Transformation -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-green-400/20 flex items-center justify-center">
+                            <i data-lucide="transform" class="w-5 h-5 text-green-400"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-white">Context Transformation</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Convert architectural designs into concrete implementation steps</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Transform abstract requirements into actionable development tasks</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Maintain context consistency across large codebases</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Generate AI-optimized contexts for development agent consumption</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Development Story Generation -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-blue-400/20 flex items-center justify-center">
+                            <i data-lucide="book-open" class="w-5 h-5 text-blue-400"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-white">Development Story Generation</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Create hyper-detailed user stories with acceptance criteria</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Include technical specifications and testing guidance</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Generate implementation roadmaps with sequential tasks</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Support multiple development methodologies (Agile, Scrum, Kanban)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Dependencies Orchestration -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-purple-400/20 flex items-center justify-center">
+                            <i data-lucide="network" class="w-5 h-5 text-purple-400"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-white">Dependencies Orchestration</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Manage and sequence interdependent development tasks</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Ensure proper task ordering and dependency resolution</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Prevent development bottlenecks through smart scheduling</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Monitor progress against detailed context specifications</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Knowledge Transfer -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-orange-400/20 flex items-center justify-center">
+                            <i data-lucide="graduation-cap" class="w-5 h-5 text-orange-400"></i>
+                        </div>
+                        <h4 class="text-lg font-semibold text-white">Knowledge Transfer</h4>
+                    </div>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Create documentation for seamless developer onboarding</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Preserve code context across development sessions</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Enable seamless team handoffs with complete context</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i data-lucide="check" class="w-4 h-4 text-orange-400 mt-0.5 flex-shrink-0"></i>
+                            <span>Generate learning paths for complex system understanding</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integration Framework -->
+        <section class="mb-12 slide-in">
+            <h3 class="text-xl font-bold mb-6 text-white">BMAD Integration Framework</h3>
+            <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Input Sources -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4 text-green-400">Input Sources</h4>
+                        <div class="space-y-3">
+                            <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="file-text" class="w-4 h-4 text-green-400"></i>
+                                    <span class="text-sm font-medium">bmad-planning-requirements</span>
+                                </div>
+                                <p class="text-xs text-gray-400">Detailed requirements and specifications</p>
+                            </div>
+                            <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="blueprint" class="w-4 h-4 text-blue-400"></i>
+                                    <span class="text-sm font-medium">bmad-architectural-design</span>
+                                </div>
+                                <p class="text-xs text-gray-400">System architecture and design patterns</p>
+                            </div>
+                            <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="code" class="w-4 h-4 text-purple-400"></i>
+                                    <span class="text-sm font-medium">bmad-codebase-analysis</span>
+                                </div>
+                                <p class="text-xs text-gray-400">Existing codebase understanding and context</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Processing Engine -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4 text-blue-400">Processing Engine</h4>
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-4">
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                    <span class="text-sm">Context Analysis</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                    <span class="text-sm">Story Generation</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                                    <span class="text-sm">Dependency Mapping</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-2 h-2 bg-orange-400 rounded-full"></div>
+                                    <span class="text-sm">Context Optimization</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Deliverables -->
+                    <div>
+                        <h4 class="text-lg font-semibold mb-4 text-purple-400">Output Deliverables</h4>
+                        <div class="space-y-3">
+                            <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="clipboard-list" class="w-4 h-4 text-green-400"></i>
+                                    <span class="text-sm font-medium">Development Stories</span>
+                                </div>
+                                <p class="text-xs text-gray-400">Hyper-detailed implementation guides</p>
+                            </div>
+                            <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="route" class="w-4 h-4 text-blue-400"></i>
+                                    <span class="text-sm font-medium">Implementation Roadmaps</span>
+                                </div>
+                                <p class="text-xs text-gray-400">Sequential task dependencies</p>
+                            </div>
+                            <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="brain" class="w-4 h-4 text-purple-400"></i>
+                                    <span class="text-sm font-medium">AI-Optimized Contexts</span>
+                                </div>
+                                <p class="text-xs text-gray-400">Ready for development agent consumption</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Context Engineering Workflow -->
+        <section class="mb-12 slide-in">
+            <h3 class="text-xl font-bold mb-6 text-white">Context Engineering Workflow</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Phase 1: Analysis -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-green-400 text-black flex items-center justify-center font-bold">1</div>
+                        <h4 class="text-lg font-semibold text-white">Context Analysis & Parsing</h4>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                            <h5 class="text-sm font-medium text-green-400 mb-2">Requirements Processing</h5>
+                            <ul class="text-xs text-gray-400 space-y-1">
+                                <li>• Parse architectural designs and requirements</li>
+                                <li>• Extract functional and non-functional requirements</li>
+                                <li>• Identify system boundaries and interfaces</li>
+                                <li>• Map stakeholder needs to technical features</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                            <h5 class="text-sm font-medium text-blue-400 mb-2">Codebase Integration</h5>
+                            <ul class="text-xs text-gray-400 space-y-1">
+                                <li>• Analyze existing codebase structure</li>
+                                <li>• Identify reusable components and patterns</li>
+                                <li>• Map legacy system dependencies</li>
+                                <li>• Assess technical debt and constraints</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 2: Story Generation -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-400 text-black flex items-center justify-center font-bold">2</div>
+                        <h4 class="text-lg font-semibold text-white">Story Generation & Detailing</h4>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                            <h5 class="text-sm font-medium text-green-400 mb-2">Epic Decomposition</h5>
+                            <ul class="text-xs text-gray-400 space-y-1">
+                                <li>• Break down features into manageable epics</li>
+                                <li>• Create user stories with acceptance criteria</li>
+                                <li>• Define technical specifications per story</li>
+                                <li>• Generate testing and validation guidance</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                            <h5 class="text-sm font-medium text-purple-400 mb-2">Implementation Details</h5>
+                            <ul class="text-xs text-gray-400 space-y-1">
+                                <li>• Specify exact code changes required</li>
+                                <li>• Include file-level modification guidance</li>
+                                <li>• Define API contracts and data schemas</li>
+                                <li>• Create integration test scenarios</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 3: Orchestration -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-purple-400 text-black flex items-center justify-center font-bold">3</div>
+                        <h4 class="text-lg font-semibold text-white">Dependencies & Orchestration</h4>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                            <h5 class="text-sm font-medium text-green-400 mb-2">Dependency Mapping</h5>
+                            <ul class="text-xs text-gray-400 space-y-1">
+                                <li>• Identify inter-story dependencies</li>
+                                <li>• Create dependency graphs and sequences</li>
+                                <li>• Plan parallel development opportunities</li>
+                                <li>• Define milestone and integration points</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                            <h5 class="text-sm font-medium text-orange-400 mb-2">Risk Mitigation</h5>
+                            <ul class="text-xs text-gray-400 space-y-1">
+                                <li>• Identify potential development bottlenecks</li>
+                                <li>• Create contingency plans for blockers</li>
+                                <li>• Define rollback and recovery procedures</li>
+                                <li>• Plan incremental delivery strategies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phase 4: Optimization -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-orange-400 text-black flex items-center justify-center font-bold">4</div>
+                        <h4 class="text-lg font-semibold text-white">Context Optimization & Delivery</h4>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                            <h5 class="text-sm font-medium text-green-400 mb-2">AI Context Optimization</h5>
+                            <ul class="text-xs text-gray-400 space-y-1">
+                                <li>• Format contexts for AI agent consumption</li>
+                                <li>• Optimize prompt structures and clarity</li>
+                                <li>• Include relevant code examples and patterns</li>
+                                <li>• Create context validation checkpoints</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-800/50 border border-gray-700 rounded p-3">
+                            <h5 class="text-sm font-medium text-blue-400 mb-2">Knowledge Transfer</h5>
+                            <ul class="text-xs text-gray-400 space-y-1">
+                                <li>• Generate comprehensive documentation</li>
+                                <li>• Create developer onboarding guides</li>
+                                <li>• Establish context preservation protocols</li>
+                                <li>• Define progress tracking mechanisms</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Specifications -->
+        <section class="mb-12 slide-in">
+            <h3 class="text-xl font-bold mb-6 text-white">Technical Specifications</h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Context Formats -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <h4 class="text-lg font-semibold mb-4 text-green-400">Context Formats</h4>
+                    <div class="space-y-3">
+                        <div class="bg-gray-800/50 border-l-4 border-green-400 p-3">
+                            <h5 class="text-sm font-medium text-white mb-2">Development Story Format</h5>
+                            <pre class="text-xs text-gray-300 code-font overflow-x-auto">
+{
+  "story_id": "US-001",
+  "title": "Feature Implementation",
+  "description": "Detailed description...",
+  "acceptance_criteria": [...],
+  "technical_specs": {
+    "files_to_modify": [...],
+    "dependencies": [...],
+    "api_contracts": {...},
+    "test_scenarios": [...]
+  },
+  "implementation_context": "...",
+  "ai_optimized_prompt": "..."
+}</pre>
+                        </div>
+                        <div class="bg-gray-800/50 border-l-4 border-blue-400 p-3">
+                            <h5 class="text-sm font-medium text-white mb-2">Dependency Graph</h5>
+                            <pre class="text-xs text-gray-300 code-font overflow-x-auto">
+{
+  "dependencies": {
+    "US-001": ["US-003", "US-007"],
+    "US-002": ["US-001"],
+    "parallel_tracks": [
+      ["US-004", "US-005"],
+      ["US-006", "US-008"]
+    ]
+  },
+  "critical_path": [...],
+  "estimated_timeline": "..."
+}</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Optimization -->
+                <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                    <h4 class="text-lg font-semibold mb-4 text-blue-400">AI Optimization Features</h4>
+                    <div class="space-y-3">
+                        <div class="bg-gray-800/50 border-l-4 border-green-400 p-3">
+                            <h5 class="text-sm font-medium text-white mb-2">Context Preservation</h5>
+                            <ul class="text-xs text-gray-300 space-y-1">
+                                <li>• Maintains context across sessions</li>
+                                <li>• Preserves architectural decisions</li>
+                                <li>• Tracks implementation history</li>
+                                <li>• Links related code changes</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-800/50 border-l-4 border-purple-400 p-3">
+                            <h5 class="text-sm font-medium text-white mb-2">Smart Prompting</h5>
+                            <ul class="text-xs text-gray-300 space-y-1">
+                                <li>• Optimized prompt structures</li>
+                                <li>• Context-aware instructions</li>
+                                <li>• Progressive disclosure of complexity</li>
+                                <li>• Error prevention guidance</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-800/50 border-l-4 border-orange-400 p-3">
+                            <h5 class="text-sm font-medium text-white mb-2">Quality Assurance</h5>
+                            <ul class="text-xs text-gray-300 space-y-1">
+                                <li>• Automated context validation</li>
+                                <li>• Consistency checks across stories</li>
+                                <li>• Implementation verification</li>
+                                <li>• Progress tracking and reporting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Metrics -->
+        <section class="slide-in">
+            <h3 class="text-xl font-bold mb-6 text-white">Success Metrics & Outcomes</h3>
+            <div class="bg-gray-900/50 border border-gray-800 rounded-lg p-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-400/20 flex items-center justify-center">
+                            <i data-lucide="target" class="w-8 h-8 text-green-400"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-green-400 mb-2">95%</h4>
+                        <p class="text-sm text-gray-300">Context Accuracy</p>
+                        <p class="text-xs text-gray-500 mt-1">Precise implementation guidance</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-400/20 flex items-center justify-center">
+                            <i data-lucide="clock" class="w-8 h-8 text-blue-400"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-blue-400 mb-2">70%</h4>
+                        <p class="text-sm text-gray-300">Time Reduction</p>
+                        <p class="text-xs text-gray-500 mt-1">Faster development cycles</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-400/20 flex items-center justify-center">
+                            <i data-lucide="shield-check" class="w-8 h-8 text-purple-400"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-purple-400 mb-2">90%</h4>
+                        <p class="text-sm text-gray-300">Consistency Rate</p>
+                        <p class="text-xs text-gray-500 mt-1">Cross-file coordination</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-orange-400/20 flex items-center justify-center">
+                            <i data-lucide="users" class="w-8 h-8 text-orange-400"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-orange-400 mb-2">50%</h4>
+                        <p class="text-sm text-gray-300">Onboarding Speed</p>
+                        <p class="text-xs text-gray-500 mt-1">Faster team integration</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 bg-black/50 backdrop-blur-sm mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="text-center">
+                <p class="text-gray-400 text-sm">
+                    BMAD Context Engineering Agent - Eliminating context loss through hyper-detailed development contexts
+                </p>
+                <div class="flex items-center justify-center space-x-4 mt-4">
+                    <span class="text-xs text-gray-500">Part of BMAD-METHOD Framework</span>
+                    <div class="w-1 h-1 bg-gray-600 rounded-full"></div>
+                    <span class="text-xs text-gray-500">Context-Engineered Development Innovation</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Add interactive hover effects
+        document.querySelectorAll('.bg-gray-900\\/50').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'transform 0.2s ease-out';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Animate elements on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.slide-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

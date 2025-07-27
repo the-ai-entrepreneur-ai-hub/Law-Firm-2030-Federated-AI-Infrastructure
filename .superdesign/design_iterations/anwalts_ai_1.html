@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnwaltsAI - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="anwalts_ai_theme_1.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--background);
+            color: var(--foreground);
+        }
+        .sidebar {
+            background-color: var(--sidebar);
+            border-right: 1px solid var(--sidebar-border);
+        }
+        .nav-item {
+            color: var(--muted-foreground);
+            transition: all 0.2s ease-out;
+        }
+        .nav-item:hover {
+            color: var(--foreground);
+            background-color: var(--sidebar-accent);
+        }
+        .nav-item.active {
+            color: var(--sidebar-primary-foreground);
+            background-color: var(--sidebar-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        .card {
+            background-color: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: all 0.25s ease-out;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .header-wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(to right, oklch(0.55 0.25 260 / 0.8), oklch(0.65 0.20 260 / 0.7));
+            opacity: 0.1;
+            mask-image: radial-gradient(ellipse 100% 50% at 50% -20%, black 70%, transparent 100%);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="flex h-screen bg-gray-50">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 flex-shrink-0 flex flex-col space-y-4 p-4">
+            <div class="flex items-center space-x-2 px-2">
+                <i data-lucide="scale" class="text-primary" style="color: var(--primary);"></i>
+                <span class="text-xl font-bold" style="color: var(--foreground);">Anwalts-AI</span>
+            </div>
+
+            <nav class="flex-1 space-y-2">
+                <a href="#" class="nav-item active flex items-center space-x-3 py-2 px-3 rounded-lg">
+                    <i data-lucide="home" class="w-5 h-5"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-item flex items-center space-x-3 py-2 px-3 rounded-lg">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    <span>Emails</span>
+                </a>
+                <a href="#" class="nav-item flex items-center space-x-3 py-2 px-3 rounded-lg">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span>Document Generator</span>
+                </a>
+                <a href="#" class="nav-item flex items-center space-x-3 py-2 px-3 rounded-lg">
+                    <i data-lucide="bookmark" class="w-5 h-5"></i>
+                    <span>Templates</span>
+                </a>
+            </nav>
+
+            <div class="space-y-2">
+                 <a href="#" class="nav-item flex items-center space-x-3 py-2 px-3 rounded-lg">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="flex items-center justify-between p-6 border-b" style="border-color: var(--border);">
+                <h1 class="text-2xl font-semibold" style="color: var(--foreground);">Dashboard</h1>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 rounded-full hover:bg-gray-100" style="color: var(--muted-foreground);">
+                        <i data-lucide="search" class="w-5 h-5"></i>
+                    </button>
+                    <button class="p-2 rounded-full hover:bg-gray-100" style="color: var(--muted-foreground);">
+                        <i data-lucide="help-circle" class="w-5 h-5"></i>
+                    </button>
+                    <button class="p-2 rounded-full hover:bg-gray-100" style="color: var(--muted-foreground);">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </header>
+            
+            <!-- Content Area -->
+            <div class="flex-1 p-8 overflow-y-auto relative">
+                <div class="header-wave"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
+                    <!-- Document Generator Card -->
+                    <div class="card p-6 flex flex-col items-start text-left">
+                        <div class="p-3 rounded-lg mb-4" style="background-color: var(--secondary);">
+                            <i data-lucide="file-pen-line" class="w-8 h-8" style="color: var(--primary);"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-1" style="color: var(--card-foreground);">Document Generator</h3>
+                        <p style="color: var(--muted-foreground);">Create legal documents with ease.</p>
+                    </div>
+
+                    <!-- Mailbox Card -->
+                    <div class="card p-6 flex flex-col items-start text-left">
+                        <div class="p-3 rounded-lg mb-4" style="background-color: var(--secondary);">
+                            <i data-lucide="inbox" class="w-8 h-8" style="color: var(--primary);"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-1" style="color: var(--card-foreground);">Mailbox</h3>
+                        <p style="color: var(--muted-foreground);">View and manage your emails.</p>
+                    </div>
+
+                    <!-- Saved Templates Card -->
+                    <div class="card p-6 flex flex-col items-start text-left">
+                        <div class="p-3 rounded-lg mb-4" style="background-color: var(--secondary);">
+                            <i data-lucide="save" class="w-8 h-8" style="color: var(--primary);"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-1" style="color: var(--card-foreground);">Saved Templates</h3>
+                        <p style="color: var(--muted-foreground);">Access your previously saved templates.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

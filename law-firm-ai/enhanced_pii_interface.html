@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ Anwalts AI - German Legal Document Processor</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 { 
+            font-size: 2.8em; 
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .header p { 
+            font-size: 1.3em; 
+            opacity: 0.9; 
+            margin-bottom: 15px;
+        }
+        .version-info {
+            font-size: 0.9em;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+        
+        /* Model Selection Styles */
+        .model-selection {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px;
+            border: 2px solid #e9ecef;
+        }
+        .model-selection h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            text-align: center;
+        }
+        .model-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .model-option {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .model-option:hover .model-card {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .model-option input[type="radio"] {
+            display: none;
+        }
+        .model-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .model-option input[type="radio"]:checked + .model-card {
+            border-color: #3498db;
+            background: linear-gradient(135deg, #3498db10, #667eea10);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+        }
+        .model-card h4 {
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        .model-card p {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+        .model-card ul {
+            list-style: none;
+            text-align: left;
+        }
+        .model-card ul li {
+            padding: 5px 0;
+            font-size: 0.9em;
+            color: #34495e;
+        }
+        .model-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .status-ready { background: #2ecc71; color: white; }
+        .status-checking { background: #f39c12; color: white; }
+        .status-error { background: #e74c3c; color: white; }
+        
+        /* Connection Status */
+        .connection-status {
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .connected { background: #2ecc71; color: white; }
+        .disconnected { background: #e74c3c; color: white; }
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        .input-section, .output-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+        }
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* File Upload */
+        .file-upload {
+            border: 3px dashed #3498db;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #ecf0f1;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .file-upload:hover, .file-upload.drag-over {
+            border-color: #2980b9;
+            background: #d5dbdb;
+            transform: scale(1.02);
+        }
+        .file-upload input[type="file"] { display: none; }
+        .upload-icon { 
+            font-size: 3em; 
+            color: #3498db; 
+            margin-bottom: 15px;
+            display: block;
+        }
+        .upload-text {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .upload-subtext {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        /* Process Button */
+        .process-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .process-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        .process-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Results */
+        .results-container {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .result-tabs {
+            display: flex;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            background: white;
+            color: #2c3e50;
+            font-weight: bold;
+            border-bottom: 2px solid #3498db;
+        }
+        .tab-content {
+            padding: 20px;
+            min-height: 300px;
+        }
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+        
+        /* Progress */
+        .progress-container {
+            margin: 20px 0;
+            display: none;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            border-radius: 15px;
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .model-options {
+                grid-template-columns: 1fr;
+            }
+            .header h1 { font-size: 2em; }
+            .header p { font-size: 1em; }
+        }
+        
+        /* File info */
+        .file-info {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        .file-info.show { display: block; }
+        .file-name {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .file-details {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏛️ Anwalts AI</h1>
+            <p>Intelligente Verarbeitung deutscher Rechtsdokumente</p>
+            <div class="version-info">
+                v2.0 - Mit lokaler KI-Unterstützung | Privacy-First Design
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="connection-status disconnected">
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span id="statusText">Verbindung wird geprüft...</span>
+            </div>
+            <div>
+                <span id="modelStatus">Modelle: Überprüfung läuft</span>
+            </div>
+        </div>
+
+        <!-- Model Selection -->
+        <div class="model-selection">
+            <h3>🤖 KI-Modell auswählen</h3>
+            <div class="model-options">
+                <label class="model-option">
+                    <input type="radio" name="aiModel" value="together" checked>
+                    <div class="model-card">
+                        <h4>🌐 Together AI</h4>
+                        <p>Fortschrittliche Cloud-Verarbeitung</p>
+                        <ul>
+                            <li>✅ Höchste Genauigkeit</li>
+                            <li>✅ Komplexe Dokumente</li>
+                            <li>✅ DeepSeek-V3 Modell</li>
+                            <li>⚠️ Internet erforderlich</li>
+                        </ul>
+                        <div id="togetherStatus" class="model-status status-checking">Überprüfung...</div>
+                    </div>
+                </label>
+                
+                <label class="model-option">
+                    <input type="radio" name="aiModel" value="local">
+                    <div class="model-card">
+                        <h4>🏠 Lokales Modell</h4>
+                        <p>Datenschutz-fokussierte lokale Verarbeitung</p>
+                        <ul>
+                            <li>✅ 100% privat</li>
+                            <li>✅ Sofortige Antworten</li>
+                            <li>✅ Kein Internet nötig</li>
+                            <li>✅ 500 Trainingsdokumente</li>
+                        </ul>
+                        <div id="localStatus" class="model-status status-checking">Überprüfung...</div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="section-title">
+                    📄 Dokument hochladen
+                </div>
+                
+                <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                    <span class="upload-icon">📁</span>
+                    <div class="upload-text">Rechtsdokument hier ablegen</div>
+                    <div class="upload-subtext">oder klicken zum Auswählen</div>
+                    <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.png,.jpg,.jpeg">
+                </div>
+                
+                <div id="fileInfo" class="file-info">
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-details" id="fileDetails"></div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div id="progressContainer" class="progress-container">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="progress-fill"></div>
+                        <div id="progressText" class="progress-text">0%</div>
+                    </div>
+                </div>
+                
+                <button id="processBtn" class="process-btn" disabled>
+                    🚀 Dokument verarbeiten
+                </button>
+                
+                <!-- Processing Options -->
+                <div style="margin-top: 20px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 10px;">⚡ Verarbeitungsoptionen:</h4>
+                    <label style="display: block; margin: 5px 0; color: #34495e;">
+                        <input type="checkbox" checked> 🔍 PII-Erkennung & Anonymisierung
+                    </label>
+                    <label style="display: block; margin: 5px 0; color: #34495e;">
+                        <input type="checkbox" checked> 🧠 Deutsche Rechtsanalyse
+                    </label>
+                    <label style="display: block; margin: 5px 0; color: #34495e;">
+                        <input type="checkbox" checked> 📝 Professionelle Antwortgenerierung
+                    </label>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="output-section">
+                <div class="section-title">
+                    📊 Verarbeitungsergebnisse
+                </div>
+                
+                <div class="results-container">
+                    <div class="result-tabs">
+                        <button class="tab active" onclick="showTab('analysis')">🎯 Analyse</button>
+                        <button class="tab" onclick="showTab('pii')">🔒 PII-Daten</button>
+                        <button class="tab" onclick="showTab('response')">📝 Antwort</button>
+                        <button class="tab" onclick="showTab('original')">📄 Original</button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div id="analysisTab" class="tab-panel active">
+                            <h4 style="color: #2c3e50; margin-bottom: 15px;">📈 Rechtliche Analyse</h4>
+                            <div id="analysisResult">
+                                <p style="color: #7f8c8d; text-align: center; padding: 40px;">
+                                    Laden Sie ein Dokument hoch, um mit der Analyse zu beginnen
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div id="piiTab" class="tab-panel">
+                            <h4 style="color: #2c3e50; margin-bottom: 15px;">🔍 Erkannte PII-Daten</h4>
+                            <div id="piiResult">
+                                <p style="color: #7f8c8d; text-align: center; padding: 40px;">
+                                    PII-Erkennungsergebnisse werden hier angezeigt
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div id="responseTab" class="tab-panel">
+                            <h4 style="color: #2c3e50; margin-bottom: 15px;">📝 Generierte Antwort</h4>
+                            <div id="responseResult">
+                                <p style="color: #7f8c8d; text-align: center; padding: 40px;">
+                                    KI-generierte Antwort wird hier angezeigt
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div id="originalTab" class="tab-panel">
+                            <h4 style="color: #2c3e50; margin-bottom: 15px;">📄 Originaltext (Anonymisiert)</h4>
+                            <div id="originalResult">
+                                <p style="color: #7f8c8d; text-align: center; padding: 40px;">
+                                    Anonymisierter Originaltext wird hier angezeigt
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats -->
+                <div class="stats-grid" id="statsGrid" style="display: none;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="processingTime">--</div>
+                        <div class="stat-label">Verarbeitungszeit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="confidence">--</div>
+                        <div class="stat-label">Konfidenz</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="piiCount">--</div>
+                        <div class="stat-label">PII-Elemente</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="modelUsed">--</div>
+                        <div class="stat-label">Verwendetes Modell</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedFile = null;
+        let isProcessing = false;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSystemHealth();
+            setupEventListeners();
+        });
+
+        // Event listeners
+        function setupEventListeners() {
+            // File input
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+            
+            // Process button
+            document.getElementById('processBtn').addEventListener('click', processDocument);
+            
+            // Model selection
+            document.querySelectorAll('input[name="aiModel"]').forEach(radio => {
+                radio.addEventListener('change', updateModelSelection);
+            });
+            
+            // Drag and drop
+            const uploadArea = document.querySelector('.file-upload');
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('drop', handleDrop);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+        }
+
+        // System health check
+        async function checkSystemHealth() {
+            try {
+                // Check main system
+                const mainResponse = await fetch('/health');
+                const mainHealth = await mainResponse.json();
+                
+                // Check local model
+                let localHealth = null;
+                try {
+                    const localResponse = await fetch('/health-local');
+                    localHealth = await localResponse.json();
+                } catch (e) {
+                    localHealth = { status: 'unavailable' };
+                }
+                
+                updateConnectionStatus(mainHealth, localHealth);
+            } catch (error) {
+                updateConnectionStatus(null, null);
+            }
+        }
+
+        function updateConnectionStatus(mainHealth, localHealth) {
+            const statusDiv = document.getElementById('connectionStatus');
+            const statusText = document.getElementById('statusText');
+            const modelStatus = document.getElementById('modelStatus');
+            const togetherStatus = document.getElementById('togetherStatus');
+            const localStatus = document.getElementById('localStatus');
+
+            if (mainHealth && mainHealth.status === 'healthy') {
+                statusDiv.className = 'connection-status connected';
+                statusText.textContent = 'System verbunden und betriebsbereit';
+                togetherStatus.textContent = 'Verfügbar';
+                togetherStatus.className = 'model-status status-ready';
+            } else {
+                statusDiv.className = 'connection-status disconnected';
+                statusText.textContent = 'Systemverbindung fehlgeschlagen';
+                togetherStatus.textContent = 'Nicht verfügbar';
+                togetherStatus.className = 'model-status status-error';
+            }
+
+            if (localHealth && localHealth.status === 'healthy') {
+                localStatus.textContent = 'Bereit';
+                localStatus.className = 'model-status status-ready';
+                modelStatus.textContent = 'Modelle: Together AI + Lokal verfügbar';
+            } else {
+                localStatus.textContent = 'Nicht verfügbar';
+                localStatus.className = 'model-status status-error';
+                modelStatus.textContent = 'Modelle: Nur Together AI verfügbar';
+            }
+        }
+
+        // File handling
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                displayFileInfo(file);
+                selectedFile = file;
+                document.getElementById('processBtn').disabled = false;
+            }
+        }
+
+        function displayFileInfo(file) {
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileDetails = document.getElementById('fileDetails');
+            
+            fileName.textContent = file.name;
+            fileDetails.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB • ${file.type || 'Unbekannter Typ'}`;
+            fileInfo.classList.add('show');
+        }
+
+        // Drag and drop
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                displayFileInfo(files[0]);
+                selectedFile = files[0];
+                document.getElementById('processBtn').disabled = false;
+            }
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('drag-over');
+        }
+
+        // Model selection
+        function updateModelSelection() {
+            // Visual feedback for model selection change
+            console.log('Model selection updated');
+        }
+
+        // Document processing
+        async function processDocument() {
+            if (!selectedFile || isProcessing) return;
+
+            isProcessing = true;
+            const processBtn = document.getElementById('processBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            
+            // Update UI
+            processBtn.disabled = true;
+            processBtn.textContent = '⏳ Verarbeitung läuft...';
+            progressContainer.style.display = 'block';
+            
+            try {
+                // Get selected model
+                const selectedModel = document.querySelector('input[name="aiModel"]:checked').value;
+                
+                // Simulate progress
+                updateProgress(20, 'Dokument wird hochgeladen...');
+                
+                // Create form data
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('model', selectedModel);
+                
+                updateProgress(50, 'PII-Erkennung läuft...');
+                
+                // Process document
+                const response = await fetch('/process-document', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                updateProgress(80, 'KI-Analyse wird durchgeführt...');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                updateProgress(100, 'Fertig!');
+                
+                // Display results
+                displayResults(result, selectedModel);
+                
+            } catch (error) {
+                console.error('Processing error:', error);
+                showError('Fehler bei der Dokumentverarbeitung: ' + error.message);
+            } finally {
+                // Reset UI
+                setTimeout(() => {
+                    isProcessing = false;
+                    processBtn.disabled = false;
+                    processBtn.textContent = '🚀 Dokument verarbeiten';
+                    progressContainer.style.display = 'none';
+                }, 1000);
+            }
+        }
+
+        function updateProgress(percent, text) {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressFill.style.width = percent + '%';
+            progressText.textContent = text || (percent + '%');
+        }
+
+        function displayResults(result, model) {
+            // Update analysis tab
+            document.getElementById('analysisResult').innerHTML = `
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <strong>Dokumenttyp:</strong> ${result.document_type || 'Unbekannt'}<br>
+                    <strong>Konfidenz:</strong> ${result.confidence ? (result.confidence * 100).toFixed(1) + '%' : 'N/A'}<br>
+                    <strong>Modell:</strong> ${model === 'local' ? 'Lokales Modell' : 'Together AI'}
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef;">
+                    ${result.analysis || result.response || 'Keine Analyse verfügbar'}
+                </div>
+            `;
+            
+            // Update PII tab
+            if (result.pii_data) {
+                const piiHtml = result.pii_data.map(item => 
+                    `<div style="background: #fff3cd; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 4px solid #ffc107;">
+                        <strong>${item.type}:</strong> ${item.value} → ${item.replacement}
+                    </div>`
+                ).join('');
+                document.getElementById('piiResult').innerHTML = piiHtml || '<p>Keine PII-Daten erkannt</p>';
+            }
+            
+            // Update response tab
+            document.getElementById('responseResult').innerHTML = `
+                <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e9ecef; white-space: pre-wrap; font-family: 'Segoe UI', sans-serif; line-height: 1.6;">
+                    ${result.response || 'Keine Antwort generiert'}
+                </div>
+            `;
+            
+            // Update original tab
+            document.getElementById('originalResult').innerHTML = `
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: monospace; font-size: 0.9em;">
+                    ${result.anonymized_text || result.original_text || 'Kein Text verfügbar'}
+                </div>
+            `;
+            
+            // Update stats
+            document.getElementById('processingTime').textContent = result.processing_time || '--';
+            document.getElementById('confidence').textContent = result.confidence ? (result.confidence * 100).toFixed(1) + '%' : '--';
+            document.getElementById('piiCount').textContent = result.pii_count || result.pii_data?.length || '--';
+            document.getElementById('modelUsed').textContent = model === 'local' ? 'Lokal' : 'Cloud';
+            document.getElementById('statsGrid').style.display = 'grid';
+        }
+
+        function showError(message) {
+            document.getElementById('analysisResult').innerHTML = `
+                <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; border: 1px solid #f5c6cb;">
+                    <strong>Fehler:</strong> ${message}
+                </div>
+            `;
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab panels
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+    </script>
+</body>
+</html>

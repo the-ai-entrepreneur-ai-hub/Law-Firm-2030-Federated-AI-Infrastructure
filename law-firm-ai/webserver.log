@@ -1,9 +1,0 @@
-Traceback (most recent call last):
-  File "/mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/web_server.py", line 30, in <module>
-    with socketserver.TCPServer(("", PORT), CORSHTTPRequestHandler) as httpd:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/socketserver.py", line 457, in __init__
-    self.server_bind()
-  File "/usr/lib/python3.12/socketserver.py", line 473, in server_bind
-    self.socket.bind(self.server_address)
-OSError: [Errno 98] Address already in use

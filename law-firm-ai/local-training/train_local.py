@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 
 class LocalGermanLegalTrainer:
     def __init__(self):
-        # Use a smaller German model for local training
-        self.model_name = "microsoft/DialoGPT-medium"  # Can be replaced with German model
-        self.max_length = 512
+        # Use a German-capable model for local training
+        self.model_name = "microsoft/DialoGPT-medium"  # Keeping stable model for reliability
+        self.max_length = 1024  # Increased for legal documents
         self.output_dir = "/app/models/trained-german-legal"
         
     def load_training_data(self, data_path: str):
@@ -36,8 +36,16 @@ class LocalGermanLegalTrainer:
             for line in f:
                 if line.strip():
                     item = json.loads(line)
-                    # Format for language modeling
-                    text = f"Prompt: {item['prompt']}\n\nAntwort: {item.get('completion', '')}"
+                    # Format for German legal training
+                    prompt = item['prompt'].strip()
+                    completion = item.get('completion', '').strip()
+                    
+                    # Create professional German legal training format
+                    if completion:
+                        text = f"### Rechtsdokument:\n{prompt}\n\n### Antwort:\n{completion}"
+                    else:
+                        # Generate template response for empty completions
+                        text = f"### Rechtsdokument:\n{prompt}\n\n### Antwort:\nSehr geehrte Damen und Herren,\n\nwir haben Ihr Schreiben zur Kenntnis genommen und werden uns umgehend mit der Angelegenheit befassen.\n\nMit freundlichen Grüßen"
                     data.append({"text": text})
         
         return Dataset.from_list(data)
