@@ -64,7 +64,10 @@
       "Bash(claude agents create bmad-quality-assurance \"Quality assurance specialist for BMAD-METHOD framework. Develops comprehensive testing strategies, generates automated test cases, establishes quality gates, implements security testing, and ensures compliance verification. Provides continuous quality monitoring with AI-powered test generation and risk-based testing prioritization.\")",
       "Bash(claude agents --help)",
       "Bash(claude config list)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(ollama:*)",
+      "Bash(pip3:*)",
+      "Bash(kill:*)"
     ],
     "deny": []
   }

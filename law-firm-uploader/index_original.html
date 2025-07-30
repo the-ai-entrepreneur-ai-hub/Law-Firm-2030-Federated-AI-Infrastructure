@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Firm 2030 | Secure Document Upload</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Law Firm Vision 2030</h1>
+            <p class="subtitle">🇩🇪→🇺🇸 German Legal Document AI with Translation</p>
+        </div>
+
+        <form id="upload-form" novalidate>
+            <div class="file-upload-container">
+                <label for="file-input" class="upload-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span class="upload-text">Choose a German Legal Document</span>
+                    <span class="upload-subtext">PDF, PNG, JPG, TXT • Max 10MB</span>
+                </label>
+                <input type="file" id="file-input" name="file" accept=".pdf,.png,.jpg,.jpeg,.txt">
+                <p id="file-name-display"></p>
+            </div>
+            
+            <button type="submit" id="submit-button">
+                <span class="button-text">Upload & Process</span>
+                <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17H7V7"/></svg>
+            </button>
+        </form>
+
+        <div id="status-message"></div>
+
+        <div id="results-container" class="results-container" style="display: none;">
+            <h3>📋 Processing Results</h3>
+            
+            <!-- Process Steps Tabs -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="analysis">Final Analysis</button>
+                    <button class="tab-button" data-tab="pii">PII Removal</button>
+                    <button class="tab-button" data-tab="process">Process Details</button>
+                    <button class="tab-button" data-tab="anonymized">Anonymized Text</button>
+                    <button class="tab-button" data-tab="original">Original Text</button>
+                </div>
+                
+                <!-- Final Analysis Tab -->
+                <div id="tab-analysis" class="tab-content active">
+                    <h4>🎯 Legal Analysis (English Translation)</h4>
+                    <div id="results-content" class="results-content"></div>
+                </div>
+                
+                <!-- PII Removal Tab -->
+                <div id="tab-pii" class="tab-content">
+                    <h4>🔒 PII Data Removed</h4>
+                    <div id="pii-stats" class="stats-grid"></div>
+                    <div id="pii-samples" class="pii-samples"></div>
+                </div>
+                
+                <!-- Process Details Tab -->
+                <div id="tab-process" class="tab-content">
+                    <h4>⚙️ Processing Statistics</h4>
+                    <div id="process-stats" class="stats-grid"></div>
+                </div>
+                
+                <!-- Anonymized Text Tab -->
+                <div id="tab-anonymized" class="tab-content">
+                    <h4>👤 Anonymized Text (English Translation)</h4>
+                    <div id="anonymized-content" class="text-content"></div>
+                </div>
+                
+                <!-- Original Text Tab -->
+                <div id="tab-original" class="tab-content">
+                    <h4>📄 Original German Text</h4>
+                    <div id="original-content" class="text-content"></div>
+                </div>
+            </div>
+            
+            <div class="results-actions">
+                <button type="button" id="copy-results" class="action-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copy Analysis
+                </button>
+                <button type="button" id="copy-all-data" class="action-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                    Copy All Data
+                </button>
+                <button type="button" id="new-document" class="action-button secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Process New Document
+                </button>
+            </div>
+        </div>
+
+        <div class="how-it-works">
+            <h3>How It Works</h3>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">1</div>
+                    <h4>Text Extraction</h4>
+                    <p>German text is extracted from your document using OCR or direct reading.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">2</div>
+                    <h4>PII Anonymization</h4>
+                    <p>Sensitive data (names, addresses, IDs) is detected and replaced with placeholders.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <h4>AI Analysis & Translation</h4>
+                    <p>The anonymized text is analyzed by AI and results are translated to English.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

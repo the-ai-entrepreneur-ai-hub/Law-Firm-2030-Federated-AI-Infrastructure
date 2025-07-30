@@ -48,6 +48,341 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Intelligent Processing Styles */
+.intelligent-response {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+    border: 2px solid #2196F3;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    position: relative;
+}
+
+.model-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.model-badge {
+    background: #2196F3;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.confidence-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.confidence-high {
+    background: #4CAF50;
+    color: white;
+}
+
+.confidence-medium {
+    background: #FF9800;
+    color: white;
+}
+
+.confidence-low {
+    background: #f44336;
+    color: white;
+}
+
+.response-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #2196F3;
+    margin: 15px 0;
+    line-height: 1.6;
+}
+
+.processing-info {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.stat-card.intelligent {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 2px solid #2196F3;
+    color: #1976D2;
+}
+
+/* Feedback Section Styles */
+.feedback-container {
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border: 2px solid #ddd;
+}
+
+.feedback-section h4 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.feedback-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
+.feedback-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 150px;
+}
+
+.feedback-btn.accept {
+    background: #4CAF50;
+    color: white;
+}
+
+.feedback-btn.accept:hover:not(:disabled) {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.feedback-btn.reject {
+    background: #f44336;
+    color: white;
+}
+
+.feedback-btn.reject:hover:not(:disabled) {
+    background: #da190b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+.feedback-btn.improve {
+    background: #FF9800;
+    color: white;
+}
+
+.feedback-btn.improve:hover:not(:disabled) {
+    background: #f57c00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+}
+
+.feedback-btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Improvement Editor */
+.improvement-editor {
+    background: white;
+    border: 2px solid #FF9800;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.improvement-editor h5 {
+    color: #FF9800;
+    margin-bottom: 10px;
+}
+
+.improvement-editor textarea {
+    width: 100%;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.improvement-editor textarea:focus {
+    border-color: #FF9800;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 152, 0, 0.3);
+}
+
+.editor-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-primary {
+    background: #FF9800;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #f57c00;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* Improved Response Display */
+.improved-response {
+    position: relative;
+    padding-top: 30px;
+}
+
+.improvement-badge {
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    background: #FF9800;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.feedback-submitted {
+    background: #e8f5e9;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.feedback-submitted p {
+    margin: 0;
+    color: #2e7d32;
+}
+
+/* Generated Response Styling */
+.generated-response {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.generated-response h4 {
+    color: #2196F3;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.response-text {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #2196F3;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.response-text.improved {
+    border-left-color: #FF9800;
+    background: #fff8e1;
+}
+
+/* Status message enhancements for intelligent processing */
+.status-loading {
+    background: linear-gradient(270deg, #2196F3, #03A9F4, #00BCD4);
+    background-size: 600% 600%;
+    animation: gradientShift 2s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.status.status-loading {
+    color: white;
+    font-weight: 500;
+}
+
+/* Mobile responsive enhancements */
+@media (max-width: 768px) {
+    .feedback-buttons {
+        flex-direction: column;
+    }
+    
+    .feedback-btn {
+        flex: none;
+        min-width: auto;
+    }
+    
+    .model-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .editor-buttons {
+        flex-direction: column;
+    }
+}
+
+/* Animation for intelligent processing */
+@keyframes aiThinking {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.5; }
+}
+
+.ai-thinking {
+    animation: aiThinking 1.5s infinite;
+}
+
+/* Add some AI-themed accents */
+.intelligent-response::before {
+    content: '🤖';
+    position: absolute;
+    top: -8px;
+    right: 15px;
+    font-size: 24px;
+    background: white;
+    padding: 4px 8px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
 /* --- Form & Upload Styling --- */
 #upload-form { margin-bottom: 30px; }
 .file-upload-container { margin-bottom: 30px; }

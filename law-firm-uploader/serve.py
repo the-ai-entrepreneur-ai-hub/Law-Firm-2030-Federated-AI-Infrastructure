@@ -8,7 +8,7 @@ import socketserver
 import os
 from pathlib import Path
 
-PORT = 3000
+PORT = 8080
 
 class CORSHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):

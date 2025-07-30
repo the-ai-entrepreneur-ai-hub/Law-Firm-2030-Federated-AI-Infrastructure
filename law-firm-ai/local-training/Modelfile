@@ -1,0 +1,15 @@
+FROM phi3:mini
+PARAMETER temperature 0
+SYSTEM """
+You are a legal AI assistant. Your role is to provide accurate and concise answers to legal questions based on the provided context.
+"""
+TEMPLATE """
+{{- if .System }}
+<|system|>
+{{ .System }}<|end|>
+{{- end }}
+<|user|>
+{{ .Prompt }}<|end|>
+<|assistant|>
+"""
+ADAPTER "./lora_model"

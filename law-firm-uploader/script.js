@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DIRECT API ENDPOINT (bypassing n8n webhook issues) ---
-    const apiUrl = 'http://localhost:5001/process-document'; 
+    // --- INTELLIGENT API ENDPOINTS ---
+    const apiUrl = 'http://localhost:5001/process-document'; // Legacy endpoint
+    const intelligentApiUrl = 'http://localhost:5001/api/generate'; // New intelligent API
+    const feedbackApiUrl = 'http://localhost:5001/api/feedback'; // Feedback API
+    const metricsApiUrl = 'http://localhost:5001/api/metrics'; // Metrics API 
 
     const form = document.getElementById('upload-form');
     const fileInput = document.getElementById('file-input');
@@ -20,8 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const anonymizedContent = document.getElementById('anonymized-content');
     const originalContent = document.getElementById('original-content');
     
-    // Store complete data for copying
+    // Store complete data for copying and feedback
     let completeData = null;
+    let currentDocumentId = null;
+    let currentModelResponse = null;
 
     // Update file name display when a file is chosen
     fileInput.addEventListener('change', () => {
@@ -65,27 +70,40 @@ document.addEventListener('DOMContentLoaded', () => {
         submitButton.querySelector('.button-text').textContent = 'Processing...';
 
         try {
-            const response = await fetch(apiUrl, {
+            // Always use the intelligent API - no fallback to legacy
+            const extractedText = await extractTextFromFile(file);
+            const documentType = detectDocumentType(extractedText);
+            
+            showStatus('📝 Dokument wird bearbeitet...', 'loading');
+            
+            // Call intelligent API for document generation
+            const intelligentResponse = await fetch(intelligentApiUrl, {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    prompt: extractedText,
+                    document_type: documentType,
+                    user_id: 'user_' + Date.now()
+                }),
             });
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || `HTTP error! status: ${response.status}`);
+            if (!intelligentResponse.ok) {
+                throw new Error(`API error: ${intelligentResponse.status}`);
             }
             
-            if (result.success && result.final_response) {
-                showStatus('✅ Document processed and translated successfully!', 'success');
-                showResults(result);
-                console.log('Processing result:', result);
-            } else if (result.requires_human_review) {
-                showStatus(`⚠️ Document requires human review. Risk score: ${result.risk_assessment.total_risk_score}`, 'warning');
-                showHighRiskResults(result);
-            } else {
-                throw new Error(result.error || result.message || 'An unknown error occurred in the response.');
+            const intelligentResult = await intelligentResponse.json();
+            
+            if (!intelligentResult.success) {
+                throw new Error(intelligentResult.error || 'API returned unsuccessful response');
             }
+            
+            currentDocumentId = intelligentResult.document_id;
+            currentModelResponse = intelligentResult;
+            
+            // Show intelligent response
+            showIntelligentResults(intelligentResult, extractedText);
 
         } catch (error) {
             console.error('Upload Error:', error);
@@ -101,6 +119,148 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessage.textContent = message;
         statusMessage.className = `status status-${type}`; // Add a base class for styling
         statusMessage.style.display = 'block';
+    }
+
+    async function extractTextFromFile(file) {
+        """Extract text content from uploaded file"""
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            if (file.type === 'text/plain') {
+                reader.onload = (e) => resolve(e.target.result);
+                reader.readAsText(file);
+            } else if (file.type === 'application/pdf') {
+                // For PDFs, we'll need to process server-side
+                resolve(`[PDF FILE: ${file.name}] - Content will be extracted server-side`);
+            } else {
+                // For images, indicate OCR processing needed
+                resolve(`[IMAGE FILE: ${file.name}] - OCR processing will be performed server-side`);
+            }
+        });
+    }
+
+    function detectDocumentType(text) {
+        """Detect document type from text content"""
+        const textLower = text.toLowerCase();
+        
+        if (textLower.includes('mahnung') || textLower.includes('zahlungserinnerung')) {
+            return 'mahnung';
+        } else if (textLower.includes('klage') || textLower.includes('klageschrift')) {
+            return 'klage';
+        } else if (textLower.includes('kündigung')) {
+            return 'kuendigung';
+        } else if (textLower.includes('vertrag') || textLower.includes('vereinbarung')) {
+            return 'contract';
+        } else if (textLower.includes('nda') || textLower.includes('geheimhaltung')) {
+            return 'nda';
+        } else {
+            return 'general';
+        }
+    }
+
+    function showIntelligentResults(result, originalText) {
+        """Show results from intelligent API"""
+        completeData = {
+            ...result,
+            original_text: originalText,
+            processing_type: 'intelligent'
+        };
+        
+        // Populate main response area - ONLY show the legal response content
+        resultsContent.innerHTML = `
+            <div class="legal-response">
+                <div class="response-content">
+                    ${formatLegalResponse(result.response)}
+                </div>
+            </div>
+        `;
+        
+        // Populate simple processing statistics without AI mentions
+        populateLegalProcessStats(result);
+        
+        // Show original and processed content
+        originalContent.textContent = originalText;
+        anonymizedContent.innerHTML = `
+            <div class="legal-document">
+                <h4>Rechtliche Antwort:</h4>
+                <div class="response-text">${result.response}</div>
+            </div>
+        `;
+        
+        // Add feedback buttons
+        addFeedbackButtons();
+        
+        // Show results container
+        resultsContainer.style.display = 'block';
+        resultsContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function populateLegalProcessStats(result) {
+        """Populate statistics for legal processing"""
+        const statsHTML = `
+            <div class="stat-card">
+                <span class="stat-value">${result.processing_time.toFixed(2)}s</span>
+                <span class="stat-label">Bearbeitungszeit</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">✓</span>
+                <span class="stat-label">Dokument verarbeitet</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">🏛️</span>
+                <span class="stat-label">Rechtliche Prüfung</span>
+            </div>
+        `;
+        processStats.innerHTML = statsHTML;
+    }
+
+    function getConfidenceClass(confidence) {
+        """Get CSS class for confidence level"""
+        if (confidence >= 0.8) return 'high';
+        if (confidence >= 0.6) return 'medium';
+        return 'low';
+    }
+
+    function formatLegalResponse(response) {
+        """Format legal response for better display"""
+        return response
+            .replace(/\n\n/g, '</p><p>')
+            .replace(/^/, '<p>')
+            .replace(/$/, '</p>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    function addFeedbackButtons() {
+        """Add feedback buttons for quality assurance"""
+        const feedbackContainer = document.createElement('div');
+        feedbackContainer.className = 'feedback-container';
+        feedbackContainer.innerHTML = `
+            <div class="feedback-section">
+                <h4>💭 Qualitätsbewertung</h4>
+                <p>Helfen Sie uns, unseren Service zu verbessern:</p>
+                <div class="feedback-buttons">
+                    <button class="feedback-btn accept" onclick="submitFeedback('accept')">
+                        ✅ Gut - Antwort akzeptieren
+                    </button>
+                    <button class="feedback-btn reject" onclick="submitFeedback('reject')">
+                        ❌ Schlecht - Antwort ablehnen
+                    </button>
+                    <button class="feedback-btn improve" onclick="showImprovementEditor()">
+                        ✏️ Verbessern - Antwort bearbeiten
+                    </button>
+                </div>
+                <div class="improvement-editor" id="improvement-editor" style="display: none;">
+                    <h5>Verbesserte Antwort:</h5>
+                    <textarea id="improved-response" rows="8" placeholder="Geben Sie hier Ihre verbesserte Version ein..."></textarea>
+                    <div class="editor-buttons">
+                        <button onclick="submitImprovement()" class="btn-primary">Verbesserung senden</button>
+                        <button onclick="cancelImprovement()" class="btn-secondary">Abbrechen</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        resultsContainer.appendChild(feedbackContainer);
     }
 
     function showResults(result) {
@@ -370,3 +530,181 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
     });
 });
+
+// Global feedback functions (need to be outside DOMContentLoaded for onclick handlers)
+async function submitFeedback(feedbackType) {
+    """Submit feedback to the intelligent training system"""
+    if (!currentDocumentId) {
+        showStatus('❌ No document ID available for feedback', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('http://localhost:5001/api/feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                document_id: currentDocumentId,
+                feedback_type: feedbackType,
+                user_id: 'user_' + Date.now()
+            }),
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showStatus(`✅ Feedback "${feedbackType}" wurde erfolgreich übermittelt!`, 'success');
+            
+            // Disable feedback buttons after submission
+            disableFeedbackButtons();
+            
+            // Show quality improvement status if triggered
+            if (result.training_triggered) {
+                showStatus('🔄 Qualitätsverbesserung wird verarbeitet...', 'loading');
+            }
+        } else {
+            throw new Error(result.error || 'Feedback submission failed');
+        }
+        
+    } catch (error) {
+        console.error('Feedback error:', error);
+        showStatus(`❌ Feedback-Fehler: ${error.message}`, 'error');
+    }
+}
+
+function showImprovementEditor() {
+    """Show the improvement editor"""
+    const editor = document.getElementById('improvement-editor');
+    const textarea = document.getElementById('improved-response');
+    
+    // Pre-fill with current response for editing
+    if (currentModelResponse && currentModelResponse.response) {
+        textarea.value = currentModelResponse.response;
+    }
+    
+    editor.style.display = 'block';
+    textarea.focus();
+}
+
+async function submitImprovement() {
+    """Submit improved response"""
+    const improvedText = document.getElementById('improved-response').value.trim();
+    
+    if (!improvedText) {
+        alert('Bitte geben Sie eine verbesserte Version ein.');
+        return;
+    }
+    
+    if (!currentDocumentId) {
+        showStatus('❌ No document ID available for improvement', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('http://localhost:5001/api/feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                document_id: currentDocumentId,
+                feedback_type: 'improve',
+                user_edit: improvedText,
+                user_id: 'user_' + Date.now()
+            }),
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showStatus('✅ Verbesserung wurde erfolgreich übermittelt!', 'success');
+            
+            // Update display with improved version
+            updateResponseDisplay(improvedText);
+            
+            // Hide editor and disable feedback buttons
+            cancelImprovement();
+            disableFeedbackButtons();
+            
+        } else {
+            throw new Error(result.error || 'Improvement submission failed');
+        }
+        
+    } catch (error) {
+        console.error('Improvement error:', error);
+        showStatus(`❌ Verbesserungs-Fehler: ${error.message}`, 'error');
+    }
+}
+
+function cancelImprovement() {
+    """Cancel improvement editing"""
+    const editor = document.getElementById('improvement-editor');
+    const textarea = document.getElementById('improved-response');
+    
+    editor.style.display = 'none';
+    textarea.value = '';
+}
+
+function updateResponseDisplay(improvedText) {
+    """Update the response display with improved text"""
+    const responseContent = document.querySelector('.response-content');
+    if (responseContent) {
+        responseContent.innerHTML = `
+            <div class="improved-response">
+                <div class="improvement-badge">✏️ Verbesserte Version</div>
+                ${formatLegalResponse(improvedText)}
+            </div>
+        `;
+    }
+    
+    // Update anonymized content tab as well
+    const anonymizedContent = document.getElementById('anonymized-content');
+    if (anonymizedContent) {
+        anonymizedContent.innerHTML = `
+            <div class="generated-response">
+                <h4>✏️ Verbesserte rechtliche Antwort:</h4>
+                <div class="response-text improved">${improvedText}</div>
+            </div>
+        `;
+    }
+}
+
+function disableFeedbackButtons() {
+    """Disable feedback buttons after submission"""
+    const feedbackButtons = document.querySelectorAll('.feedback-btn');
+    feedbackButtons.forEach(button => {
+        button.disabled = true;
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+    });
+    
+    // Add feedback submitted message
+    const feedbackSection = document.querySelector('.feedback-section');
+    if (feedbackSection) {
+        const submittedMessage = document.createElement('div');
+        submittedMessage.className = 'feedback-submitted';
+        submittedMessage.innerHTML = '<p>✅ <strong>Feedback wurde übermittelt.</strong> Vielen Dank für Ihr Feedback zur Verbesserung unseres Services!</p>';
+        feedbackSection.appendChild(submittedMessage);
+    }
+}
+
+function formatLegalResponse(response) {
+    """Format legal response for better display"""
+    return response
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/^/, '<p>')
+        .replace(/$/, '</p>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
+function showStatus(message, type) {
+    """Show status message"""
+    const statusMessage = document.getElementById('status-message');
+    if (statusMessage) {
+        statusMessage.textContent = message;
+        statusMessage.className = `status status-${type}`;
+        statusMessage.style.display = 'block';
+    }
+}

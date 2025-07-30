@@ -1,0 +1,149 @@
+:root {
+  /* Primary Colors - Deep blue/purple theme */
+  --background: oklch(0.2500 0.1200 270.0000); /* Deep blue/purple #4338CA */
+  --foreground: oklch(0.9800 0.0000 0.0000); /* Pure white */
+  --card: oklch(0.9800 0.0000 0.0000 / 0.15); /* Semi-transparent white glassmorphism */
+  --card-foreground: oklch(0.9800 0.0000 0.0000); /* White text */
+  --popover: oklch(0.9800 0.0000 0.0000 / 0.95); /* Almost opaque white */
+  --popover-foreground: oklch(0.1500 0.0000 0.0000); /* Dark text for popovers */
+  
+  /* Primary button colors */
+  --primary: oklch(0.5500 0.2000 258.0000); /* Lighter blue accent #6366F1 */
+  --primary-foreground: oklch(0.9800 0.0000 0.0000); /* White */
+  --primary-hover: oklch(0.4800 0.2200 260.0000); /* Button blue #2563EB */
+  
+  /* Secondary colors */
+  --secondary: oklch(0.9500 0.0000 0.0000 / 0.10); /* Very light transparent */
+  --secondary-foreground: oklch(0.9800 0.0000 0.0000); /* White */
+  --muted: oklch(0.9800 0.0000 0.0000 / 0.08); /* Subtle white overlay */
+  --muted-foreground: oklch(0.8500 0.0000 0.0000); /* Light gray text */
+  
+  /* Accent colors */
+  --accent: oklch(0.6000 0.1800 270.0000); /* Purple accent */
+  --accent-foreground: oklch(0.9800 0.0000 0.0000); /* White */
+  
+  /* Status colors */
+  --success: oklch(0.6500 0.1500 145.0000); /* Professional green */
+  --success-foreground: oklch(0.9800 0.0000 0.0000);
+  --warning: oklch(0.7500 0.1500 65.0000); /* Professional amber */
+  --warning-foreground: oklch(0.1500 0.0000 0.0000);
+  --destructive: oklch(0.6000 0.2000 25.0000); /* Professional red */
+  --destructive-foreground: oklch(0.9800 0.0000 0.0000);
+  
+  /* Border and input colors */
+  --border: oklch(0.9800 0.0000 0.0000 / 0.20); /* Semi-transparent white borders */
+  --input: oklch(0.9800 0.0000 0.0000 / 0.10); /* Subtle input background */
+  --ring: oklch(0.5500 0.2000 258.0000); /* Focus ring color */
+  
+  /* Typography - Professional fonts with German support */
+  --font-sans: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  
+  /* Border radius - Professional, not too rounded */
+  --radius: 0.75rem;
+  --radius-sm: calc(var(--radius) - 0.25rem);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 0.25rem);
+  --radius-xl: calc(var(--radius) + 0.5rem);
+  
+  /* Glassmorphism shadows */
+  --shadow-glass: 0 8px 32px 0 rgba(67, 56, 202, 0.37);
+  --shadow-glass-hover: 0 12px 40px 0 rgba(67, 56, 202, 0.45);
+  --shadow-card: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
+  --shadow-button: 0 2px 8px 0 rgba(37, 99, 235, 0.3);
+  
+  /* Standard shadows */
+  --shadow-2xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-xs: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  /* Spacing and typography */
+  --tracking-normal: 0em;
+  --tracking-wide: 0.025em;
+  --spacing: 0.25rem;
+  
+  /* Gradient backgrounds */
+  --gradient-primary: linear-gradient(135deg, oklch(0.2800 0.1400 270.0000) 0%, oklch(0.2200 0.1000 280.0000) 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  --gradient-button: linear-gradient(135deg, oklch(0.5500 0.2000 258.0000) 0%, oklch(0.4800 0.2200 260.0000) 100%);
+}
+
+/* Glassmorphism utility classes */
+.glass {
+  background: var(--card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-hover:hover {
+  box-shadow: var(--shadow-glass-hover);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Professional button styles */
+.btn-primary {
+  background: var(--gradient-button);
+  color: var(--primary-foreground);
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-button);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px 0 rgba(37, 99, 235, 0.4);
+}
+
+/* Legal document specific styling */
+.legal-text {
+  font-family: var(--font-serif);
+  line-height: 1.7;
+  color: var(--foreground);
+}
+
+.legal-heading {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--foreground);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* German language optimizations */
+.german-text {
+  font-feature-settings: "liga" 1, "kern" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Background gradient for body */
+body {
+  background: var(--gradient-primary) !important;
+  min-height: 100vh !important;
+  font-family: var(--font-sans) !important;
+  color: var(--foreground) !important;
+}
+
+/* Professional card styling */
+.professional-card {
+  background: var(--gradient-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-glass);
+  transition: all 0.3s ease;
+}
+
+.professional-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glass-hover);
+}

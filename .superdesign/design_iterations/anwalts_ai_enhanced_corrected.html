@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anwalts-AI - Ihr KI-Partner für deutsche Rechtsdokumente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        /* DARK BACKGROUND - MATCHING INSPIRATION */
+        .cloud-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000000 0%, #0a0a0a 30%, #1a1a1a 70%, #000000 100%);
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        /* Centered 3D Spline background */
+        .spline-3d-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 80vmin;
+            height: 80vmin;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0.6;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        
+        .cloud-background::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            animation: cloudFloat 20s ease-in-out infinite;
+            transform: rotate(0deg);
+        }
+        
+        .cloud-background::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 60% 70%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+            animation: cloudFloat 25s ease-in-out infinite reverse;
+            transform: rotate(45deg);
+        }
+        
+        @keyframes cloudFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(-20px, -10px) rotate(1deg) scale(1.02); }
+            50% { transform: translate(-10px, -20px) rotate(-1deg) scale(0.98); }
+            75% { transform: translate(20px, -5px) rotate(0.5deg) scale(1.01); }
+        }
+        
+        /* EXACT STACKED CARDS ANIMATION - PRESERVED */
+        .cards-section {
+            --_offset-steps: 5rem;
+            --_scale-steps: 12;
+            --_opacity-steps: 18;
+            --_offset-steps-two: calc(var(--_offset-steps) * -1);
+            --_offset-steps-three: calc(var(--_offset-steps) * -2);
+            --scale-steps-two: calc(1 - var(--_scale-steps) * 0.01);
+            --scale-steps-three: calc(1 - var(--_scale-steps) * 0.02);
+            --opacity-steps-two: calc(1 - var(--_opacity-steps) * 0.015);
+            --opacity-steps-three: calc(1 - var(--_opacity-steps) * 0.03);
+            display: grid;
+            grid-template-areas: "stack";
+            width: min(calc(100% - 2rem), 28rem);
+            perspective: 1000px;
+        }
+        
+        .feature-card {
+            grid-area: stack;
+            transition: 600ms cubic-bezier(0.4, 0, 0.2, 1);
+            translate: var(--_offset) 0;
+            order: var(--_order);
+            z-index: var(--_order);
+            scale: var(--_scale);
+            opacity: var(--_opacity);
+            cursor: grab;
+            user-select: none;
+            transform-style: preserve-3d;
+        }
+        
+        .feature-card:active { cursor: grabbing; }
+        
+        .feature-card:nth-of-type(1) {
+            --_order: var(--_1-order);
+            --_scale: var(--_1-scale);
+            --_opacity: var(--_1-opacity);
+            --_offset: var(--_1-offset);
+        }
+        
+        .feature-card:nth-of-type(2) {
+            --_order: var(--_2-order);
+            --_scale: var(--_2-scale);
+            --_opacity: var(--_2-opacity);
+            --_offset: var(--_2-offset);
+        }
+        
+        .feature-card:nth-of-type(3) {
+            --_order: var(--_3-order);
+            --_scale: var(--_3-scale);
+            --_opacity: var(--_3-opacity);
+            --_offset: var(--_3-offset);
+        }
+        
+        .feature-card:nth-of-type(4) {
+            --_order: var(--_4-order);
+            --_scale: var(--_4-scale);
+            --_opacity: var(--_4-opacity);
+            --_offset: var(--_4-offset);
+        }
+        
+        .cards-section.feature-1-active {
+            --_1-order: 4; --_1-scale: 1; --_1-opacity: 1; --_1-offset: 0;
+            --_2-order: 3; --_2-scale: var(--scale-steps-two); --_2-opacity: var(--opacity-steps-two); --_2-offset: var(--_offset-steps-two);
+            --_3-order: 2; --_3-scale: var(--scale-steps-three); --_3-opacity: var(--opacity-steps-three); --_3-offset: var(--_offset-steps-three);
+            --_4-order: 1; --_4-scale: calc(1 - var(--_scale-steps) * 0.025); --_4-opacity: calc(1 - var(--_opacity-steps) * 0.045); --_4-offset: calc(var(--_offset-steps) * -2.5);
+        }
+        
+        .cards-section.feature-2-active {
+            --_2-order: 4; --_2-scale: 1; --_2-opacity: 1; --_2-offset: 0;
+            --_3-order: 3; --_3-scale: var(--scale-steps-two); --_3-opacity: var(--opacity-steps-two); --_3-offset: var(--_offset-steps-two);
+            --_4-order: 2; --_4-scale: var(--scale-steps-three); --_4-opacity: var(--opacity-steps-three); --_4-offset: var(--_offset-steps-three);
+            --_1-order: 1; --_1-scale: calc(1 - var(--_scale-steps) * 0.025); --_1-opacity: calc(1 - var(--_opacity-steps) * 0.045); --_1-offset: calc(var(--_offset-steps) * -2.5);
+        }
+        
+        .cards-section.feature-3-active {
+            --_3-order: 4; --_3-scale: 1; --_3-opacity: 1; --_3-offset: 0;
+            --_4-order: 3; --_4-scale: var(--scale-steps-two); --_4-opacity: var(--opacity-steps-two); --_4-offset: var(--_offset-steps-two);
+            --_1-order: 2; --_1-scale: var(--scale-steps-three); --_1-opacity: var(--opacity-steps-three); --_1-offset: var(--_offset-steps-three);
+            --_2-order: 1; --_2-scale: calc(1 - var(--_scale-steps) * 0.025); --_2-opacity: calc(1 - var(--_opacity-steps) * 0.045); --_2-offset: calc(var(--_offset-steps) * -2.5);
+        }
+        
+        .cards-section.feature-4-active {
+            --_4-order: 4; --_4-scale: 1; --_4-opacity: 1; --_4-offset: 0;
+            --_1-order: 3; --_1-scale: var(--scale-steps-two); --_1-opacity: var(--opacity-steps-two); --_1-offset: var(--_offset-steps-two);
+            --_2-order: 2; --_2-scale: var(--scale-steps-three); --_2-opacity: var(--opacity-steps-three); --_2-offset: var(--_offset-steps-three);
+            --_3-order: 1; --_3-scale: calc(1 - var(--_scale-steps) * 0.025); --_3-opacity: calc(1 - var(--_opacity-steps) * 0.045); --_3-offset: calc(var(--_offset-steps) * -2.5);
+        }
+        
+        .dragging-left { transform: translateX(-30px) rotateY(-5deg); }
+        .dragging-right { transform: translateX(30px) rotateY(5deg); }
+        
+        /* ENHANCED GLASSMORPHISM AND ANIMATIONS */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* FLOATING GLASS NAVBAR */
+        .floating-navbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 8px 24px;
+            max-width: 90vw;
+            width: auto;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff, #e5e7eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* ENHANCED ANIMATIONS */
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeInScale {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes slideDownGlow {
+            from { 
+                transform: translateY(-30px); 
+                opacity: 0; 
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); 
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1; 
+                box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2); 
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0,-10px,0); }
+            70% { transform: translate3d(0,-5px,0); }
+            90% { transform: translate3d(0,-2px,0); }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+                transform: scale(1.02);
+            }
+        }
+        
+        .slide-in-up { animation: slideInUp 0.8s ease-out; }
+        .fade-in-scale { animation: fadeInScale 0.6s ease-out; }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        .slide-down-glow { animation: slideDownGlow 1s ease-out; }
+        .bounce-animation { animation: bounce 2s ease-in-out infinite; }
+        .pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+        
+        .legal-button {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .legal-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Scroll down indicator */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+        
+        .scroll-indicator svg {
+            stroke: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .scroll-indicator:hover svg {
+            stroke: white;
+            transform: scale(1.1);
+        }
+        
+        .feature-icon-gradient-1 { background: linear-gradient(135deg, #6366F1, #4338CA); }
+        .feature-icon-gradient-2 { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .feature-icon-gradient-3 { background: linear-gradient(135deg, #06B6D4, #0891B2); }
+        .feature-icon-gradient-4 { background: linear-gradient(135deg, #10B981, #059669); }
+        
+        /* SMOOTH SCROLL */
+        html { scroll-behavior: smooth; }
+        
+        /* TESTIMONIAL CARDS */
+        .testimonial-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* RESPONSIVE IMPROVEMENTS */
+        @media (max-width: 768px) {
+            .cards-section {
+                --_offset-steps: 3rem;
+                width: min(calc(100% - 1rem), 20rem);
+            }
+            
+            .floating-navbar {
+                top: 10px;
+                padding: 6px 16px;
+            }
+            
+            .floating-navbar .hidden {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-white antialiased overflow-x-hidden">
+    <!-- DARK BACKGROUND -->
+    <div class="cloud-background"></div>
+    
+    <!-- CENTERED 3D SPLINE BACKGROUND -->
+    <div class="spline-3d-container">
+        <iframe src="https://my.spline.design/reactiveorb-s0GzgSco0uSVSXvwMHuJvPQs/" frameborder="0" width="100%" height="100%" class="w-full h-full"></iframe>
+    </div>
+    
+    <!-- Floating Glass Navbar -->
+    <nav class="floating-navbar">
+        <div class="flex items-center justify-between gap-8">
+            <div class="flex items-center gap-3">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center border border-white/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                </div>
+                <span class="text-lg font-semibold tracking-tight text-white">Anwalts-AI</span>
+            </div>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#funktionen" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Funktionen</a>
+                <a href="#erfolgsgeschichten" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Erfolgsgeschichten</a>
+                <a href="#preise" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Preise</a>
+                <button class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium border border-white/20 transition-all">
+                    30 Tage kostenlos testen
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center pt-16 relative">
+        <div class="max-w-7xl mx-auto px-6 py-12 z-10 relative">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="space-y-8 slide-down-glow">
+                    <div class="space-y-6">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm font-medium text-gray-200 tracking-wide">Es ist 23:47 Uhr. Ihr Mandant wartet auf den Vertrag. Kennen Sie das?</span>
+                        </div>
+                        
+                        <h1 class="text-4xl lg:text-6xl gradient-text tracking-tighter font-['Playfair_Display'] leading-tight">
+                            Schluss mit Überstunden.
+                            <span class="block">Hallo, Anwalts-AI.</span>
+                        </h1>
+                        
+                        <p class="max-w-lg text-xl text-gray-200 leading-relaxed">
+                            Stellen Sie sich vor: Verträge in 3 Minuten statt 3 Stunden. E-Mails, die sich selbst beantworten. 
+                            Vorlagen, die schlauer sind als Ihr bester Referendar. <strong>Das ist keine Zukunftsmusik.</strong>
+                        </p>
+                    </div>
+                    
+                    <!-- Navigation Dots -->
+                    <div class="flex items-center gap-3">
+                        <button id="nav-1" class="w-3 h-3 rounded-full bg-white transition-all scale-125"></button>
+                        <button id="nav-2" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                        <button id="nav-3" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                        <button id="nav-4" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                    </div>
+                    
+                    <!-- Feature Highlights -->
+                    <div id="feature-details" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                            <span class="text-gray-200">Von 3 Stunden auf 3 Minuten - Vertragsprüfung</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                            <span class="text-gray-200">Perfekte NDAs in unter 2 Minuten</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full"></div>
+                            <span class="text-gray-200">Nie wieder eine Mandanten-Deadline verpassen</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-200">500+ Expertenvorlagen griffbereit</span>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="legal-button px-8 py-4 rounded-lg text-white font-medium text-lg">
+                            Jetzt 30 Tage kostenlos testen
+                        </button>
+                        <button class="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-lg font-medium text-lg border border-white/20 transition-colors">
+                            5-Minuten Demo ansehen
+                        </button>
+                    </div>
+                    
+                    <!-- Social Proof -->
+                    <div class="text-sm text-gray-300">
+                        <p>Bereits über <strong>1.200+ deutsche Anwaltskanzleien</strong> vertrauen Anwalts-AI</p>
+                    </div>
+                </div>
+
+                <!-- Right Content - Interactive Stacked Cards -->
+                <div class="flex lg:justify-end justify-center pulse-glow" style="height: 36rem;">
+                    <div class="cards-section feature-1-active" style="height: 36rem;">
+                        <!-- Document Processing Card -->
+                        <div class="feature-card glass-card rounded-2xl p-8 float-animation" style="height: 36rem;">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-1 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7l-5-5z"/>
+                                            <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                                            <path d="M10 9H8"/>
+                                            <path d="M16 13H8"/>
+                                            <path d="M16 17H8"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">Dokumentenanalyse</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Von 3 Stunden auf 3 Minuten</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6 leading-relaxed">
+                                    <strong>"Ich dachte, ich träume."</strong> Dr. Mueller aus Hamburg analysierte einen 40-seitigen 
+                                    Gesellschaftsvertrag. Was normalerweise seinen halben Tag kostete, erledigte Anwalts-AI in 3 Minuten. 
+                                    <em>Mit 99,2% Genauigkeit.</em>
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Zeitersparnis</span>
+                                        <span class="text-green-400 font-semibold">94%</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Dokumenttypen</span>
+                                        <span class="text-white font-medium">500+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Genauigkeit</span>
+                                        <span class="text-blue-400 font-semibold">99,2%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="space-y-1">
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-blue-400 rounded-full"></div>
+                                            Verträge, AGBs, Gesellschaftsverträge
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-blue-400 rounded-full"></div>
+                                            Automatische Risikoanalyse
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-blue-400 rounded-full"></div>
+                                            Sofortige Verbesserungsvorschläge
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    Dokument analysieren lassen
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Legal Document Creation Card -->
+                        <div class="feature-card glass-card rounded-2xl p-8" style="height: 36rem;">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-2 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                            <polyline points="14,2 14,8 20,8"/>
+                                            <line x1="16" y1="13" x2="8" y2="13"/>
+                                            <line x1="16" y1="17" x2="8" y2="17"/>
+                                            <path d="M10 9H8"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">Dokumentenerstellung</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Perfekte NDAs in 2 Minuten</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6 leading-relaxed">
+                                    <strong>"Mein Referendar ist eifersüchtig."</strong> RA Schmidt aus München erstellt jetzt 
+                                    NDAs, Arbeitsverträge und Kaufverträge schneller als je zuvor. <em>Rechtssicher. Mandantenspezifisch. Perfektion in Minuten.</em>
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Erstellungszeit</span>
+                                        <span class="text-green-400 font-semibold">&lt;2 Min</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Vorlagen verfügbar</span>
+                                        <span class="text-white font-medium">500+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Rechtssicherheit</span>
+                                        <span class="text-purple-400 font-semibold">100%</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="space-y-1">
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-purple-400 rounded-full"></div>
+                                            NDAs, Arbeitsverträge, Kaufverträge
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-purple-400 rounded-full"></div>
+                                            Automatische Mandantendaten-Integration
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-purple-400 rounded-full"></div>
+                                            Aktuelle Rechtsprechung inklusive
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    Dokument erstellen
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Management Card -->
+                        <div class="feature-card glass-card rounded-2xl p-8" style="height: 36rem;">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-3 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                            <polyline points="22,6 12,13 2,6"/>
+                                            <path d="M16 10l-4 4-4-4"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">E-Mail-KI</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Nie wieder Deadline verpasst</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6 leading-relaxed">
+                                    <strong>"280 E-Mails am Tag? Kein Problem mehr."</strong> RA Weber aus Berlin lässt Anwalts-AI 
+                                    ihre Mandanten-E-Mails vorsortieren, Deadlines erkennen und Antworten vorschlagen. 
+                                    <em>Intelligent. Höflich. Immer pünktlich.</em>
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">E-Mails pro Tag</span>
+                                        <span class="text-cyan-400 font-semibold">Unbegrenzt</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Antwortzeit</span>
+                                        <span class="text-white font-medium">Sofort</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Deadline-Erkennung</span>
+                                        <span class="text-cyan-400 font-semibold">99,8%</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="space-y-1">
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-cyan-400 rounded-full"></div>
+                                            Automatische Mandanten-Zuordnung
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-cyan-400 rounded-full"></div>
+                                            Intelligente Antwort-Vorschläge
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-cyan-400 rounded-full"></div>
+                                            Deadline-Tracking & Erinnerungen
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    E-Mail-KI aktivieren
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Template System Card -->
+                        <div class="feature-card glass-card rounded-2xl p-8" style="height: 36rem;">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-4 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11z"/>
+                                            <path d="M12 11v6"/>
+                                            <path d="M9 14h6"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">Experten-Bibliothek</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">500+ Expertenvorlagen</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-lg text-gray-200 mb-6 flex-1 leading-relaxed">
+                                    <strong>"Wie ein Lexikon, das mitdenkt."</strong> Kanzlei Hoffmann & Partner nutzt die 
+                                    Vorlagen-Bibliothek von Anwalts-AI. Von Arbeitsrecht bis Zivilprozess - alle Vorlagen 
+                                    von führenden Experten erstellt. <em>Immer aktuell. Immer rechtssicher.</em>
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Verfügbare Vorlagen</span>
+                                        <span class="text-green-400 font-semibold">500+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Rechtsbereiche</span>
+                                        <span class="text-white font-medium">25+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Monatliche Updates</span>
+                                        <span class="text-green-400 font-semibold">50+</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="space-y-1">
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-green-400 rounded-full"></div>
+                                            Arbeits-, Zivil-, Gesellschaftsrecht
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-green-400 rounded-full"></div>
+                                            Automatische Rechtsprechungs-Updates
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-green-400 rounded-full"></div>
+                                            Kanzlei-spezifische Anpassungen
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    Vorlagen durchsuchen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 relative" id="erfolgsgeschichten">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 slide-down-glow">
+                <h2 class="text-4xl font-['Playfair_Display'] gradient-text mb-4">
+                    Was deutsche Anwälte über Anwalts-AI sagen
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Echte Erfolgsgeschichten von Kanzleien, die bereits den Schritt in die Zukunft gewagt haben.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card rounded-xl p-6 bounce-animation">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                            DM
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Dr. Müller</h4>
+                            <p class="text-sm text-gray-300">Kanzlei Müller & Partner, Hamburg</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        "Nach 20 Jahren als Anwalt dachte ich, ich hätte alles gesehen. Anwalts-AI hat meine 
+                        Produktivität verdreifacht. Ich gehe wieder pünktlich nach Hause."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ★★★★★
+                    </div>
+                </div>
+                
+                <div class="testimonial-card rounded-xl p-6 bounce-animation">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-semibold">
+                            SW
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Sandra Weber</h4>
+                            <p class="text-sm text-gray-300">Weber Rechtsanwälte, Berlin</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        "280 E-Mails am Tag waren mein Albtraum. Jetzt sortiert Anwalts-AI alles vor und 
+                        schlägt sogar Antworten vor. Ich konzentriere mich wieder aufs Wesentliche."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ★★★★★
+                    </div>
+                </div>
+                
+                <div class="testimonial-card rounded-xl p-6 bounce-animation">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-semibold">
+                            HP
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Hoffmann & Partner</h4>
+                            <p class="text-sm text-gray-300">Wirtschaftskanzlei, München</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        "Unsere Mandanten sind begeistert von der Geschwindigkeit. Was früher Tage dauerte, 
+                        erledigen wir jetzt in Stunden. Anwalts-AI ist unser Geheimnis."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ★★★★★
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 relative">
+        <div class="max-w-4xl mx-auto px-6 text-center slide-down-glow">
+            <h2 class="text-4xl lg:text-5xl font-['Playfair_Display'] gradient-text mb-6">
+                Bereit für den nächsten Schritt?
+            </h2>
+            <p class="text-xl text-gray-200 mb-8 leading-relaxed">
+                Über 1.200 deutsche Kanzleien haben bereits den Sprung gewagt. 
+                <strong>Testen Sie Anwalts-AI 30 Tage kostenlos.</strong> Ohne Risiko. Ohne Verpflichtung.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="legal-button px-8 py-4 rounded-lg text-white font-medium text-lg">
+                    Jetzt 30 Tage kostenlos testen
+                </button>
+                <button class="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-lg font-medium text-lg border border-white/20 transition-colors">
+                    Persönliche Demo buchen
+                </button>
+            </div>
+            <p class="text-sm text-gray-400 mt-6">
+                Kreditkarte nicht erforderlich • DSGVO-konform • Jederzeit kündbar
+            </p>
+        </div>
+    </section>
+
+    <!-- Scroll Down Indicator -->
+    <div class="scroll-indicator" onclick="document.querySelector('#erfolgsgeschichten').scrollIntoView({behavior: 'smooth'})">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M5 12L12 19L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- EXACT JAVASCRIPT FROM ORIGINAL FILE -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Card navigation system - EXACT COPY FROM ORIGINAL
+        const cardsContainer = document.querySelector('.cards-section');
+        const cards = document.querySelectorAll('.feature-card');
+        const navButtons = document.querySelectorAll('[id^="nav-"]');
+        let activeFeature = 1;
+        
+        // Touch/drag handling - EXACT COPY FROM ORIGINAL
+        cards.forEach((card, index) => {
+            let startX, isDragging = false;
+            
+            card.addEventListener('mousedown', e => initDrag(e, index + 1));
+            card.addEventListener('touchstart', e => {
+                e.preventDefault();
+                initDrag(e.touches[0], index + 1);
+            });
+            
+            function initDrag(e, featureId) {
+                if (featureId !== activeFeature) return;
+                isDragging = true;
+                startX = e.clientX;
+                
+                document.addEventListener('mousemove', handleDrag);
+                document.addEventListener('touchmove', e => handleDrag(e.touches[0]));
+                document.addEventListener('mouseup', endDrag);
+                document.addEventListener('touchend', endDrag);
+            }
+            
+            function handleDrag(e) {
+                if (!isDragging) return;
+                const diff = e.clientX - startX;
+                
+                if (diff > 20) {
+                    card.classList.add('dragging-right');
+                    card.classList.remove('dragging-left');
+                } else if (diff < -20) {
+                    card.classList.add('dragging-left');
+                    card.classList.remove('dragging-right');
+                } else {
+                    card.classList.remove('dragging-left', 'dragging-right');
+                }
+            }
+            
+            function endDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                
+                if (card.classList.contains('dragging-right')) {
+                    switchToFeature(activeFeature === 1 ? 4 : activeFeature - 1);
+                } else if (card.classList.contains('dragging-left')) {
+                    switchToFeature(activeFeature === 4 ? 1 : activeFeature + 1);
+                }
+                
+                card.classList.remove('dragging-left', 'dragging-right');
+                document.removeEventListener('mousemove', handleDrag);
+                document.removeEventListener('touchmove', handleDrag);
+                document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchend', endDrag);
+            }
+        });
+        
+        // Navigation button handling - EXACT COPY FROM ORIGINAL
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const featureId = parseInt(button.id.split('-')[1]);
+                switchToFeature(featureId);
+            });
+        });
+        
+        function switchToFeature(featureId) {
+            activeFeature = featureId;
+            cardsContainer.className = `cards-section feature-${featureId}-active`;
+            
+            // Update navigation buttons
+            navButtons.forEach((button, index) => {
+                if (index + 1 === featureId) {
+                    button.className = 'w-3 h-3 rounded-full bg-white transition-all scale-125';
+                } else {
+                    button.className = 'w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all';
+                }
+            });
+        }
+        
+        // Auto-advance cards every 5 seconds
+        setInterval(() => {
+            const nextFeature = activeFeature === 4 ? 1 : activeFeature + 1;
+            switchToFeature(nextFeature);
+        }, 5000);
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.slide-in-up, .fade-in-scale, .slide-down-glow, .bounce-animation, .pulse-glow').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Hide scroll indicator when user scrolls past hero section
+        window.addEventListener('scroll', () => {
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            const heroSection = document.querySelector('section');
+            const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+            
+            if (window.scrollY > heroBottom * 0.5) {
+                scrollIndicator.style.opacity = '0';
+                scrollIndicator.style.pointerEvents = 'none';
+            } else {
+                scrollIndicator.style.opacity = '1';
+                scrollIndicator.style.pointerEvents = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>

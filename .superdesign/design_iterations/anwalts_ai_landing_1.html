@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnwaltsAI - Intelligente KI-Lösungen für Rechtsanwälte</title>
+    <meta name="description" content="Revolutionieren Sie Ihre Kanzlei mit AnwaltsAI - KI-gestützte Dokumentenerstellung, E-Mail-Management und intelligente Rechtsberatung für moderne Anwaltskanzleien.">
+    
+    <!-- CSS Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.0.0/dist/flowbite.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --primary-purple: #7c3aed;
+            --accent-gold: #f59e0b;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif !important;
+            line-height: 1.6 !important;
+            color: var(--text-dark) !important;
+            overflow-x: hidden;
+        }
+
+        .font-display {
+            font-family: 'Playfair Display', serif !important;
+        }
+
+        /* Hero Background Animation */
+        .hero-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        /* Glassmorphism Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(31, 38, 135, 0.5);
+            border-color: var(--accent-gold);
+        }
+
+        /* Feature Card Animations */
+        .feature-card {
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slideInUp 0.8s ease forwards;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Icon Animations */
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2) rotate(5deg);
+            color: var(--accent-gold);
+        }
+
+        /* Testimonial Cards */
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        /* CTA Button */
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            border: none;
+            border-radius: 50px;
+            padding: 16px 32px;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Stats Animation */
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Scroll Reveal Animation */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero-bg {
+                min-height: 100vh;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .cta-button {
+                padding: 14px 28px;
+                font-size: 16px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar fixed w-full top-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                    <i data-lucide="scale" class="w-6 h-6 text-white"></i>
+                </div>
+                <span class="font-display text-2xl font-bold text-gray-800">AnwaltsAI</span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#features" class="text-gray-600 hover:text-blue-600 transition-colors">Funktionen</a>
+                <a href="#benefits" class="text-gray-600 hover:text-blue-600 transition-colors">Vorteile</a>
+                <a href="#testimonials" class="text-gray-600 hover:text-blue-600 transition-colors">Referenzen</a>
+                <a href="#pricing" class="text-gray-600 hover:text-blue-600 transition-colors">Preise</a>
+                <button class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors">
+                    Demo anfragen
+                </button>
+            </div>
+            
+            <button class="md:hidden p-2">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg min-h-screen flex items-center justify-center relative">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="scroll-reveal">
+                <h1 class="font-display text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                    Die Zukunft der
+                    <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                        Rechtsberatung
+                    </span>
+                </h1>
+                <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Revolutionieren Sie Ihre Kanzlei mit KI-gestützter Dokumentenerstellung, 
+                    intelligentem E-Mail-Management und 24/7 Rechtsberatung.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button class="cta-button">
+                        <span class="flex items-center gap-2">
+                            Kostenlose Demo starten
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </span>
+                    </button>
+                    <button class="bg-white/20 backdrop-blur text-white px-8 py-4 rounded-full border border-white/30 hover:bg-white/30 transition-all">
+                        Video ansehen
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 scroll-reveal">
+                <div class="text-center">
+                    <div class="stat-number text-white">500+</div>
+                    <p class="text-white/80">Zufriedene Kanzleien</p>
+                </div>
+                <div class="text-center">
+                    <div class="stat-number text-white">95%</div>
+                    <p class="text-white/80">Zeitersparnis</p>
+                </div>
+                <div class="text-center">
+                    <div class="stat-number text-white">24/7</div>
+                    <p class="text-white/80">KI-Unterstützung</p>
+                </div>
+                <div class="text-center">
+                    <div class="stat-number text-white">DSGVO</div>
+                    <p class="text-white/80">Konform</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+                    Intelligente Funktionen für moderne Kanzleien
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Entdecken Sie die leistungsstarken KI-Tools, die Ihre tägliche Arbeit revolutionieren 
+                    und Ihnen mehr Zeit für strategische Beratung geben.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Dokument Generator -->
+                <div class="feature-card glass-card p-8 text-center">
+                    <div class="feature-icon w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="file-text" class="w-8 h-8 text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Dokument Generator</h3>
+                    <p class="text-gray-600 mb-6">
+                        KI-gestützte Erstellung von Rechtsdokumenten mit automatischer 
+                        Compliance-Prüfung und Formatierung.
+                    </p>
+                    <ul class="text-left text-sm text-gray-500 space-y-2">
+                        <li>✓ Verträge & Vereinbarungen</li>
+                        <li>✓ Klageschriften & Anträge</li>
+                        <li>✓ Rechtsgutachten</li>
+                        <li>✓ Standardbriefe</li>
+                    </ul>
+                </div>
+
+                <!-- Email Management -->
+                <div class="feature-card glass-card p-8 text-center">
+                    <div class="feature-icon w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="mail" class="w-8 h-8 text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Email Management</h3>
+                    <p class="text-gray-600 mb-6">
+                        Intelligente E-Mail-Verarbeitung mit automatischen Antworten 
+                        und Terminkoordination.
+                    </p>
+                    <ul class="text-left text-sm text-gray-500 space-y-2">
+                        <li>✓ Automatische Klassifizierung</li>
+                        <li>✓ Smart Replies</li>
+                        <li>✓ Terminvorschläge</li>
+                        <li>✓ Prioritätserkennung</li>
+                    </ul>
+                </div>
+
+                <!-- Template Bibliothek -->
+                <div class="feature-card glass-card p-8 text-center">
+                    <div class="feature-icon w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="library" class="w-8 h-8 text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Template Bibliothek</h3>
+                    <p class="text-gray-600 mb-6">
+                        Umfassende Sammlung vorgefertigter Vorlagen für alle 
+                        Rechtsbereiche und Situationen.
+                    </p>
+                    <ul class="text-left text-sm text-gray-500 space-y-2">
+                        <li>✓ 500+ Vorlagen</li>
+                        <li>✓ Alle Rechtsgebiete</li>
+                        <li>✓ Anpassbare Bausteine</li>
+                        <li>✓ Regelmäßige Updates</li>
+                    </ul>
+                </div>
+
+                <!-- KI Assistent -->
+                <div class="feature-card glass-card p-8 text-center">
+                    <div class="feature-icon w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="brain" class="w-8 h-8 text-orange-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">KI Assistent</h3>
+                    <p class="text-gray-600 mb-6">
+                        24/7 verfügbarer KI-Assistent für Rechtsberatung, 
+                        Recherche und Compliance-Prüfung.
+                    </p>
+                    <ul class="text-left text-sm text-gray-500 space-y-2">
+                        <li>✓ Sofortige Rechtsauskunft</li>
+                        <li>✓ Juristische Recherche</li>
+                        <li>✓ Compliance Check</li>
+                        <li>✓ Prozessoptimierung</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section id="benefits" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="scroll-reveal">
+                    <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+                        Warum AnwaltsAI die beste Wahl ist
+                    </h2>
+                    <p class="text-xl text-gray-600 mb-8">
+                        Unsere KI-Lösungen sind speziell für deutsche Rechtsanwälte entwickelt 
+                        und berücksichtigen alle lokalen Gesetze und Bestimmungen.
+                    </p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="shield-check" class="w-6 h-6 text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">DSGVO-konform & sicher</h3>
+                                <p class="text-gray-600">
+                                    Höchste Datenschutzstandards mit Ende-zu-Ende-Verschlüsselung 
+                                    und deutschen Servern.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="clock" class="w-6 h-6 text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">95% Zeitersparnis</h3>
+                                <p class="text-gray-600">
+                                    Automatisierung routinemäßiger Aufgaben für mehr Zeit 
+                                    bei strategischer Beratung.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="trending-up" class="w-6 h-6 text-green-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">Erhöhte Produktivität</h3>
+                                <p class="text-gray-600">
+                                    Bearbeiten Sie mehr Fälle in kürzerer Zeit bei 
+                                    gleichbleibend hoher Qualität.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="scroll-reveal">
+                    <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop&crop=face" 
+                             alt="Anwalt arbeitet mit KI" 
+                             class="w-full h-80 object-cover rounded-2xl mb-6">
+                        <div class="text-center">
+                            <blockquote class="text-lg text-gray-700 italic mb-4">
+                                "AnwaltsAI hat unsere Kanzlei revolutioniert. Wir sparen täglich 
+                                Stunden bei der Dokumentenerstellung und können uns voll auf 
+                                unsere Mandanten konzentrieren."
+                            </blockquote>
+                            <div class="font-semibold text-gray-800">Dr. Maria Schmidt</div>
+                            <div class="text-gray-600">Partnerin, Schmidt & Partner Rechtsanwälte</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+                    Was unsere Kunden sagen
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Über 500 Kanzleien vertrauen bereits auf AnwaltsAI für ihre tägliche Arbeit.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card p-8 scroll-reveal">
+                    <div class="flex items-center gap-1 mb-4">
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">
+                        "Die Dokumentenerstellung ist jetzt dreimal schneller. 
+                        AnwaltsAI versteht genau, was wir brauchen."
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" 
+                             alt="Thomas Müller" class="w-12 h-12 rounded-full">
+                        <div>
+                            <div class="font-semibold text-gray-800">Thomas Müller</div>
+                            <div class="text-gray-600 text-sm">Müller & Associates</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card p-8 scroll-reveal">
+                    <div class="flex items-center gap-1 mb-4">
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">
+                        "Endlich eine KI-Lösung, die wirklich versteht, 
+                        wie deutsche Rechtsanwälte arbeiten."
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b2c5?w=60&h=60&fit=crop&crop=face" 
+                             alt="Lisa Weber" class="w-12 h-12 rounded-full">
+                        <div>
+                            <div class="font-semibold text-gray-800">Lisa Weber</div>
+                            <div class="text-gray-600 text-sm">Weber Rechtsberatung</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card p-8 scroll-reveal">
+                    <div class="flex items-center gap-1 mb-4">
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                        <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-current"></i>
+                    </div>
+                    <p class="text-gray-700 mb-6">
+                        "Der ROI war bereits nach 3 Monaten erreicht. 
+                        Absolute Empfehlung für jede moderne Kanzlei."
+                    </p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=60&h=60&fit=crop&crop=face" 
+                             alt="Dr. Andreas Klein" class="w-12 h-12 rounded-full">
+                        <div>
+                            <div class="font-semibold text-gray-800">Dr. Andreas Klein</div>
+                            <div class="text-gray-600 text-sm">Klein Legal Partners</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+                    Transparente Preise für jede Kanzlei
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Wählen Sie das passende Paket für Ihre Kanzlei. 
+                    Alle Pläne enthalten 30 Tage kostenlosen Support.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Starter Plan -->
+                <div class="glass-card p-8 scroll-reveal">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Starter</h3>
+                    <div class="text-4xl font-bold text-blue-600 mb-6">
+                        €99<span class="text-lg text-gray-600">/Monat</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>Bis zu 100 Dokumente/Monat</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>Basis Template Bibliothek</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>E-Mail Support</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>DSGVO-konform</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        Jetzt starten
+                    </button>
+                </div>
+                
+                <!-- Professional Plan -->
+                <div class="glass-card p-8 border-2 border-purple-500 relative scroll-reveal">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-purple-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                        Beliebteste Wahl
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Professional</h3>
+                    <div class="text-4xl font-bold text-purple-600 mb-6">
+                        €299<span class="text-lg text-gray-600">/Monat</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>Unbegrenzte Dokumente</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>Vollständige Template Bibliothek</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>KI-Assistent 24/7</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>Prioritäts-Support</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>API-Zugang</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                        Jetzt starten
+                    </button>
+                </div>
+                
+                <!-- Enterprise Plan -->
+                <div class="glass-card p-8 scroll-reveal">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Enterprise</h3>
+                    <div class="text-4xl font-bold text-gray-800 mb-6">
+                        Auf Anfrage
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>Alle Professional Features</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>Individuelle Anpassungen</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>Dedicated Account Manager</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>On-Premise Deployment</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <i data-lucide="check" class="w-5 h-5 text-green-600"></i>
+                            <span>24/7 Telefon-Support</span>
+                        </li>
+                    </ul>
+                    <button class="w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition-colors">
+                        Kontakt aufnehmen
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="scroll-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold text-white mb-6">
+                    Bereit für die Zukunft der Rechtsberatung?
+                </h2>
+                <p class="text-xl text-white/90 mb-8">
+                    Starten Sie noch heute mit AnwaltsAI und erleben Sie, 
+                    wie KI Ihre Kanzlei transformieren kann.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors">
+                        30 Tage kostenlos testen
+                    </button>
+                    <button class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition-all">
+                        Demo vereinbaren
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i data-lucide="scale" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="font-display text-xl font-bold">AnwaltsAI</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Intelligente KI-Lösungen für die moderne Rechtsberatung.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="linkedin" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="twitter" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i data-lucide="facebook" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Produkt</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Funktionen</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Preise</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Integrationen</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Unternehmen</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Über uns</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Karriere</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Presse</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Hilfe-Center</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Kontakt</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Datenschutz</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Impressum</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AnwaltsAI. Alle Rechte vorbehalten. DSGVO-konform entwickelt in Deutschland.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll reveal animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.querySelector('.md\\:hidden button');
+        const mobileMenu = document.querySelector('.md\\:flex');
+        
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => {
+                // Mobile menu functionality would go here
+                console.log('Mobile menu clicked');
+            });
+        }
+
+        // CTA button interactions
+        document.querySelectorAll('.cta-button, button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Add ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add some interactive elements
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Performance optimization - Lazy load background animations
+        const heroSection = document.querySelector('.hero-bg');
+        if (heroSection && 'IntersectionObserver' in window) {
+            const heroObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'gradientShift 8s ease infinite';
+                    }
+                });
+            });
+            heroObserver.observe(heroSection);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,3110 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnwaltsAI - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            font-family: 'Inter', sans-serif; 
+        }
+        
+        /* Dashboard Architecture Styles - Updated to match login page */
+        .dashboard-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 25%, #312e81 50%, #4338ca 100%);
+        }
+        
+        .glass-morphism {
+            background: linear-gradient(135deg, rgba(67, 56, 202, 0.15), rgba(30, 27, 75, 0.1));
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 25px 50px rgba(67, 56, 202, 0.3);
+        }
+        
+        .nav-glass {
+            background: linear-gradient(135deg, rgba(67, 56, 202, 0.2), rgba(30, 27, 75, 0.15));
+            backdrop-filter: blur(25px);
+            border-right: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Interactive Card Animations */
+        .dashboard-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(0);
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow:
+                0 30px 60px rgba(67, 56, 202, 0.4),
+                0 0 0 1px rgba(139, 92, 246, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: inherit;
+            pointer-events: none;
+        }
+        
+        .dashboard-card:hover::before {
+            opacity: 1;
+        }
+        
+        /* Navigation Styles */
+        .nav-item {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-item:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(67, 56, 202, 0.1));
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(67, 56, 202, 0.2));
+            border-right: 3px solid #8b5cf6;
+        }
+        
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #8b5cf6, #3b82f6);
+        }
+        
+        /* Legal Theme Colors */
+        .legal-primary { color: #1e40af; }
+        .legal-secondary { color: #8b5cf6; }
+        .legal-accent { color: #059669; }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff, #e5e7eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .legal-gradient-text {
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Loading Animation */
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(139, 92, 246, 0.6);
+            }
+        }
+        
+        .loading-pulse {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+        }
+        
+        /* Page Transition */
+        .page-content {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .page-content.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #8b5cf6, #3b82f6);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #7c3aed, #2563eb);
+        }
+        
+        /* View Toggle Styles */
+        .view-toggle {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .view-toggle.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(67, 56, 202, 0.2));
+            color: #8b5cf6;
+        }
+        
+        .view-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="dashboard-gradient text-white antialiased overflow-x-hidden">
+    
+    <!-- Main Dashboard Layout -->
+    <div class="flex h-screen">
+        
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar nav-glass w-64 min-h-screen fixed left-0 top-0 z-40 flex flex-col">
+            <!-- Logo & Brand -->
+            <div class="p-6 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
+                        <i data-lucide="scale" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold legal-gradient-text">AnwaltsAI</h1>
+                        <p class="text-xs text-gray-400">Rechtsinnovation</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <div class="flex-1 p-4">
+                <div class="space-y-2">
+                    <a href="#dashboard" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium" data-page="dashboard">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    
+                    <a href="#emails" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium" data-page="emails">
+                        <i data-lucide="mail" class="w-5 h-5"></i>
+                        <span>E-Mails</span>
+                        <span class="ml-auto bg-red-500 text-xs px-2 py-1 rounded-full">3</span>
+                    </a>
+                    
+                    <a href="#generator" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium" data-page="generator">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                        <span>Dokument Generator</span>
+                    </a>
+                    
+                    <a href="#templates" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium" data-page="templates">
+                        <i data-lucide="bookmark" class="w-5 h-5"></i>
+                        <span>Vorlagen</span>
+                    </a>
+                    
+                    <div class="border-t border-white/10 my-4"></div>
+                    
+                    <a href="#analytics" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium" data-page="analytics">
+                        <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                        <span>Statistiken</span>
+                    </a>
+                    
+                    <a href="#settings" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium" data-page="settings">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                        <span>Einstellungen</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- User Profile -->
+            <div class="p-4 border-t border-white/10">
+                <div class="flex items-center gap-3 p-3 rounded-lg glass-morphism">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center">
+                        <span class="text-sm font-semibold">AV</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium">Dr. Anna Vogel</p>
+                        <p class="text-xs text-gray-400">Partner</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-white">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="flex-1 ml-64 min-h-screen">
+            
+            <!-- Top Header -->
+            <header class="glass-morphism border-b border-white/10 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold gradient-text">Willkommen zurück, Dr. Vogel</h2>
+                        <p class="text-gray-400">Heute ist ein guter Tag für Rechtsinnovation</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <!-- Quick Actions -->
+                        <button class="glass-morphism p-3 rounded-lg hover:bg-white/10 transition-colors">
+                            <i data-lucide="search" class="w-5 h-5"></i>
+                        </button>
+                        
+                        <button class="glass-morphism p-3 rounded-lg hover:bg-white/10 transition-colors relative">
+                            <i data-lucide="bell" class="w-5 h-5"></i>
+                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                        </button>
+                        
+                        <!-- Mobile Menu Toggle -->
+                        <button class="md:hidden glass-morphism p-3 rounded-lg" id="mobile-menu-toggle">
+                            <i data-lucide="menu" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Page Content Container -->
+            <div class="p-6 space-y-6">
+                
+                <!-- Dashboard Home Page -->
+                <section id="page-dashboard" class="page-content">
+                    <div class="space-y-6">
+                        
+                        <!-- Quick Stats -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="glass-morphism p-6 rounded-2xl">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Dokumente heute</p>
+                                        <p class="text-3xl font-bold legal-gradient-text">12</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center">
+                                        <i data-lucide="file-check" class="w-6 h-6 text-green-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-morphism p-6 rounded-2xl">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Gespeicherte Zeit</p>
+                                        <p class="text-3xl font-bold legal-gradient-text">4.5h</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                                        <i data-lucide="clock" class="w-6 h-6 text-blue-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-morphism p-6 rounded-2xl">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Erfolgsrate</p>
+                                        <p class="text-3xl font-bold legal-gradient-text">94%</p>
+                                    </div>
+                                    <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                                        <i data-lucide="trending-up" class="w-6 h-6 text-purple-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Main Dashboard Cards -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            
+                            <!-- Document Generator Card -->
+                            <div class="dashboard-card glass-morphism rounded-2xl p-8 relative overflow-hidden cursor-pointer" data-navigate="generator">
+                                <div class="relative z-10">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center">
+                                            <i data-lucide="file-plus" class="w-8 h-8 text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-bold">Dokument Generator</h3>
+                                            <p class="text-gray-400 text-sm">Erstellen Sie Rechtsdokumente mit KI</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-300 mb-6 leading-relaxed">
+                                        Nutzen Sie unsere spezialisierte KI, um deutsche Rechtsdokumente schnell und präzise zu erstellen.
+                                    </p>
+                                    
+                                    <div class="space-y-3 mb-6">
+                                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                                            <i data-lucide="check" class="w-4 h-4 text-green-400"></i>
+                                            <span>Mahnung & Zahlungserinnerung</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                                            <i data-lucide="check" class="w-4 h-4 text-green-400"></i>
+                                            <span>Verträge & Vereinbarungen</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 text-sm text-gray-400">
+                                            <i data-lucide="check" class="w-4 h-4 text-green-400"></i>
+                                            <span>Rechtsberatung & Gutachten</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="w-full py-3 px-4 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                                        <span>Jetzt starten</span>
+                                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Email Management Card -->
+                            <div class="dashboard-card glass-morphism rounded-2xl p-8 relative overflow-hidden cursor-pointer" data-navigate="emails">
+                                <div class="relative z-10">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                                            <i data-lucide="mail" class="w-8 h-8 text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-bold">E-Mail Verwaltung</h3>
+                                            <p class="text-gray-400 text-sm">Verwalten Sie Ihre Korrespondenz</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-300 mb-6 leading-relaxed">
+                                        Zentrale Verwaltung aller eingehenden E-Mails mit intelligenter KI-Unterstützung für Antworten.
+                                    </p>
+                                    
+                                    <div class="space-y-3 mb-6">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-400">Ungelesene E-Mails</span>
+                                            <span class="bg-red-500 text-white px-2 py-1 rounded text-xs">3 neue</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-400">Heute bearbeitet</span>
+                                            <span class="text-white font-medium">8</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-400">KI-Antworten generiert</span>
+                                            <span class="text-white font-medium">5</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="w-full py-3 px-4 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                                        <span>Postfach öffnen</span>
+                                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Templates Card -->
+                            <div class="dashboard-card glass-morphism rounded-2xl p-8 relative overflow-hidden cursor-pointer" data-navigate="templates">
+                                <div class="relative z-10">
+                                    <div class="flex items-center gap-4 mb-6">
+                                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center">
+                                            <i data-lucide="bookmark" class="w-8 h-8 text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="text-xl font-bold">Vorlagen</h3>
+                                            <p class="text-gray-400 text-sm">Gespeicherte Dokumentvorlagen</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <p class="text-gray-300 mb-6 leading-relaxed">
+                                        Zugriff auf Ihre persönlichen und firmeneigenen Dokumentvorlagen für effizientes Arbeiten.
+                                    </p>
+                                    
+                                    <div class="space-y-3 mb-6">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-400">Persönliche Vorlagen</span>
+                                            <span class="text-white font-medium">12</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-400">Firmenvorlagen</span>
+                                            <span class="text-white font-medium">8</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-400">Zuletzt verwendet</span>
+                                            <span class="text-white font-medium">Heute</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="w-full py-3 px-4 bg-white/10 hover:bg-white/20 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                                        <span>Vorlagen anzeigen</span>
+                                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Recent Activity -->
+                        <div class="glass-morphism rounded-2xl p-6">
+                            <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+                                <i data-lucide="activity" class="w-5 h-5 text-purple-400"></i>
+                                Letzte Aktivitäten
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
+                                    <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">Mahnung für Kunde Schmidt erstellt</p>
+                                        <p class="text-sm text-gray-400">vor 2 Stunden</p>
+                                    </div>
+                                    <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Akzeptiert</span>
+                                </div>
+                                
+                                <div class="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
+                                    <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">E-Mail Antwort generiert</p>
+                                        <p class="text-sm text-gray-400">vor 4 Stunden</p>
+                                    </div>
+                                    <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">Bearbeitet</span>
+                                </div>
+                                
+                                <div class="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
+                                    <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">Neue Vorlage "NDA" gespeichert</p>
+                                        <p class="text-sm text-gray-400">gestern</p>
+                                    </div>
+                                    <span class="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">Neu</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </section>
+                
+                <!-- Placeholder pages for other sections -->
+                <section id="page-emails" class="page-content hidden">
+                    <div class="space-y-6">
+                        
+                        <!-- Email Header -->
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-3xl font-bold legal-gradient-text">E-Mail Verwaltung</h2>
+                                <p class="text-gray-400">Zentrale Verwaltung Ihrer Korrespondenz mit KI-Unterstützung</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button id="refresh-emails" class="glass-morphism px-4 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+                                    Aktualisieren
+                                </button>
+                                <button id="compose-email" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm transition-colors">
+                                    <i data-lucide="edit" class="w-4 h-4 mr-2"></i>
+                                    Neue E-Mail
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Controls -->
+                        <div class="glass-morphism rounded-2xl p-4">
+                            <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                                <!-- Search and Filters -->
+                                <div class="flex flex-col sm:flex-row gap-3 flex-1">
+                                    <div class="relative flex-1 max-w-md">
+                                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                        <input
+                                            type="text"
+                                            id="email-search"
+                                            placeholder="E-Mails durchsuchen..."
+                                            class="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-colors"
+                                        >
+                                    </div>
+                                    
+                                    <select id="email-filter" class="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-colors">
+                                        <option value="all">Alle E-Mails</option>
+                                        <option value="unread">Ungelesen</option>
+                                        <option value="ai-responses">Mit KI-Antworten</option>
+                                        <option value="attachments">Mit Anhängen</option>
+                                        <option value="today">Heute</option>
+                                        <option value="week">Diese Woche</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- View Toggle -->
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-400">Ansicht:</span>
+                                    <button id="list-view" class="view-toggle active px-3 py-2 rounded-lg text-sm transition-colors">
+                                        <i data-lucide="list" class="w-4 h-4"></i>
+                                    </button>
+                                    <button id="preview-view" class="view-toggle px-3 py-2 rounded-lg text-sm transition-colors">
+                                        <i data-lucide="layout-panel-left" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Layout -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[600px]">
+                            
+                            <!-- Email List -->
+                            <div class="lg:col-span-1 glass-morphism rounded-2xl p-4">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold">Posteingang</h3>
+                                    <span id="email-count" class="text-sm text-gray-400">0 E-Mails</span>
+                                </div>
+                                
+                                <div id="email-list" class="space-y-2 max-h-[500px] overflow-y-auto">
+                                    <!-- Email items will be populated by JavaScript -->
+                                    <div id="email-loading" class="text-center py-8">
+                                        <div class="loading-pulse w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <i data-lucide="mail" class="w-4 h-4 text-purple-400"></i>
+                                        </div>
+                                        <p class="text-gray-400 text-sm">E-Mails werden geladen...</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Email Detail View -->
+                            <div class="lg:col-span-2 glass-morphism rounded-2xl p-6">
+                                <!-- Empty State -->
+                                <div id="email-empty-state" class="flex items-center justify-center h-full text-center">
+                                    <div>
+                                        <i data-lucide="mail-open" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                                        <h4 class="text-lg font-medium text-gray-300 mb-2">E-Mail auswählen</h4>
+                                        <p class="text-gray-400 text-sm">Wählen Sie eine E-Mail aus der Liste, um sie anzuzeigen</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Email Detail Content -->
+                                <div id="email-detail" class="hidden h-full flex flex-col">
+                                    <!-- Email Header -->
+                                    <div class="border-b border-white/10 pb-4 mb-4">
+                                        <div class="flex items-start justify-between mb-3">
+                                            <div class="flex-1">
+                                                <h3 id="email-subject" class="text-xl font-semibold mb-2"></h3>
+                                                <div class="flex items-center gap-4 text-sm text-gray-400">
+                                                    <span id="email-sender"></span>
+                                                    <span id="email-date"></span>
+                                                    <span id="email-attachments" class="hidden flex items-center gap-1">
+                                                        <i data-lucide="paperclip" class="w-4 h-4"></i>
+                                                        Anhang
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <button id="reply-email" class="glass-morphism px-3 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors">
+                                                    <i data-lucide="reply" class="w-4 h-4 mr-1"></i>
+                                                    Antworten
+                                                </button>
+                                                <button id="forward-email" class="glass-morphism px-3 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors">
+                                                    <i data-lucide="forward" class="w-4 h-4 mr-1"></i>
+                                                    Weiterleiten
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Email Content -->
+                                    <div id="email-content" class="flex-1 overflow-y-auto mb-4 p-4 bg-white/5 rounded-lg">
+                                        <!-- Email body will be populated here -->
+                                    </div>
+                                    
+                                    <!-- AI Response Section -->
+                                    <div class="border-t border-white/10 pt-4">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <h4 class="font-semibold flex items-center gap-2">
+                                                <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                                                KI-Antwort generieren
+                                            </h4>
+                                            <button id="generate-response" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm transition-colors">
+                                                <i data-lucide="wand-2" class="w-4 h-4 mr-2"></i>
+                                                Antwort generieren
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Response Options -->
+                                        <div class="grid grid-cols-3 gap-3 mb-3">
+                                            <button class="response-type bg-white/5 hover:bg-white/10 p-3 rounded-lg text-sm transition-colors" data-type="professional">
+                                                <i data-lucide="briefcase" class="w-4 h-4 mx-auto mb-1"></i>
+                                                Professionell
+                                            </button>
+                                            <button class="response-type bg-white/5 hover:bg-white/10 p-3 rounded-lg text-sm transition-colors" data-type="friendly">
+                                                <i data-lucide="smile" class="w-4 h-4 mx-auto mb-1"></i>
+                                                Freundlich
+                                            </button>
+                                            <button class="response-type bg-white/5 hover:bg-white/10 p-3 rounded-lg text-sm transition-colors" data-type="formal">
+                                                <i data-lucide="scale" class="w-4 h-4 mx-auto mb-1"></i>
+                                                Formal
+                                            </button>
+                                        </div>
+                                        
+                                        <!-- Generated Response Area -->
+                                        <div id="response-area" class="hidden">
+                                            <textarea
+                                                id="generated-response"
+                                                rows="6"
+                                                class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-colors resize-none"
+                                                placeholder="Die generierte Antwort wird hier angezeigt..."
+                                            ></textarea>
+                                            
+                                            <div class="flex items-center justify-between mt-3">
+                                                <div class="flex items-center gap-3">
+                                                    <button id="copy-response" class="glass-morphism px-3 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors">
+                                                        <i data-lucide="copy" class="w-4 h-4 mr-1"></i>
+                                                        Kopieren
+                                                    </button>
+                                                    <button id="edit-response" class="glass-morphism px-3 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors">
+                                                        <i data-lucide="edit-3" class="w-4 h-4 mr-1"></i>
+                                                        Bearbeiten
+                                                    </button>
+                                                </div>
+                                                <button id="send-response" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm transition-colors">
+                                                    <i data-lucide="send" class="w-4 h-4 mr-2"></i>
+                                                    Senden
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Email Statistics -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="glass-morphism p-4 rounded-xl text-center">
+                                <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="inbox" class="w-4 h-4 text-blue-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold" id="stat-total">0</p>
+                                <p class="text-xs text-gray-400">Gesamt</p>
+                            </div>
+                            
+                            <div class="glass-morphism p-4 rounded-xl text-center">
+                                <div class="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="mail" class="w-4 h-4 text-red-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold" id="stat-unread">0</p>
+                                <p class="text-xs text-gray-400">Ungelesen</p>
+                            </div>
+                            
+                            <div class="glass-morphism p-4 rounded-xl text-center">
+                                <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold" id="stat-ai-responses">0</p>
+                                <p class="text-xs text-gray-400">KI-Antworten</p>
+                            </div>
+                            
+                            <div class="glass-morphism p-4 rounded-xl text-center">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold" id="stat-responded">0</p>
+                                <p class="text-xs text-gray-400">Beantwortet</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </section>
+                
+                <section id="page-generator" class="page-content hidden">
+                    <div class="space-y-6">
+                        
+                        <!-- Generator Header -->
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-3xl font-bold legal-gradient-text">KI Dokument Generator</h2>
+                                <p class="text-gray-400">Erstellen Sie professionelle Rechtsdokumente mit künstlicher Intelligenz</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button id="clear-generator" class="glass-morphism px-4 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i>
+                                    Zurücksetzen
+                                </button>
+                                <button id="save-template" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-sm transition-colors">
+                                    <i data-lucide="bookmark-plus" class="w-4 h-4 mr-2"></i>
+                                    Als Vorlage speichern
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Main Generator Layout -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 min-h-[600px]">
+                            
+                            <!-- Left Panel - Input Section -->
+                            <div class="glass-morphism rounded-2xl p-6 space-y-6">
+                                <h3 class="text-xl font-semibold flex items-center gap-2">
+                                    <i data-lucide="edit-3" class="w-5 h-5 text-blue-400"></i>
+                                    Eingabe & Kontext
+                                </h3>
+                                
+                                <!-- Template Selection -->
+                                <div class="space-y-3">
+                                    <label class="block text-sm font-medium text-gray-300">
+                                        <i data-lucide="bookmark" class="w-4 h-4 inline mr-2"></i>
+                                        Vorlage auswählen (optional)
+                                    </label>
+                                    <select id="template-select" class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-colors">
+                                        <option value="">Keine Vorlage - Freie Erstellung</option>
+                                        <option value="mahnung">Mahnung / Zahlungserinnerung</option>
+                                        <option value="nda">Geheimhaltungsvereinbarung (NDA)</option>
+                                        <option value="beratungsvertrag">Beratungsvertrag</option>
+                                        <option value="kaufvertrag">Kaufvertrag</option>
+                                        <option value="mietvertrag">Mietvertrag</option>
+                                        <option value="arbeitsvertrag">Arbeitsvertrag</option>
+                                        <option value="vollmacht">Vollmacht</option>
+                                        <option value="widerspruch">Widerspruch</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Document Upload -->
+                                <div class="space-y-3">
+                                    <label class="block text-sm font-medium text-gray-300">
+                                        <i data-lucide="upload" class="w-4 h-4 inline mr-2"></i>
+                                        Dokument hochladen (optional)
+                                    </label>
+                                    <div id="upload-area" class="border-2 border-dashed border-white/20 rounded-lg p-6 text-center hover:border-purple-400 transition-colors cursor-pointer">
+                                        <i data-lucide="file-plus" class="w-8 h-8 text-gray-400 mx-auto mb-2"></i>
+                                        <p class="text-gray-400 mb-1">PDF oder DOCX Datei hier ablegen</p>
+                                        <p class="text-xs text-gray-500">oder klicken zum Auswählen</p>
+                                        <input type="file" id="file-input" class="hidden" accept=".pdf,.docx,.doc">
+                                    </div>
+                                    <div id="uploaded-file" class="hidden bg-white/5 rounded-lg p-3 flex items-center gap-3">
+                                        <i data-lucide="file-text" class="w-5 h-5 text-green-400"></i>
+                                        <span id="file-name" class="flex-1 text-sm"></span>
+                                        <button id="remove-file" class="text-red-400 hover:text-red-300">
+                                            <i data-lucide="x" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Prompt Input -->
+                                <div class="space-y-3">
+                                    <label class="block text-sm font-medium text-gray-300">
+                                        <i data-lucide="message-square" class="w-4 h-4 inline mr-2"></i>
+                                        Beschreibung & Anweisungen
+                                    </label>
+                                    <textarea
+                                        id="prompt-input"
+                                        rows="8"
+                                        class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-colors resize-none"
+                                        placeholder="Beschreiben Sie das gewünschte Dokument...
+
+Beispiele:
+• Erstelle eine Mahnung für Kunde Max Mustermann, Rechnungsnummer 2024-001, Betrag 1.500€, Zahlungsziel war der 15.01.2024
+• Verfasse einen Beratungsvertrag zwischen unserer Kanzlei und der Firma ABC GmbH für Arbeitsrecht
+• Generiere einen Widerspruch gegen einen Bußgeldbescheid wegen Geschwindigkeitsüberschreitung"></textarea>
+                                </div>
+                                
+                                <!-- Additional Options -->
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-3">
+                                        <input type="checkbox" id="formal-tone" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-400">
+                                        <label for="formal-tone" class="text-sm text-gray-300">Besonders formeller Ton</label>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <input type="checkbox" id="include-legal-refs" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-400">
+                                        <label for="include-legal-refs" class="text-sm text-gray-300">Gesetzesverweise einbeziehen</label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Generate Button -->
+                                <button id="generate-btn" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 py-4 rounded-lg font-semibold text-lg transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                                    <span id="generate-text">Dokument generieren</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Right Panel - Output Section -->
+                            <div class="glass-morphism rounded-2xl p-6 flex flex-col">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-xl font-semibold flex items-center gap-2">
+                                        <i data-lucide="file-text" class="w-5 h-5 text-green-400"></i>
+                                        Generiertes Dokument
+                                    </h3>
+                                    <div class="flex items-center gap-2">
+                                        <button id="copy-output" class="glass-morphism px-3 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors" title="Kopieren">
+                                            <i data-lucide="copy" class="w-4 h-4"></i>
+                                        </button>
+                                        <button id="download-output" class="glass-morphism px-3 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors" title="Herunterladen">
+                                            <i data-lucide="download" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Output Display -->
+                                <div class="flex-1 relative">
+                                    <!-- Loading State -->
+                                    <div id="loading-state" class="hidden absolute inset-0 flex items-center justify-center bg-white/5 rounded-lg">
+                                        <div class="text-center">
+                                            <div class="loading-pulse w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <i data-lucide="sparkles" class="w-8 h-8 text-purple-400 animate-spin"></i>
+                                            </div>
+                                            <p class="text-gray-300 font-medium">KI generiert Ihr Dokument...</p>
+                                            <p class="text-sm text-gray-400 mt-1">Dies kann einige Sekunden dauern</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Empty State -->
+                                    <div id="empty-state" class="flex items-center justify-center h-full text-center">
+                                        <div>
+                                            <i data-lucide="file-plus" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                                            <h4 class="text-lg font-medium text-gray-300 mb-2">Bereit für die Generierung</h4>
+                                            <p class="text-gray-400 text-sm">Füllen Sie die Eingabefelder aus und klicken Sie auf "Generieren"</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Output Text Area -->
+                                    <textarea
+                                        id="output-text"
+                                        class="hidden w-full h-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-colors resize-none"
+                                        placeholder="Das generierte Dokument wird hier angezeigt..."
+                                    ></textarea>
+                                </div>
+                                
+                                <!-- Feedback Buttons -->
+                                <div id="feedback-section" class="hidden mt-6 space-y-4">
+                                    <div class="border-t border-white/10 pt-4">
+                                        <p class="text-sm text-gray-400 mb-3">Wie bewerten Sie das generierte Dokument?</p>
+                                        <div class="grid grid-cols-3 gap-3">
+                                            <button id="accept-btn" class="bg-green-600 hover:bg-green-700 py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                                                <i data-lucide="check" class="w-4 h-4"></i>
+                                                Akzeptieren
+                                            </button>
+                                            <button id="improve-btn" class="bg-blue-600 hover:bg-blue-700 py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                                Verbessern
+                                            </button>
+                                            <button id="reject-btn" class="bg-red-600 hover:bg-red-700 py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                                                <i data-lucide="x" class="w-4 h-4"></i>
+                                                Ablehnen
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Recent Generations -->
+                        <div class="glass-morphism rounded-2xl p-6">
+                            <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                                <i data-lucide="history" class="w-5 h-5 text-purple-400"></i>
+                                Letzte Generierungen
+                            </h3>
+                            
+                            <div id="recent-generations" class="space-y-3">
+                                <!-- Recent items will be populated by JavaScript -->
+                                <div class="text-center py-8 text-gray-400">
+                                    <i data-lucide="clock" class="w-8 h-8 mx-auto mb-2"></i>
+                                    <p>Noch keine Dokumente generiert</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </section>
+                
+                <section id="page-templates" class="page-content hidden">
+                    <div class="space-y-6">
+                        
+                        <!-- Templates Header -->
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-3xl font-bold legal-gradient-text">Vorlagen Verwaltung</h2>
+                                <p class="text-gray-400">Verwalten Sie Ihre Dokumentvorlagen für effizientes Arbeiten</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button id="import-template" class="glass-morphism px-4 py-2 rounded-lg text-sm hover:bg-white/10 transition-colors">
+                                    <i data-lucide="upload" class="w-4 h-4 mr-2"></i>
+                                    Importieren
+                                </button>
+                                <button id="create-template" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm transition-colors">
+                                    <i data-lucide="plus" class="w-4 h-4 mr-2"></i>
+                                    Neue Vorlage
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Template Categories -->
+                        <div class="glass-morphism rounded-2xl p-4">
+                            <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                                <!-- Search and Filters -->
+                                <div class="flex flex-col sm:flex-row gap-3 flex-1">
+                                    <div class="relative flex-1 max-w-md">
+                                        <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                                        <input
+                                            type="text"
+                                            id="template-search"
+                                            placeholder="Vorlagen durchsuchen..."
+                                            class="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-colors"
+                                        >
+                                    </div>
+                                    
+                                    <select id="template-category-filter" class="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white focus:border-green-400 focus:ring-2 focus:ring-green-400/20 transition-colors">
+                                        <option value="all">Alle Kategorien</option>
+                                        <option value="system">System-Vorlagen</option>
+                                        <option value="personal">Persönliche Vorlagen</option>
+                                        <option value="firm">Firmen-Vorlagen</option>
+                                        <option value="contracts">Verträge</option>
+                                        <option value="letters">Briefe</option>
+                                        <option value="legal">Rechtsdokumente</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- View Options -->
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-gray-400">Sortierung:</span>
+                                    <select id="template-sort" class="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm">
+                                        <option value="name">Name</option>
+                                        <option value="date">Erstellungsdatum</option>
+                                        <option value="usage">Häufigkeit</option>
+                                        <option value="category">Kategorie</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Templates Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            
+                            <!-- System Templates Section -->
+                            <div class="md:col-span-2 lg:col-span-3">
+                                <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                                    <i data-lucide="shield-check" class="w-5 h-5 text-blue-400"></i>
+                                    System-Vorlagen
+                                </h3>
+                            </div>
+                            
+                            <div id="system-templates" class="md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- System templates will be populated by JavaScript -->
+                            </div>
+                            
+                            <!-- Personal Templates Section -->
+                            <div class="md:col-span-2 lg:col-span-3 mt-8">
+                                <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                                    <i data-lucide="user" class="w-5 h-5 text-purple-400"></i>
+                                    Persönliche Vorlagen
+                                </h3>
+                            </div>
+                            
+                            <div id="personal-templates" class="md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Personal templates will be populated by JavaScript -->
+                            </div>
+                            
+                            <!-- Firm Templates Section -->
+                            <div class="md:col-span-2 lg:col-span-3 mt-8">
+                                <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                                    <i data-lucide="building" class="w-5 h-5 text-green-400"></i>
+                                    Firmen-Vorlagen
+                                </h3>
+                            </div>
+                            
+                            <div id="firm-templates" class="md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Firm templates will be populated by JavaScript -->
+                            </div>
+                            
+                        </div>
+                        
+                        <!-- Template Statistics -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="glass-morphism p-4 rounded-xl text-center">
+                                <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="file-text" class="w-4 h-4 text-blue-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold" id="stat-total-templates">0</p>
+                                <p class="text-xs text-gray-400">Gesamt</p>
+                            </div>
+                            
+                            <div class="glass-morphism p-4 rounded-xl text-center">
+                                <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="user" class="w-4 h-4 text-purple-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold" id="stat-personal-templates">0</p>
+                                <p class="text-xs text-gray-400">Persönlich</p>
+                            </div>
+                            
+                            <div class="glass-morphism p-4 rounded-xl text-center">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="building" class="w-4 h-4 text-green-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold" id="stat-firm-templates">0</p>
+                                <p class="text-xs text-gray-400">Firma</p>
+                            </div>
+                            
+                            <div class="glass-morphism p-4 rounded-xl text-center">
+                                <div class="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                    <i data-lucide="trending-up" class="w-4 h-4 text-yellow-400"></i>
+                                </div>
+                                <p class="text-2xl font-bold" id="stat-most-used">0</p>
+                                <p class="text-xs text-gray-400">Meist genutzt</p>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </section>
+                
+                <section id="page-analytics" class="page-content hidden">
+                    <div class="text-center py-12">
+                        <i data-lucide="bar-chart-3" class="w-16 h-16 text-yellow-400 mx-auto mb-4"></i>
+                        <h2 class="text-2xl font-bold mb-2">Statistiken</h2>
+                        <p class="text-gray-400">Analytics Interface wird geladen...</p>
+                    </div>
+                </section>
+                
+                <section id="page-settings" class="page-content hidden">
+                    <div class="text-center py-12">
+                        <i data-lucide="settings" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i>
+                        <h2 class="text-2xl font-bold mb-2">Einstellungen</h2>
+                        <p class="text-gray-400">Settings Interface wird geladen...</p>
+                    </div>
+                </section>
+                
+            </div>
+            
+        </main>
+        
+    </div>
+    
+    <!-- JavaScript for Dashboard Functionality -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+        
+        // Dashboard Navigation System
+        class DashboardNavigation {
+            constructor() {
+                this.currentPage = 'dashboard';
+                this.navItems = document.querySelectorAll('.nav-item');
+                this.pages = document.querySelectorAll('.page-content');
+                this.dashboardCards = document.querySelectorAll('.dashboard-card[data-navigate]');
+                this.mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+                this.sidebar = document.querySelector('.sidebar');
+                
+                this.init();
+            }
+            
+            init() {
+                // Navigation event listeners
+                this.navItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const page = item.dataset.page;
+                        if (page) {
+                            this.navigateToPage(page);
+                        }
+                    });
+                });
+                
+                // Dashboard card navigation
+                this.dashboardCards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        const page = card.dataset.navigate;
+                        if (page) {
+                            this.navigateToPage(page);
+                        }
+                    });
+                });
+                
+                // Mobile menu toggle
+                if (this.mobileMenuToggle && this.sidebar) {
+                    this.mobileMenuToggle.addEventListener('click', () => {
+                        this.sidebar.classList.toggle('mobile-open');
+                    });
+                }
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.sidebar.contains(e.target) && !this.mobileMenuToggle.contains(e.target)) {
+                        this.sidebar.classList.remove('mobile-open');
+                    }
+                });
+            }
+            
+            navigateToPage(pageId) {
+                // Hide current page
+                const currentPageElement = document.getElementById(`page-${this.currentPage}`);
+                if (currentPageElement) {
+                    currentPageElement.classList.add('hidden');
+                }
+                
+                // Show new page
+                const newPageElement = document.getElementById(`page-${pageId}`);
+                if (newPageElement) {
+                    newPageElement.classList.remove('hidden');
+                }
+                
+                // Update navigation active state
+                this.navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.page === pageId) {
+                        item.classList.add('active');
+                    }
+                });
+                
+                this.currentPage = pageId;
+                
+                // Close mobile menu
+                this.sidebar.classList.remove('mobile-open');
+                
+                // Call page-specific initialization
+                this.initializePage(pageId);
+            }
+            
+            initializePage(pageId) {
+                switch (pageId) {
+                    case 'generator':
+                        this.loadDocumentGenerator();
+                        break;
+                    case 'emails':
+                        this.loadEmailInterface();
+                        break;
+                    case 'templates':
+                        this.loadTemplatesInterface();
+                        break;
+                    default:
+                        console.log(`Loading page: ${pageId}`);
+                }
+            }
+            
+            // API Placeholder Methods
+            loadDocumentGenerator() {
+                console.log('API Call: Loading document generator interface...');
+                // Initialize document generator when page loads
+                if (!window.documentGenerator) {
+                    window.documentGenerator = new DocumentGenerator();
+                }
+            }
+            
+            loadEmailInterface() {
+                console.log('API Call: Loading email interface...');
+                // Initialize email manager when page loads
+                if (!window.emailManager) {
+                    window.emailManager = new EmailManager();
+                }
+            }
+            
+            loadTemplatesInterface() {
+                console.log('API Call: Loading templates interface...');
+                // Initialize template manager when page loads
+                if (!window.templateManager) {
+                    window.templateManager = new TemplateManager();
+                }
+            }
+        }
+        
+        // Authentication Functions
+        function checkAuthentication() {
+            const userData = localStorage.getItem('anwalts_ai_user');
+            if (!userData) {
+                // Redirect to login if not authenticated
+                window.location.href = '.superdesign/design_iterations/anwalts_ai_enhanced.html';
+                return false;
+            }
+            
+            const currentUser = JSON.parse(userData);
+            updateUserDisplay(currentUser);
+            return true;
+        }
+        
+        function updateUserDisplay(user) {
+            // Update user avatar and name in header
+            const userAvatar = document.querySelector('.user-avatar');
+            const userName = document.querySelector('.user-name');
+            const userEmail = document.querySelector('.user-email');
+            
+            if (userAvatar && user.name) {
+                userAvatar.textContent = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            }
+            if (userName) userName.textContent = user.name;
+            if (userEmail) userEmail.textContent = user.email;
+        }
+        
+        function logout() {
+            localStorage.removeItem('anwalts_ai_user');
+            window.location.href = '.superdesign/design_iterations/anwalts_ai_enhanced.html';
+        }
+
+        // Initialize Dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication first
+            if (!checkAuthentication()) {
+                return;
+            }
+            
+            window.dashboardNavigation = new DashboardNavigation();
+            
+            // Add logout functionality
+            const logoutButton = document.querySelector('[data-action="logout"]');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', logout);
+            }
+            
+            // Add some interactive feedback for cards
+            const cards = document.querySelectorAll('.dashboard-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-8px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+        
+        // Template Manager Class
+        class TemplateManager {
+            constructor() {
+                this.templates = [];
+                this.currentFilter = 'all';
+                this.currentSort = 'name';
+                this.init();
+            }
+            
+            init() {
+                // Get DOM elements
+                this.elements = {
+                    importTemplate: document.getElementById('import-template'),
+                    createTemplate: document.getElementById('create-template'),
+                    templateSearch: document.getElementById('template-search'),
+                    templateCategoryFilter: document.getElementById('template-category-filter'),
+                    templateSort: document.getElementById('template-sort'),
+                    systemTemplates: document.getElementById('system-templates'),
+                    personalTemplates: document.getElementById('personal-templates'),
+                    firmTemplates: document.getElementById('firm-templates'),
+                    statTotalTemplates: document.getElementById('stat-total-templates'),
+                    statPersonalTemplates: document.getElementById('stat-personal-templates'),
+                    statFirmTemplates: document.getElementById('stat-firm-templates'),
+                    statMostUsed: document.getElementById('stat-most-used')
+                };
+                
+                this.bindEvents();
+                this.loadTemplates();
+            }
+            
+            bindEvents() {
+                // Import and create
+                this.elements.importTemplate.addEventListener('click', this.importTemplate.bind(this));
+                this.elements.createTemplate.addEventListener('click', this.createNewTemplate.bind(this));
+                
+                // Search and filter
+                this.elements.templateSearch.addEventListener('input', this.handleSearch.bind(this));
+                this.elements.templateCategoryFilter.addEventListener('change', this.handleFilter.bind(this));
+                this.elements.templateSort.addEventListener('change', this.handleSort.bind(this));
+            }
+            
+            async loadTemplates() {
+                try {
+                    const result = await AnwaltsAI_API.getTemplates();
+                    if (result.success) {
+                        this.templates = result.templates;
+                        this.renderTemplates();
+                        this.updateStatistics();
+                    }
+                } catch (error) {
+                    console.error('Error loading templates:', error);
+                    this.showError('Fehler beim Laden der Vorlagen');
+                }
+            }
+            
+            renderTemplates() {
+                const filteredTemplates = this.getFilteredTemplates();
+                
+                // Group templates by type
+                const systemTemplates = filteredTemplates.filter(t => t.type === 'system');
+                const personalTemplates = filteredTemplates.filter(t => t.type === 'personal');
+                const firmTemplates = filteredTemplates.filter(t => t.type === 'firm');
+                
+                this.renderTemplateGroup(this.elements.systemTemplates, systemTemplates, 'system');
+                this.renderTemplateGroup(this.elements.personalTemplates, personalTemplates, 'personal');
+                this.renderTemplateGroup(this.elements.firmTemplates, firmTemplates, 'firm');
+            }
+            
+            renderTemplateGroup(container, templates, type) {
+                if (templates.length === 0) {
+                    container.innerHTML = `
+                        <div class="md:col-span-2 lg:col-span-3 text-center py-8 text-gray-400">
+                            <i data-lucide="file-plus" class="w-8 h-8 mx-auto mb-2"></i>
+                            <p>Keine ${this.getTypeLabel(type)} gefunden</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = templates.map(template => this.renderTemplateCard(template)).join('');
+                }
+                
+                lucide.createIcons();
+            }
+            
+            renderTemplateCard(template) {
+                const iconClass = this.getTemplateIcon(template.category);
+                const colorClass = this.getTemplateColor(template.type);
+                
+                return `
+                    <div class="template-card glass-morphism rounded-xl p-6 hover:bg-white/10 transition-all duration-300 cursor-pointer" data-template-id="${template.id}">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 ${colorClass} rounded-xl flex items-center justify-center">
+                                    <i data-lucide="${iconClass}" class="w-6 h-6 text-white"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-white">${template.name}</h4>
+                                    <p class="text-xs text-gray-400">${this.getTypeLabel(template.type)}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <button class="text-gray-400 hover:text-white p-1 rounded" onclick="event.stopPropagation(); templateManager.useTemplate('${template.id}')" title="Verwenden">
+                                    <i data-lucide="play" class="w-4 h-4"></i>
+                                </button>
+                                ${template.type !== 'system' ? `
+                                    <button class="text-gray-400 hover:text-white p-1 rounded" onclick="event.stopPropagation(); templateManager.editTemplate('${template.id}')" title="Bearbeiten">
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </button>
+                                    <button class="text-gray-400 hover:text-red-400 p-1 rounded" onclick="event.stopPropagation(); templateManager.deleteTemplate('${template.id}')" title="Löschen">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-400">Kategorie:</span>
+                                <span class="text-white">${this.getCategoryLabel(template.category)}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-400">Verwendet:</span>
+                                <span class="text-white">${template.usageCount || 0}x</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-400">Erstellt:</span>
+                                <span class="text-white">${new Date(template.createdAt || Date.now()).toLocaleDateString('de-DE')}</span>
+                            </div>
+                        </div>
+                        
+                        ${template.description ? `<p class="text-sm text-gray-300 mb-4">${template.description}</p>` : ''}
+                        
+                        <div class="flex items-center gap-2">
+                            <button class="flex-1 bg-white/10 hover:bg-white/20 py-2 px-3 rounded-lg text-sm transition-colors" onclick="event.stopPropagation(); templateManager.previewTemplate('${template.id}')">
+                                <i data-lucide="eye" class="w-4 h-4 mr-1"></i>
+                                Vorschau
+                            </button>
+                            <button class="flex-1 bg-green-600 hover:bg-green-700 py-2 px-3 rounded-lg text-sm transition-colors" onclick="event.stopPropagation(); templateManager.useTemplate('${template.id}')">
+                                <i data-lucide="file-plus" class="w-4 h-4 mr-1"></i>
+                                Verwenden
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            getFilteredTemplates() {
+                let filtered = this.templates;
+                
+                // Apply search filter
+                const searchTerm = this.elements.templateSearch.value.toLowerCase().trim();
+                if (searchTerm) {
+                    filtered = filtered.filter(template =>
+                        template.name.toLowerCase().includes(searchTerm) ||
+                        template.description?.toLowerCase().includes(searchTerm) ||
+                        template.category.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                // Apply category filter
+                if (this.currentFilter !== 'all') {
+                    if (['system', 'personal', 'firm'].includes(this.currentFilter)) {
+                        filtered = filtered.filter(template => template.type === this.currentFilter);
+                    } else {
+                        filtered = filtered.filter(template => template.category === this.currentFilter);
+                    }
+                }
+                
+                // Apply sorting
+                filtered.sort((a, b) => {
+                    switch (this.currentSort) {
+                        case 'name':
+                            return a.name.localeCompare(b.name);
+                        case 'date':
+                            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+                        case 'usage':
+                            return (b.usageCount || 0) - (a.usageCount || 0);
+                        case 'category':
+                            return a.category.localeCompare(b.category);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                return filtered;
+            }
+            
+            handleSearch() {
+                this.renderTemplates();
+            }
+            
+            handleFilter() {
+                this.currentFilter = this.elements.templateCategoryFilter.value;
+                this.renderTemplates();
+            }
+            
+            handleSort() {
+                this.currentSort = this.elements.templateSort.value;
+                this.renderTemplates();
+            }
+            
+            useTemplate(templateId) {
+                const template = this.templates.find(t => t.id === templateId);
+                if (template) {
+                    // Increment usage count
+                    template.usageCount = (template.usageCount || 0) + 1;
+                    
+                    // Navigate to document generator with template pre-selected
+                    window.dashboardNavigation.navigateToPage('generator');
+                    
+                    // Wait for generator to load, then set template
+                    setTimeout(() => {
+                        if (window.documentGenerator && window.documentGenerator.elements.templateSelect) {
+                            // Map template ID to select value
+                            const selectValue = this.getTemplateSelectValue(template);
+                            window.documentGenerator.elements.templateSelect.value = selectValue;
+                            window.documentGenerator.handleTemplateChange();
+                        }
+                    }, 100);
+                    
+                    console.log('Using template:', template.name);
+                }
+            }
+            
+            getTemplateSelectValue(template) {
+                // Map template categories to document generator select values
+                const mapping = {
+                    'payment': 'mahnung',
+                    'contracts': 'beratungsvertrag',
+                    'legal': 'widerspruch'
+                };
+                return mapping[template.category] || template.id;
+            }
+            
+            previewTemplate(templateId) {
+                const template = this.templates.find(t => t.id === templateId);
+                if (template) {
+                    alert(`Vorschau für "${template.name}":\n\n${template.description || 'Keine Beschreibung verfügbar'}`);
+                }
+            }
+            
+            editTemplate(templateId) {
+                const template = this.templates.find(t => t.id === templateId);
+                if (template) {
+                    const newName = prompt('Neuer Name für die Vorlage:', template.name);
+                    if (newName && newName.trim()) {
+                        template.name = newName.trim();
+                        this.renderTemplates();
+                        console.log('Template edited:', template);
+                    }
+                }
+            }
+            
+            deleteTemplate(templateId) {
+                const template = this.templates.find(t => t.id === templateId);
+                if (template && confirm(`Möchten Sie die Vorlage "${template.name}" wirklich löschen?`)) {
+                    this.templates = this.templates.filter(t => t.id !== templateId);
+                    this.renderTemplates();
+                    this.updateStatistics();
+                    console.log('Template deleted:', template);
+                }
+            }
+            
+            createNewTemplate() {
+                const name = prompt('Name für die neue Vorlage:');
+                if (name && name.trim()) {
+                    const newTemplate = {
+                        id: 'custom_' + Date.now(),
+                        name: name.trim(),
+                        type: 'personal',
+                        category: 'legal',
+                        description: 'Benutzerdefinierte Vorlage',
+                        createdAt: new Date().toISOString(),
+                        usageCount: 0
+                    };
+                    
+                    this.templates.push(newTemplate);
+                    this.renderTemplates();
+                    this.updateStatistics();
+                    console.log('New template created:', newTemplate);
+                }
+            }
+            
+            importTemplate() {
+                console.log('Importing template...');
+                alert('Template-Import wird implementiert...');
+            }
+            
+            updateStatistics() {
+                const total = this.templates.length;
+                const personal = this.templates.filter(t => t.type === 'personal').length;
+                const firm = this.templates.filter(t => t.type === 'firm').length;
+                const mostUsed = Math.max(...this.templates.map(t => t.usageCount || 0));
+                
+                this.elements.statTotalTemplates.textContent = total;
+                this.elements.statPersonalTemplates.textContent = personal;
+                this.elements.statFirmTemplates.textContent = firm;
+                this.elements.statMostUsed.textContent = mostUsed;
+            }
+            
+            getTemplateIcon(category) {
+                const icons = {
+                    'contracts': 'file-text',
+                    'letters': 'mail',
+                    'legal': 'scale',
+                    'payment': 'credit-card',
+                    'default': 'bookmark'
+                };
+                return icons[category] || icons.default;
+            }
+            
+            getTemplateColor(type) {
+                const colors = {
+                    'system': 'bg-gradient-to-br from-blue-500 to-blue-600',
+                    'personal': 'bg-gradient-to-br from-purple-500 to-purple-600',
+                    'firm': 'bg-gradient-to-br from-green-500 to-green-600'
+                };
+                return colors[type] || colors.personal;
+            }
+            
+            getTypeLabel(type) {
+                const labels = {
+                    'system': 'System',
+                    'personal': 'Persönlich',
+                    'firm': 'Firma'
+                };
+                return labels[type] || type;
+            }
+            
+            getCategoryLabel(category) {
+                const labels = {
+                    'contracts': 'Verträge',
+                    'letters': 'Briefe',
+                    'legal': 'Rechtsdokumente',
+                    'payment': 'Zahlungen'
+                };
+                return labels[category] || category;
+            }
+            
+            showError(message) {
+                console.error(message);
+                alert(message);
+            }
+        }
+
+        // Email Manager Class
+        class EmailManager {
+            constructor() {
+                this.emails = [];
+                this.currentEmail = null;
+                this.currentFilter = 'all';
+                this.currentView = 'list';
+                this.init();
+            }
+            
+            init() {
+                // Get DOM elements
+                this.elements = {
+                    refreshEmails: document.getElementById('refresh-emails'),
+                    composeEmail: document.getElementById('compose-email'),
+                    emailSearch: document.getElementById('email-search'),
+                    emailFilter: document.getElementById('email-filter'),
+                    listView: document.getElementById('list-view'),
+                    previewView: document.getElementById('preview-view'),
+                    emailList: document.getElementById('email-list'),
+                    emailCount: document.getElementById('email-count'),
+                    emailLoading: document.getElementById('email-loading'),
+                    emailEmptyState: document.getElementById('email-empty-state'),
+                    emailDetail: document.getElementById('email-detail'),
+                    emailSubject: document.getElementById('email-subject'),
+                    emailSender: document.getElementById('email-sender'),
+                    emailDate: document.getElementById('email-date'),
+                    emailAttachments: document.getElementById('email-attachments'),
+                    emailContent: document.getElementById('email-content'),
+                    replyEmail: document.getElementById('reply-email'),
+                    forwardEmail: document.getElementById('forward-email'),
+                    generateResponse: document.getElementById('generate-response'),
+                    responseArea: document.getElementById('response-area'),
+                    generatedResponse: document.getElementById('generated-response'),
+                    copyResponse: document.getElementById('copy-response'),
+                    editResponse: document.getElementById('edit-response'),
+                    sendResponse: document.getElementById('send-response'),
+                    statTotal: document.getElementById('stat-total'),
+                    statUnread: document.getElementById('stat-unread'),
+                    statAiResponses: document.getElementById('stat-ai-responses'),
+                    statResponded: document.getElementById('stat-responded')
+                };
+                
+                this.bindEvents();
+                this.loadEmails();
+            }
+            
+            bindEvents() {
+                // Refresh and compose
+                this.elements.refreshEmails.addEventListener('click', this.loadEmails.bind(this));
+                this.elements.composeEmail.addEventListener('click', this.composeNewEmail.bind(this));
+                
+                // Search and filter
+                this.elements.emailSearch.addEventListener('input', this.handleSearch.bind(this));
+                this.elements.emailFilter.addEventListener('change', this.handleFilter.bind(this));
+                
+                // View toggles
+                this.elements.listView.addEventListener('click', () => this.switchView('list'));
+                this.elements.previewView.addEventListener('click', () => this.switchView('preview'));
+                
+                // Email actions
+                this.elements.replyEmail.addEventListener('click', this.replyToEmail.bind(this));
+                this.elements.forwardEmail.addEventListener('click', this.forwardEmail.bind(this));
+                this.elements.generateResponse.addEventListener('click', this.generateAIResponse.bind(this));
+                
+                // Response actions
+                this.elements.copyResponse.addEventListener('click', this.copyResponse.bind(this));
+                this.elements.editResponse.addEventListener('click', this.editResponse.bind(this));
+                this.elements.sendResponse.addEventListener('click', this.sendResponse.bind(this));
+                
+                // Response type buttons
+                document.querySelectorAll('.response-type').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.response-type').forEach(b => b.classList.remove('bg-purple-600'));
+                        btn.classList.add('bg-purple-600');
+                        this.selectedResponseType = btn.dataset.type;
+                    });
+                });
+            }
+            
+            async loadEmails() {
+                this.showLoadingState();
+                
+                try {
+                    const result = await AnwaltsAI_API.getEmails();
+                    if (result.success) {
+                        this.emails = result.emails;
+                        this.renderEmailList();
+                        this.updateStatistics();
+                    }
+                } catch (error) {
+                    console.error('Error loading emails:', error);
+                    this.showError('Fehler beim Laden der E-Mails');
+                }
+            }
+            
+            showLoadingState() {
+                this.elements.emailLoading.classList.remove('hidden');
+                this.elements.emailList.classList.add('hidden');
+            }
+            
+            renderEmailList() {
+                this.elements.emailLoading.classList.add('hidden');
+                this.elements.emailList.classList.remove('hidden');
+                
+                const filteredEmails = this.getFilteredEmails();
+                this.elements.emailCount.textContent = `${filteredEmails.length} E-Mails`;
+                
+                if (filteredEmails.length === 0) {
+                    this.elements.emailList.innerHTML = `
+                        <div class="text-center py-8 text-gray-400">
+                            <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2"></i>
+                            <p>Keine E-Mails gefunden</p>
+                        </div>
+                    `;
+                } else {
+                    this.elements.emailList.innerHTML = filteredEmails.map(email => `
+                        <div class="email-item p-3 rounded-lg hover:bg-white/5 cursor-pointer transition-colors ${email.read ? '' : 'bg-blue-500/10 border-l-2 border-blue-400'}" data-email-id="${email.id}">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <p class="font-medium text-sm truncate">${email.sender}</p>
+                                        ${email.hasAttachment ? '<i data-lucide="paperclip" class="w-3 h-3 text-gray-400 flex-shrink-0"></i>' : ''}
+                                        ${email.hasAIResponse ? '<i data-lucide="sparkles" class="w-3 h-3 text-purple-400 flex-shrink-0"></i>' : ''}
+                                    </div>
+                                    <p class="text-sm text-gray-300 truncate mb-1">${email.subject}</p>
+                                    <p class="text-xs text-gray-400">${this.formatDate(email.date)}</p>
+                                </div>
+                                <div class="flex items-center gap-1 ml-2">
+                                    ${!email.read ? '<div class="w-2 h-2 bg-blue-400 rounded-full"></div>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                // Add click event listeners to email items
+                document.querySelectorAll('.email-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const emailId = parseInt(item.dataset.emailId);
+                        this.selectEmail(emailId);
+                    });
+                });
+                
+                lucide.createIcons();
+            }
+            
+            getFilteredEmails() {
+                let filtered = this.emails;
+                
+                // Apply search filter
+                const searchTerm = this.elements.emailSearch.value.toLowerCase().trim();
+                if (searchTerm) {
+                    filtered = filtered.filter(email =>
+                        email.subject.toLowerCase().includes(searchTerm) ||
+                        email.sender.toLowerCase().includes(searchTerm) ||
+                        email.content.toLowerCase().includes(searchTerm)
+                    );
+                }
+                
+                // Apply selected filter
+                switch (this.currentFilter) {
+                    case 'unread':
+                        filtered = filtered.filter(email => !email.read);
+                        break;
+                    case 'ai-responses':
+                        filtered = filtered.filter(email => email.hasAIResponse);
+                        break;
+                    case 'attachments':
+                        filtered = filtered.filter(email => email.hasAttachment);
+                        break;
+                    case 'today':
+                        const today = new Date().toDateString();
+                        filtered = filtered.filter(email => new Date(email.date).toDateString() === today);
+                        break;
+                    case 'week':
+                        const weekAgo = new Date();
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        filtered = filtered.filter(email => new Date(email.date) >= weekAgo);
+                        break;
+                }
+                
+                return filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+            
+            handleSearch() {
+                this.renderEmailList();
+            }
+            
+            handleFilter() {
+                this.currentFilter = this.elements.emailFilter.value;
+                this.renderEmailList();
+            }
+            
+            switchView(view) {
+                this.currentView = view;
+                document.querySelectorAll('.view-toggle').forEach(btn => btn.classList.remove('active'));
+                
+                if (view === 'list') {
+                    this.elements.listView.classList.add('active');
+                } else {
+                    this.elements.previewView.classList.add('active');
+                }
+            }
+            
+            selectEmail(emailId) {
+                const email = this.emails.find(e => e.id === emailId);
+                if (!email) return;
+                
+                this.currentEmail = email;
+                
+                // Mark as read
+                if (!email.read) {
+                    email.read = true;
+                    AnwaltsAI_API.markEmailAsRead(emailId);
+                    this.renderEmailList();
+                    this.updateStatistics();
+                }
+                
+                // Show email detail
+                this.showEmailDetail(email);
+            }
+            
+            showEmailDetail(email) {
+                this.elements.emailEmptyState.classList.add('hidden');
+                this.elements.emailDetail.classList.remove('hidden');
+                
+                this.elements.emailSubject.textContent = email.subject;
+                this.elements.emailSender.textContent = email.sender;
+                this.elements.emailDate.textContent = this.formatDate(email.date);
+                this.elements.emailContent.innerHTML = this.formatEmailContent(email.content);
+                
+                if (email.hasAttachment) {
+                    this.elements.emailAttachments.classList.remove('hidden');
+                } else {
+                    this.elements.emailAttachments.classList.add('hidden');
+                }
+                
+                // Hide response area initially
+                this.elements.responseArea.classList.add('hidden');
+            }
+            
+            formatEmailContent(content) {
+                return content.replace(/\n/g, '<br>');
+            }
+            
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffInHours = (now - date) / (1000 * 60 * 60);
+                
+                if (diffInHours < 24) {
+                    return date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+                } else if (diffInHours < 24 * 7) {
+                    return date.toLocaleDateString('de-DE', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+                } else {
+                    return date.toLocaleDateString('de-DE');
+                }
+            }
+            
+            async generateAIResponse() {
+                if (!this.currentEmail) return;
+                
+                const responseType = this.selectedResponseType || 'professional';
+                
+                try {
+                    this.elements.generateResponse.disabled = true;
+                    this.elements.generateResponse.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 mr-2 animate-spin"></i>Generiert...';
+                    
+                    const result = await AnwaltsAI_API.generateEmailResponse(this.currentEmail, responseType);
+                    
+                    if (result.success) {
+                        this.elements.generatedResponse.value = result.response;
+                        this.elements.responseArea.classList.remove('hidden');
+                        
+                        // Mark email as having AI response
+                        this.currentEmail.hasAIResponse = true;
+                        this.renderEmailList();
+                        this.updateStatistics();
+                    }
+                } catch (error) {
+                    console.error('Error generating response:', error);
+                    alert('Fehler beim Generieren der Antwort');
+                } finally {
+                    this.elements.generateResponse.disabled = false;
+                    this.elements.generateResponse.innerHTML = '<i data-lucide="wand-2" class="w-4 h-4 mr-2"></i>Antwort generieren';
+                    lucide.createIcons();
+                }
+            }
+            
+            copyResponse() {
+                navigator.clipboard.writeText(this.elements.generatedResponse.value).then(() => {
+                    const originalText = this.elements.copyResponse.innerHTML;
+                    this.elements.copyResponse.innerHTML = '<i data-lucide="check" class="w-4 h-4 mr-1"></i>Kopiert!';
+                    setTimeout(() => {
+                        this.elements.copyResponse.innerHTML = originalText;
+                        lucide.createIcons();
+                    }, 2000);
+                });
+            }
+            
+            editResponse() {
+                this.elements.generatedResponse.focus();
+                this.elements.generatedResponse.select();
+            }
+            
+            sendResponse() {
+                if (!this.elements.generatedResponse.value.trim()) {
+                    alert('Bitte geben Sie eine Antwort ein');
+                    return;
+                }
+                
+                // Simulate sending
+                alert('Antwort wurde gesendet!');
+                this.elements.responseArea.classList.add('hidden');
+                
+                // Mark as responded
+                this.currentEmail.responded = true;
+                this.updateStatistics();
+            }
+            
+            replyToEmail() {
+                if (this.currentEmail) {
+                    console.log('Replying to email:', this.currentEmail.id);
+                    alert('E-Mail Antwort wird vorbereitet...');
+                }
+            }
+            
+            forwardEmail() {
+                if (this.currentEmail) {
+                    console.log('Forwarding email:', this.currentEmail.id);
+                    alert('E-Mail wird weitergeleitet...');
+                }
+            }
+            
+            composeNewEmail() {
+                console.log('Composing new email');
+                alert('Neue E-Mail wird erstellt...');
+            }
+            
+            updateStatistics() {
+                const total = this.emails.length;
+                const unread = this.emails.filter(e => !e.read).length;
+                const aiResponses = this.emails.filter(e => e.hasAIResponse).length;
+                const responded = this.emails.filter(e => e.responded).length;
+                
+                this.elements.statTotal.textContent = total;
+                this.elements.statUnread.textContent = unread;
+                this.elements.statAiResponses.textContent = aiResponses;
+                this.elements.statResponded.textContent = responded;
+            }
+            
+            showError(message) {
+                console.error(message);
+                alert(message);
+            }
+        }
+
+        // Document Generator Class
+        class DocumentGenerator {
+            constructor() {
+                this.currentDocument = null;
+                this.recentGenerations = JSON.parse(localStorage.getItem('anwalts_recent_generations') || '[]');
+                this.init();
+            }
+            
+            init() {
+                // Get DOM elements
+                this.elements = {
+                    templateSelect: document.getElementById('template-select'),
+                    uploadArea: document.getElementById('upload-area'),
+                    fileInput: document.getElementById('file-input'),
+                    uploadedFile: document.getElementById('uploaded-file'),
+                    fileName: document.getElementById('file-name'),
+                    removeFile: document.getElementById('remove-file'),
+                    promptInput: document.getElementById('prompt-input'),
+                    formalTone: document.getElementById('formal-tone'),
+                    includeLegalRefs: document.getElementById('include-legal-refs'),
+                    generateBtn: document.getElementById('generate-btn'),
+                    generateText: document.getElementById('generate-text'),
+                    loadingState: document.getElementById('loading-state'),
+                    emptyState: document.getElementById('empty-state'),
+                    outputText: document.getElementById('output-text'),
+                    feedbackSection: document.getElementById('feedback-section'),
+                    acceptBtn: document.getElementById('accept-btn'),
+                    improveBtn: document.getElementById('improve-btn'),
+                    rejectBtn: document.getElementById('reject-btn'),
+                    copyOutput: document.getElementById('copy-output'),
+                    downloadOutput: document.getElementById('download-output'),
+                    clearGenerator: document.getElementById('clear-generator'),
+                    saveTemplate: document.getElementById('save-template'),
+                    recentGenerations: document.getElementById('recent-generations')
+                };
+                
+                this.bindEvents();
+                this.loadRecentGenerations();
+                this.updateTemplatePrompts();
+            }
+            
+            bindEvents() {
+                // File upload events
+                this.elements.uploadArea.addEventListener('click', () => this.elements.fileInput.click());
+                this.elements.uploadArea.addEventListener('dragover', this.handleDragOver.bind(this));
+                this.elements.uploadArea.addEventListener('drop', this.handleFileDrop.bind(this));
+                this.elements.fileInput.addEventListener('change', this.handleFileSelect.bind(this));
+                this.elements.removeFile.addEventListener('click', this.removeFile.bind(this));
+                
+                // Template selection
+                this.elements.templateSelect.addEventListener('change', this.handleTemplateChange.bind(this));
+                
+                // Generation
+                this.elements.generateBtn.addEventListener('click', this.generateDocument.bind(this));
+                
+                // Feedback buttons
+                this.elements.acceptBtn.addEventListener('click', () => this.submitFeedback('accept'));
+                this.elements.improveBtn.addEventListener('click', () => this.submitFeedback('improve'));
+                this.elements.rejectBtn.addEventListener('click', () => this.submitFeedback('reject'));
+                
+                // Utility buttons
+                this.elements.copyOutput.addEventListener('click', this.copyToClipboard.bind(this));
+                this.elements.downloadOutput.addEventListener('click', this.downloadDocument.bind(this));
+                this.elements.clearGenerator.addEventListener('click', this.clearAll.bind(this));
+                this.elements.saveTemplate.addEventListener('click', this.saveAsTemplate.bind(this));
+            }
+            
+            handleDragOver(e) {
+                e.preventDefault();
+                this.elements.uploadArea.classList.add('border-purple-400');
+            }
+            
+            handleFileDrop(e) {
+                e.preventDefault();
+                this.elements.uploadArea.classList.remove('border-purple-400');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.processFile(files[0]);
+                }
+            }
+            
+            handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.processFile(file);
+                }
+            }
+            
+            processFile(file) {
+                // Validate file type
+                const allowedTypes = ['.pdf', '.docx', '.doc'];
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+                
+                if (!allowedTypes.includes(fileExtension)) {
+                    alert('Nur PDF und DOCX Dateien sind erlaubt.');
+                    return;
+                }
+                
+                // Show uploaded file
+                this.elements.fileName.textContent = file.name;
+                this.elements.uploadedFile.classList.remove('hidden');
+                this.elements.uploadArea.classList.add('hidden');
+                
+                // Store file for processing
+                this.uploadedFile = file;
+            }
+            
+            removeFile() {
+                this.elements.uploadedFile.classList.add('hidden');
+                this.elements.uploadArea.classList.remove('hidden');
+                this.elements.fileInput.value = '';
+                this.uploadedFile = null;
+            }
+            
+            handleTemplateChange() {
+                const selectedTemplate = this.elements.templateSelect.value;
+                if (selectedTemplate) {
+                    const prompts = this.getTemplatePrompts();
+                    this.elements.promptInput.value = prompts[selectedTemplate] || '';
+                }
+            }
+            
+            getTemplatePrompts() {
+                return {
+                    mahnung: 'Erstelle eine professionelle Mahnung für einen säumigen Kunden. Bitte folgende Informationen einbeziehen:\n\n- Kundenname: [Name eingeben]\n- Rechnungsnummer: [Nummer eingeben]\n- Rechnungsbetrag: [Betrag eingeben]\n- Ursprüngliches Zahlungsziel: [Datum eingeben]\n- Mahngebühren: [falls zutreffend]\n\nDie Mahnung soll höflich aber bestimmt formuliert sein und alle rechtlichen Anforderungen erfüllen.',
+                    nda: 'Erstelle eine Geheimhaltungsvereinbarung (NDA) zwischen:\n\n- Partei 1: [Firmenname/Person]\n- Partei 2: [Firmenname/Person]\n- Zweck: [Grund für Geheimhaltung]\n- Dauer: [Zeitraum]\n\nDie Vereinbarung soll alle wesentlichen Punkte abdecken und nach deutschem Recht gültig sein.',
+                    beratungsvertrag: 'Erstelle einen Beratungsvertrag zwischen unserer Kanzlei und einem Mandanten:\n\n- Mandant: [Name/Firma]\n- Beratungsbereich: [Rechtsgebiet]\n- Honorar: [Stundensatz/Pauschale]\n- Laufzeit: [Zeitraum]\n\nDer Vertrag soll die BRAO-Bestimmungen beachten.',
+                    kaufvertrag: 'Erstelle einen Kaufvertrag für:\n\n- Verkäufer: [Name]\n- Käufer: [Name]\n- Kaufgegenstand: [Beschreibung]\n- Kaufpreis: [Betrag]\n- Übergabetermin: [Datum]\n\nAlle wesentlichen Gewährleistungsrechte einbeziehen.',
+                    mietvertrag: 'Erstelle einen Mietvertrag für:\n\n- Vermieter: [Name]\n- Mieter: [Name]\n- Mietobjekt: [Adresse und Beschreibung]\n- Miete: [Betrag kalt/warm]\n- Mietbeginn: [Datum]\n\nAlle mietrechtlichen Bestimmungen beachten.',
+                    arbeitsvertrag: 'Erstelle einen Arbeitsvertrag für:\n\n- Arbeitgeber: [Firmenname]\n- Arbeitnehmer: [Name]\n- Position: [Stellenbezeichnung]\n- Gehalt: [Betrag]\n- Arbeitszeit: [Stunden/Woche]\n- Beginn: [Datum]\n\nArbeitsrechtliche Bestimmungen einhalten.',
+                    vollmacht: 'Erstelle eine Vollmacht:\n\n- Vollmachtgeber: [Name]\n- Bevollmächtigter: [Name]\n- Umfang: [Beschreibung der Befugnisse]\n- Gültigkeitsdauer: [Zeitraum]\n\nRechtssichere Formulierung verwenden.',
+                    widerspruch: 'Erstelle einen Widerspruch gegen:\n\n- Behörde: [Name der Behörde]\n- Bescheid vom: [Datum]\n- Aktenzeichen: [falls bekannt]\n- Grund des Widerspruchs: [Begründung]\n\nFrist und Formvorschriften beachten.'
+                };
+            }
+            
+            updateTemplatePrompts() {
+                // This method can be called to refresh template prompts
+                console.log('Template prompts updated');
+            }
+            
+            async generateDocument() {
+                const prompt = this.elements.promptInput.value.trim();
+                const template = this.elements.templateSelect.value;
+                const formalTone = this.elements.formalTone.checked;
+                const includeLegalRefs = this.elements.includeLegalRefs.checked;
+                
+                if (!prompt) {
+                    alert('Bitte geben Sie eine Beschreibung für das Dokument ein.');
+                    return;
+                }
+                
+                // Show loading state
+                this.showLoadingState();
+                
+                try {
+                    // Call API
+                    const result = await AnwaltsAI_API.generateDocument(prompt, template, this.uploadedFile, {
+                        formalTone,
+                        includeLegalRefs
+                    });
+                    
+                    if (result.success) {
+                        this.showGeneratedDocument(result.document, result.id);
+                        this.addToRecentGenerations({
+                            id: result.id,
+                            prompt: prompt.substring(0, 100) + (prompt.length > 100 ? '...' : ''),
+                            template: template,
+                            timestamp: new Date().toISOString(),
+                            preview: result.document.substring(0, 200) + '...'
+                        });
+                    } else {
+                        throw new Error(result.error || 'Generierung fehlgeschlagen');
+                    }
+                } catch (error) {
+                    console.error('Generation error:', error);
+                    alert('Fehler bei der Dokumentgenerierung: ' + error.message);
+                    this.showEmptyState();
+                }
+            }
+            
+            showLoadingState() {
+                this.elements.emptyState.classList.add('hidden');
+                this.elements.outputText.classList.add('hidden');
+                this.elements.feedbackSection.classList.add('hidden');
+                this.elements.loadingState.classList.remove('hidden');
+                this.elements.generateBtn.disabled = true;
+                this.elements.generateText.textContent = 'Generiert...';
+            }
+            
+            showGeneratedDocument(document, id) {
+                this.currentDocument = { content: document, id: id };
+                
+                this.elements.loadingState.classList.add('hidden');
+                this.elements.emptyState.classList.add('hidden');
+                this.elements.outputText.classList.remove('hidden');
+                this.elements.feedbackSection.classList.remove('hidden');
+                
+                this.elements.outputText.value = document;
+                this.elements.generateBtn.disabled = false;
+                this.elements.generateText.textContent = 'Dokument generieren';
+            }
+            
+            showEmptyState() {
+                this.elements.loadingState.classList.add('hidden');
+                this.elements.outputText.classList.add('hidden');
+                this.elements.feedbackSection.classList.add('hidden');
+                this.elements.emptyState.classList.remove('hidden');
+                this.elements.generateBtn.disabled = false;
+                this.elements.generateText.textContent = 'Dokument generieren';
+            }
+            
+            async submitFeedback(type) {
+                if (!this.currentDocument) return;
+                
+                let feedback = '';
+                if (type === 'reject') {
+                    feedback = prompt('Warum war das Ergebnis nicht hilfreich? (Optional)') || '';
+                }
+                
+                try {
+                    await AnwaltsAI_API.submitFeedback(type, this.currentDocument.id, feedback);
+                    
+                    // Update UI based on feedback type
+                    switch (type) {
+                        case 'accept':
+                            this.elements.acceptBtn.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i> Akzeptiert!';
+                            this.elements.acceptBtn.classList.add('bg-green-700');
+                            break;
+                        case 'improve':
+                            this.regenerateDocument();
+                            break;
+                        case 'reject':
+                            this.showEmptyState();
+                            break;
+                    }
+                } catch (error) {
+                    console.error('Feedback error:', error);
+                    alert('Fehler beim Senden des Feedbacks');
+                }
+            }
+            
+            async regenerateDocument() {
+                const editedContent = this.elements.outputText.value;
+                const originalPrompt = this.elements.promptInput.value;
+                
+                this.showLoadingState();
+                
+                try {
+                    const result = await AnwaltsAI_API.improveDocument(
+                        originalPrompt,
+                        this.currentDocument.content,
+                        editedContent
+                    );
+                    
+                    if (result.success) {
+                        this.showGeneratedDocument(result.document, result.id);
+                    }
+                } catch (error) {
+                    console.error('Regeneration error:', error);
+                    alert('Fehler bei der Verbesserung');
+                    this.showGeneratedDocument(this.currentDocument.content, this.currentDocument.id);
+                }
+            }
+            
+            copyToClipboard() {
+                if (this.currentDocument) {
+                    navigator.clipboard.writeText(this.elements.outputText.value).then(() => {
+                        // Show temporary feedback
+                        const originalText = this.elements.copyOutput.innerHTML;
+                        this.elements.copyOutput.innerHTML = '<i data-lucide="check" class="w-4 h-4"></i>';
+                        setTimeout(() => {
+                            this.elements.copyOutput.innerHTML = originalText;
+                            lucide.createIcons();
+                        }, 2000);
+                    });
+                }
+            }
+            
+            downloadDocument() {
+                if (this.currentDocument) {
+                    const blob = new Blob([this.elements.outputText.value], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `anwalts-ai-dokument-${Date.now()}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+            }
+            
+            clearAll() {
+                this.elements.templateSelect.value = '';
+                this.elements.promptInput.value = '';
+                this.elements.formalTone.checked = false;
+                this.elements.includeLegalRefs.checked = false;
+                this.removeFile();
+                this.showEmptyState();
+                this.currentDocument = null;
+            }
+            
+            saveAsTemplate() {
+                if (!this.currentDocument) {
+                    alert('Kein Dokument zum Speichern vorhanden');
+                    return;
+                }
+                
+                const templateName = prompt('Name für die neue Vorlage:');
+                if (templateName) {
+                    // Save template logic would go here
+                    console.log('Saving template:', templateName);
+                    alert('Vorlage gespeichert: ' + templateName);
+                }
+            }
+            
+            addToRecentGenerations(generation) {
+                this.recentGenerations.unshift(generation);
+                this.recentGenerations = this.recentGenerations.slice(0, 10); // Keep only last 10
+                localStorage.setItem('anwalts_recent_generations', JSON.stringify(this.recentGenerations));
+                this.loadRecentGenerations();
+            }
+            
+            loadRecentGenerations() {
+                const container = this.elements.recentGenerations;
+                
+                if (this.recentGenerations.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-400">
+                            <i data-lucide="clock" class="w-8 h-8 mx-auto mb-2"></i>
+                            <p>Noch keine Dokumente generiert</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = this.recentGenerations.map(gen => `
+                        <div class="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors cursor-pointer" data-generation-id="${gen.id}">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <p class="font-medium text-sm mb-1">${gen.prompt}</p>
+                                    <p class="text-xs text-gray-400 mb-2">${gen.template ? `Vorlage: ${gen.template}` : 'Freie Erstellung'}</p>
+                                    <p class="text-xs text-gray-500">${new Date(gen.timestamp).toLocaleString('de-DE')}</p>
+                                </div>
+                                <button class="text-gray-400 hover:text-white ml-3" onclick="event.stopPropagation(); documentGenerator.loadGeneration('${gen.id}')">
+                                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                
+                lucide.createIcons();
+            }
+            
+            loadGeneration(id) {
+                const generation = this.recentGenerations.find(g => g.id === id);
+                if (generation) {
+                    // Load the generation data back into the form
+                    console.log('Loading generation:', generation);
+                    alert('Generation wird geladen...');
+                }
+            }
+        }
+
+        // API Placeholder Functions
+        const AnwaltsAI_API = {
+            // Document Generation API
+            async generateDocument(prompt, template, uploadedFile, options = {}) {
+                console.log('API Call: Generate Document', { prompt, template, uploadedFile, options });
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        // Simulate different document types based on template
+                        let documentContent = '';
+                        
+                        switch(template) {
+                            case 'mahnung':
+                                documentContent = `MAHNUNG
+
+Sehr geehrte Damen und Herren,
+
+hiermit mahnen wir Sie zur Zahlung der noch offenen Rechnung an.
+
+Rechnungsdetails:
+- Rechnungsnummer: [Aus Prompt extrahieren]
+- Rechnungsdatum: [Datum]
+- Fälligkeit: [Datum]
+- Betrag: [Betrag] EUR
+
+Trotz Ablauf der Zahlungsfrist ist der Betrag noch nicht bei uns eingegangen.
+
+Wir fordern Sie hiermit auf, den ausstehenden Betrag binnen 14 Tagen nach Erhalt dieses Schreibens zu begleichen.
+
+Sollten Sie bereits gezahlt haben, betrachten Sie dieses Schreiben als gegenstandslos.
+
+Mit freundlichen Grüßen
+[Kanzleiname]`;
+                                break;
+                            case 'nda':
+                                documentContent = `GEHEIMHALTUNGSVEREINBARUNG
+
+zwischen
+
+[Partei 1]
+und
+[Partei 2]
+
+§ 1 Gegenstand der Vereinbarung
+Die Parteien beabsichtigen, vertrauliche Informationen auszutauschen...
+
+§ 2 Vertraulichkeitsverpflichtung
+Die empfangende Partei verpflichtet sich...
+
+§ 3 Ausnahmen
+Von der Geheimhaltungspflicht ausgenommen sind...
+
+§ 4 Dauer der Verpflichtung
+Diese Vereinbarung gilt für einen Zeitraum von...
+
+§ 5 Vertragsstrafe
+Bei Verletzung der Geheimhaltungspflicht...
+
+§ 6 Schlussbestimmungen
+Es gilt deutsches Recht...`;
+                                break;
+                            default:
+                                documentContent = `Generiertes Rechtsdokument
+
+Basierend auf Ihrer Anfrage: "${prompt.substring(0, 100)}..."
+
+[Hier würde der KI-generierte Inhalt stehen, der auf Ihren spezifischen Anforderungen basiert.]
+
+Rechtliche Hinweise:
+- Dieses Dokument wurde mit KI-Unterstützung erstellt
+- Bitte prüfen Sie alle Angaben auf Richtigkeit
+- Bei wichtigen Rechtsfragen konsultieren Sie einen Anwalt
+
+${options.includeLegalRefs ? '\nRelevante Gesetzesverweise:\n- BGB §§ 433 ff.\n- ZPO §§ 253 ff.' : ''}
+
+${options.formalTone ? '\nMit vorzüglicher Hochachtung' : '\nMit freundlichen Grüßen'}
+
+[Kanzleiname]
+[Datum]`;
+                        }
+                        
+                        resolve({
+                            success: true,
+                            document: documentContent,
+                            id: 'doc_' + Date.now()
+                        });
+                    }, 2000);
+                });
+            },
+            
+            // Document Improvement API
+            async improveDocument(originalPrompt, originalDocument, editedDocument) {
+                console.log('API Call: Improve Document', { originalPrompt, originalDocument, editedDocument });
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve({
+                            success: true,
+                            document: editedDocument + '\n\n[KI-Verbesserung: Dokument wurde basierend auf Ihren Änderungen optimiert]',
+                            id: 'doc_improved_' + Date.now()
+                        });
+                    }, 1500);
+                });
+            },
+            
+            // Email Management API
+            async getEmails() {
+                console.log('API Call: Get Emails');
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const currentDate = new Date();
+                        const yesterday = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
+                        const weekAgo = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        
+                        resolve({
+                            success: true,
+                            emails: [
+                                {
+                                    id: 1,
+                                    sender: 'max.mustermann@example.com',
+                                    subject: 'Rückfrage zu Vertragsentwurf',
+                                    date: currentDate.toISOString(),
+                                    hasAttachment: true,
+                                    hasAIResponse: false,
+                                    read: false,
+                                    responded: false,
+                                    content: `Sehr geehrte Damen und Herren,
+
+vielen Dank für den Vertragsentwurf. Ich habe noch einige Rückfragen zu den Klauseln 5 und 7.
+
+Könnten Sie mir bitte erläutern, was genau mit "angemessener Frist" gemeint ist? Gibt es hier rechtliche Richtwerte?
+
+Für eine zeitnahe Rückmeldung wäre ich sehr dankbar.
+
+Mit freundlichen Grüßen
+Max Mustermann`
+                                },
+                                {
+                                    id: 2,
+                                    sender: 'dr.mueller@partnerkanzlei.de',
+                                    subject: 'Gemeinsamer Mandant - Abstimmung erforderlich',
+                                    date: yesterday.toISOString(),
+                                    hasAttachment: false,
+                                    hasAIResponse: true,
+                                    read: true,
+                                    responded: true,
+                                    content: `Liebe Kollegin Dr. Vogel,
+
+bezüglich unseres gemeinsamen Mandanten Firma ABC GmbH benötigen wir eine Abstimmung zur weiteren Vorgehensweise.
+
+Die neuen Entwicklungen erfordern eine Anpassung unserer Strategie. Wann hätten Sie Zeit für ein kurzes Telefonat?
+
+Beste Grüße
+Dr. Hans Müller`
+                                },
+                                {
+                                    id: 3,
+                                    sender: 'verwaltung@amtsgericht-berlin.de',
+                                    subject: 'Terminbestätigung Verhandlung Az: 123 C 456/24',
+                                    date: yesterday.toISOString(),
+                                    hasAttachment: true,
+                                    hasAIResponse: false,
+                                    read: false,
+                                    responded: false,
+                                    content: `Sehr geehrte Rechtsanwältin Dr. Vogel,
+
+hiermit bestätigen wir den Verhandlungstermin für:
+
+Datum: 15. Februar 2024
+Uhrzeit: 10:00 Uhr
+Saal: A123
+Aktenzeichen: 123 C 456/24
+
+Bitte bringen Sie alle relevanten Unterlagen mit.
+
+Mit freundlichen Grüßen
+Geschäftsstelle Amtsgericht Berlin`
+                                },
+                                {
+                                    id: 4,
+                                    sender: 'buchhaltung@firma-xyz.de',
+                                    subject: 'Zahlungsverzug - Mahnung erhalten',
+                                    date: weekAgo.toISOString(),
+                                    hasAttachment: false,
+                                    hasAIResponse: false,
+                                    read: true,
+                                    responded: false,
+                                    content: `Sehr geehrte Frau Dr. Vogel,
+
+wir haben heute Ihre Mahnung erhalten. Leider ist uns aufgrund eines internen Fehlers die ursprüngliche Rechnung nicht zugegangen.
+
+Wir werden den Betrag umgehend überweisen. Können Sie uns eine Kopie der Originalrechnung zukommen lassen?
+
+Mit freundlichen Grüßen
+Maria Schmidt
+Buchhaltung Firma XYZ`
+                                },
+                                {
+                                    id: 5,
+                                    sender: 'info@rechtsschutz-versicherung.de',
+                                    subject: 'Deckungszusage für Mandant Schmidt',
+                                    date: weekAgo.toISOString(),
+                                    hasAttachment: true,
+                                    hasAIResponse: true,
+                                    read: true,
+                                    responded: true,
+                                    content: `Sehr geehrte Frau Dr. Vogel,
+
+für Ihren Mandanten Herrn Schmidt erteilen wir hiermit die Deckungszusage für das arbeitsrechtliche Verfahren.
+
+Die Kostenübernahme erfolgt nach den vereinbarten Bedingungen. Die entsprechenden Unterlagen finden Sie im Anhang.
+
+Mit freundlichen Grüßen
+Rechtsschutzversicherung AG`
+                                }
+                            ]
+                        });
+                    }, 1000);
+                });
+            },
+            
+            // Mark Email as Read API
+            async markEmailAsRead(emailId) {
+                console.log('API Call: Mark Email as Read', { emailId });
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve({ success: true });
+                    }, 200);
+                });
+            },
+            
+            // Generate Email Response API
+            async generateEmailResponse(email, responseType = 'professional') {
+                console.log('API Call: Generate Email Response', { email: email.id, responseType });
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        let response = '';
+                        
+                        switch (responseType) {
+                            case 'professional':
+                                response = `Sehr geehrte Damen und Herren,
+
+vielen Dank für Ihre E-Mail vom ${new Date(email.date).toLocaleDateString('de-DE')}.
+
+[Hier würde die KI eine professionelle Antwort basierend auf dem Inhalt generieren]
+
+Für weitere Fragen stehe ich Ihnen gerne zur Verfügung.
+
+Mit freundlichen Grüßen
+
+Dr. Anna Vogel
+Rechtsanwältin`;
+                                break;
+                                
+                            case 'friendly':
+                                response = `Liebe/r ${email.sender.split('@')[0]},
+
+herzlichen Dank für Ihre Nachricht!
+
+[Hier würde die KI eine freundliche Antwort generieren]
+
+Ich melde mich zeitnah bei Ihnen zurück.
+
+Beste Grüße
+Anna Vogel`;
+                                break;
+                                
+                            case 'formal':
+                                response = `Sehr geehrte Damen und Herren,
+
+Bezug: Ihr Schreiben vom ${new Date(email.date).toLocaleDateString('de-DE')}
+Betreff: ${email.subject}
+
+[Hier würde die KI eine formelle rechtliche Antwort generieren]
+
+Hochachtungsvoll
+
+Dr. Anna Vogel
+Rechtsanwältin
+Fachanwältin für [Rechtsgebiet]`;
+                                break;
+                        }
+                        
+                        resolve({
+                            success: true,
+                            response: response
+                        });
+                    }, 2000);
+                });
+            },
+            
+            // Template Management API
+            async getTemplates() {
+                console.log('API Call: Get Templates');
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve({
+                            success: true,
+                            templates: [
+                                // System Templates
+                                {
+                                    id: 'sys_mahnung',
+                                    name: 'Mahnung / Zahlungserinnerung',
+                                    type: 'system',
+                                    category: 'payment',
+                                    description: 'Standardvorlage für Mahnungen und Zahlungserinnerungen',
+                                    createdAt: '2024-01-01T00:00:00Z',
+                                    usageCount: 45
+                                },
+                                {
+                                    id: 'sys_nda',
+                                    name: 'Geheimhaltungsvereinbarung (NDA)',
+                                    type: 'system',
+                                    category: 'contracts',
+                                    description: 'Standardvorlage für Geheimhaltungsvereinbarungen',
+                                    createdAt: '2024-01-01T00:00:00Z',
+                                    usageCount: 32
+                                },
+                                {
+                                    id: 'sys_beratung',
+                                    name: 'Beratungsvertrag',
+                                    type: 'system',
+                                    category: 'contracts',
+                                    description: 'Standardvorlage für Beratungsverträge',
+                                    createdAt: '2024-01-01T00:00:00Z',
+                                    usageCount: 28
+                                },
+                                {
+                                    id: 'sys_widerspruch',
+                                    name: 'Widerspruch',
+                                    type: 'system',
+                                    category: 'legal',
+                                    description: 'Standardvorlage für Widersprüche gegen Bescheide',
+                                    createdAt: '2024-01-01T00:00:00Z',
+                                    usageCount: 18
+                                },
+                                {
+                                    id: 'sys_vollmacht',
+                                    name: 'Vollmacht',
+                                    type: 'system',
+                                    category: 'legal',
+                                    description: 'Standardvorlage für Vollmachten',
+                                    createdAt: '2024-01-01T00:00:00Z',
+                                    usageCount: 22
+                                },
+                                
+                                // Personal Templates
+                                {
+                                    id: 'pers_arbeitsrecht',
+                                    name: 'Arbeitsrechtliche Erstberatung',
+                                    type: 'personal',
+                                    category: 'letters',
+                                    description: 'Persönliche Vorlage für arbeitsrechtliche Erstberatungen',
+                                    createdAt: '2024-01-15T10:30:00Z',
+                                    usageCount: 12
+                                },
+                                {
+                                    id: 'pers_mietrecht',
+                                    name: 'Mietrechtliche Abmahnung',
+                                    type: 'personal',
+                                    category: 'legal',
+                                    description: 'Persönliche Vorlage für mietrechtliche Abmahnungen',
+                                    createdAt: '2024-01-20T14:15:00Z',
+                                    usageCount: 8
+                                },
+                                {
+                                    id: 'pers_familien',
+                                    name: 'Familienrechtlicher Brief',
+                                    type: 'personal',
+                                    category: 'letters',
+                                    description: 'Persönliche Vorlage für familienrechtliche Korrespondenz',
+                                    createdAt: '2024-02-01T09:00:00Z',
+                                    usageCount: 5
+                                },
+                                
+                                // Firm Templates
+                                {
+                                    id: 'firm_mandatsvertrag',
+                                    name: 'Mandatsvertrag Standard',
+                                    type: 'firm',
+                                    category: 'contracts',
+                                    description: 'Firmeneigene Vorlage für Mandatsverträge',
+                                    createdAt: '2024-01-05T16:45:00Z',
+                                    usageCount: 67
+                                },
+                                {
+                                    id: 'firm_honorar',
+                                    name: 'Honorarvereinbarung',
+                                    type: 'firm',
+                                    category: 'contracts',
+                                    description: 'Firmeneigene Vorlage für Honorarvereinbarungen',
+                                    createdAt: '2024-01-08T11:20:00Z',
+                                    usageCount: 34
+                                },
+                                {
+                                    id: 'firm_kanzlei_brief',
+                                    name: 'Kanzlei-Briefkopf Standard',
+                                    type: 'firm',
+                                    category: 'letters',
+                                    description: 'Firmeneigene Vorlage für offizielle Kanzleischreiben',
+                                    createdAt: '2024-01-10T08:30:00Z',
+                                    usageCount: 89
+                                }
+                            ]
+                        });
+                    }, 800);
+                });
+            },
+            
+            // User Feedback API
+            async submitFeedback(type, documentId, feedback) {
+                console.log('API Call: Submit Feedback', { type, documentId, feedback });
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve({ success: true, message: 'Feedback submitted successfully' });
+                    }, 500);
+                });
+            }
+        };
+
+        // Document Generator with Real API Integration
+        class DocumentGenerator {
+            constructor() {
+                this.apiUrl = 'http://localhost:5001/api/generate';
+                this.feedbackApiUrl = 'http://localhost:5001/api/feedback';
+                this.currentDocumentId = null;
+                this.currentModelResponse = null;
+                
+                this.initializeElements();
+                this.setupEventListeners();
+            }
+
+            initializeElements() {
+                // Form elements
+                this.fileInput = document.getElementById('file-input');
+                this.uploadArea = document.getElementById('upload-area');
+                this.uploadedFile = document.getElementById('uploaded-file');
+                this.fileName = document.getElementById('file-name');
+                this.removeFileBtn = document.getElementById('remove-file');
+                this.promptInput = document.getElementById('prompt-input');
+                this.generateBtn = document.getElementById('generate-btn');
+                this.generateText = document.getElementById('generate-text');
+                
+                // Output elements
+                this.loadingState = document.getElementById('loading-state');
+                this.emptyState = document.getElementById('empty-state');
+                this.outputText = document.getElementById('output-text');
+                this.feedbackSection = document.getElementById('feedback-section');
+                
+                // Buttons
+                this.copyBtn = document.getElementById('copy-output');
+                this.downloadBtn = document.getElementById('download-output');
+                this.acceptBtn = document.getElementById('accept-btn');
+                this.improveBtn = document.getElementById('improve-btn');
+                this.rejectBtn = document.getElementById('reject-btn');
+            }
+
+            setupEventListeners() {
+                // File upload handling
+                if (this.uploadArea && this.fileInput) {
+                    this.uploadArea.addEventListener('click', () => this.fileInput.click());
+                    this.uploadArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        this.uploadArea.classList.add('dragover');
+                    });
+                    this.uploadArea.addEventListener('dragleave', () => {
+                        this.uploadArea.classList.remove('dragover');
+                    });
+                    this.uploadArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        this.uploadArea.classList.remove('dragover');
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                            this.handleFileSelect(files[0]);
+                        }
+                    });
+                    
+                    this.fileInput.addEventListener('change', (e) => {
+                        if (e.target.files.length > 0) {
+                            this.handleFileSelect(e.target.files[0]);
+                        }
+                    });
+                }
+
+                // Remove file button
+                if (this.removeFileBtn) {
+                    this.removeFileBtn.addEventListener('click', () => this.removeFile());
+                }
+
+                // Generate button
+                if (this.generateBtn) {
+                    this.generateBtn.addEventListener('click', () => this.generateDocument());
+                }
+
+                // Copy button
+                if (this.copyBtn) {
+                    this.copyBtn.addEventListener('click', () => this.copyToClipboard());
+                }
+
+                // Download button
+                if (this.downloadBtn) {
+                    this.downloadBtn.addEventListener('click', () => this.downloadDocument());
+                }
+
+                // Feedback buttons
+                if (this.acceptBtn) {
+                    this.acceptBtn.addEventListener('click', () => this.submitFeedback('accept'));
+                }
+                if (this.improveBtn) {
+                    this.improveBtn.addEventListener('click', () => this.submitFeedback('improve'));
+                }
+                if (this.rejectBtn) {
+                    this.rejectBtn.addEventListener('click', () => this.submitFeedback('reject'));
+                }
+            }
+
+            handleFileSelect(file) {
+                // Validate file type
+                const allowedTypes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'text/plain'];
+                if (!allowedTypes.includes(file.type)) {
+                    this.showStatus('Bitte wählen Sie eine gültige PDF, PNG, JPG oder TXT Datei.', 'error');
+                    return;
+                }
+
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    this.showStatus('Dateigröße muss unter 10MB liegen.', 'error');
+                    return;
+                }
+
+                // Show file info
+                if (this.fileName) this.fileName.textContent = file.name;
+                if (this.uploadedFile) this.uploadedFile.classList.remove('hidden');
+                if (this.uploadArea) this.uploadArea.style.display = 'none';
+                
+                this.selectedFile = file;
+            }
+
+            removeFile() {
+                this.selectedFile = null;
+                if (this.uploadedFile) this.uploadedFile.classList.add('hidden');
+                if (this.uploadArea) this.uploadArea.style.display = 'block';
+                if (this.fileInput) this.fileInput.value = '';
+            }
+
+            async generateDocument() {
+                const promptText = this.promptInput?.value?.trim();
+                
+                if (!promptText && !this.selectedFile) {
+                    this.showStatus('Bitte geben Sie eine Beschreibung ein oder laden Sie ein Dokument hoch.', 'error');
+                    return;
+                }
+
+                this.setLoadingState(true);
+
+                try {
+                    let extractedText = promptText || '';
+                    let documentType = 'general';
+
+                    // Extract text from file if uploaded
+                    if (this.selectedFile) {
+                        extractedText = await this.extractTextFromFile(this.selectedFile);
+                        documentType = this.detectDocumentType(extractedText);
+                    }
+
+                    // Call the API
+                    const response = await fetch(this.apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            prompt: extractedText,
+                            document_type: documentType,
+                            user_id: 'dashboard_user_' + Date.now()
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API Fehler: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        throw new Error(result.error || 'API returned unsuccessful response');
+                    }
+
+                    this.currentDocumentId = result.document_id;
+                    this.currentModelResponse = result;
+                    
+                    this.showResults(result.response);
+
+                } catch (error) {
+                    console.error('Generation Error:', error);
+                    this.showStatus(`❌ Fehler: ${error.message}`, 'error');
+                } finally {
+                    this.setLoadingState(false);
+                }
+            }
+
+            async extractTextFromFile(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    
+                    if (file.type === 'text/plain') {
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsText(file);
+                    } else if (file.type === 'application/pdf') {
+                        resolve(`[PDF FILE: ${file.name}] - Content will be extracted server-side`);
+                    } else {
+                        resolve(`[IMAGE FILE: ${file.name}] - OCR processing will be performed server-side`);
+                    }
+                });
+            }
+
+            detectDocumentType(text) {
+                const textLower = text.toLowerCase();
+                
+                if (textLower.includes('mahnung') || textLower.includes('zahlungserinnerung')) {
+                    return 'mahnung';
+                } else if (textLower.includes('klage') || textLower.includes('klageschrift')) {
+                    return 'klage';
+                } else if (textLower.includes('kündigung')) {
+                    return 'kuendigung';
+                } else if (textLower.includes('vertrag') || textLower.includes('vereinbarung')) {
+                    return 'contract';
+                } else if (textLower.includes('nda') || textLower.includes('geheimhaltung')) {
+                    return 'nda';
+                } else {
+                    return 'general';
+                }
+            }
+
+            showResults(responseText) {
+                // Hide empty state and loading
+                if (this.emptyState) this.emptyState.style.display = 'none';
+                if (this.loadingState) this.loadingState.classList.add('hidden');
+                
+                // Show and populate output
+                if (this.outputText) {
+                    this.outputText.classList.remove('hidden');
+                    this.outputText.value = responseText;
+                }
+                
+                // Show feedback section
+                if (this.feedbackSection) this.feedbackSection.classList.remove('hidden');
+                
+                this.showStatus('✅ Dokument erfolgreich generiert!', 'success');
+            }
+
+            setLoadingState(loading) {
+                if (loading) {
+                    if (this.emptyState) this.emptyState.style.display = 'none';
+                    if (this.outputText) this.outputText.classList.add('hidden');
+                    if (this.loadingState) this.loadingState.classList.remove('hidden');
+                    if (this.generateBtn) {
+                        this.generateBtn.disabled = true;
+                        if (this.generateText) this.generateText.textContent = 'Generiert...';
+                    }
+                } else {
+                    if (this.loadingState) this.loadingState.classList.add('hidden');
+                    if (this.generateBtn) {
+                        this.generateBtn.disabled = false;
+                        if (this.generateText) this.generateText.textContent = 'Dokument generieren';
+                    }
+                }
+            }
+
+            async copyToClipboard() {
+                if (this.outputText && this.outputText.value) {
+                    try {
+                        await navigator.clipboard.writeText(this.outputText.value);
+                        this.showStatus('✅ Text in Zwischenablage kopiert', 'success');
+                    } catch (err) {
+                        this.showStatus('❌ Fehler beim Kopieren', 'error');
+                    }
+                }
+            }
+
+            downloadDocument() {
+                if (this.outputText && this.outputText.value) {
+                    const blob = new Blob([this.outputText.value], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'legal-document.txt';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    this.showStatus('✅ Dokument heruntergeladen', 'success');
+                }
+            }
+
+            async submitFeedback(feedbackType) {
+                if (!this.currentDocumentId) {
+                    this.showStatus('❌ Keine Dokument-ID für Feedback verfügbar', 'error');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(this.feedbackApiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            document_id: this.currentDocumentId,
+                            feedback_type: feedbackType,
+                            user_id: 'dashboard_user_' + Date.now()
+                        }),
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showStatus(`✅ Feedback "${feedbackType}" erfolgreich übermittelt!`, 'success');
+                        this.disableFeedbackButtons();
+                    } else {
+                        throw new Error(result.error || 'Feedback submission failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('Feedback error:', error);
+                    this.showStatus(`❌ Feedback-Fehler: ${error.message}`, 'error');
+                }
+            }
+
+            disableFeedbackButtons() {
+                [this.acceptBtn, this.improveBtn, this.rejectBtn].forEach(btn => {
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.style.opacity = '0.5';
+                        btn.style.cursor = 'not-allowed';
+                    }
+                });
+            }
+
+            showStatus(message, type) {
+                console.log(`${type.toUpperCase()}: ${message}`);
+                // Create a simple toast notification
+                const toast = document.createElement('div');
+                toast.className = `status status-${type}`;
+                toast.textContent = message;
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem;
+                    border-radius: 0.5rem;
+                    color: white;
+                    font-weight: 500;
+                    z-index: 1000;
+                    max-width: 300px;
+                `;
+                
+                if (type === 'success') {
+                    toast.style.background = 'rgba(34, 197, 94, 0.9)';
+                } else if (type === 'error') {
+                    toast.style.background = 'rgba(239, 68, 68, 0.9)';
+                } else {
+                    toast.style.background = 'rgba(59, 130, 246, 0.9)';
+                }
+                
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        document.body.removeChild(toast);
+                    }
+                }, 3000);
+            }
+        }
+    </script>
+    
+</body>
+</html>

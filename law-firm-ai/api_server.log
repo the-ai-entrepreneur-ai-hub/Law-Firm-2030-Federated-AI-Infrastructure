@@ -1,0 +1,28 @@
+INFO:__main__:Starting Anwalts AI Backend Server...
+INFO:__main__:Database initialized at: training_data.db
+ * Serving Flask app 'api_server'
+ * Debug mode: on
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://172.18.193.15:5001
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:__main__:Starting Anwalts AI Backend Server...
+INFO:__main__:Database initialized at: training_data.db
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 248-773-979
+ERROR:__main__:Together.ai API error: HTTPSConnectionPool(host='api.together.xyz', port=443): Read timed out. (read timeout=30)
+INFO:__main__:Using basic fallback response
+INFO:__main__:Added training example: pending
+INFO:werkzeug:127.0.0.1 - - [30/Jul/2025 02:53:33] "POST /api/generate HTTP/1.1" 200 -
+INFO:__main__:Added training example: pending
+INFO:werkzeug:127.0.0.1 - - [30/Jul/2025 02:53:59] "POST /api/generate HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/api_server.py', reloading
+INFO:werkzeug: * Restarting with stat
+INFO:__main__:Starting Anwalts AI Backend Server...
+INFO:__main__:Database initialized at: training_data.db
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 248-773-979
+INFO:werkzeug: * Detected change in '/mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030/law-firm-ai/api_server.py', reloading
+INFO:werkzeug: * Restarting with stat

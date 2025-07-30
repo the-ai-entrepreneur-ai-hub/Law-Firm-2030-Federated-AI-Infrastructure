@@ -19,8 +19,8 @@ class SimpleGermanLegalTrainer:
     """Simple trainer that enhances the existing model with German legal knowledge"""
     
     def __init__(self):
-        self.base_dir = Path("/mnt/c/Users/Administrator/serveless-apps/Law Firm Vision 2030")
-        self.dataset_path = self.base_dir / "law_firm_dataset.jsonl"
+        self.base_dir = Path("C:/Users/Administrator/serveless-apps/Law Firm Vision 2030")
+        self.dataset_path = self.base_dir / "legal_training_dataset.jsonl"
         self.output_dir = self.base_dir / "law-firm-ai" / "local-training" / "trained_model"
         self.output_dir.mkdir(exist_ok=True)
         
@@ -31,25 +31,25 @@ class SimpleGermanLegalTrainer:
         data = []
         try:
             with open(self.dataset_path, 'r', encoding='utf-8') as f:
-                for line_num, line in enumerate(f, 1):
-                    if line.strip():
-                        try:
-                            item = json.loads(line)
-                            data.append(item)
-                        except json.JSONDecodeError as e:
-                            logger.warning(f"Skipping invalid JSON on line {line_num}: {e}")
-                            continue
-                            
-            logger.info(f"✅ Loaded {len(data)} training examples")
+                content = f.read()
+                # Add commas between JSON objects and wrap in a list
+                json_content = '[' + content.replace('}\n{', '},\n{') + ']'
+                try:
+                    data = json.loads(json_content)
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse JSON: {e}")
+                    return []
+
+            logger.info(f"Loaded {len(data)} training examples")
             return data
             
         except FileNotFoundError:
-            logger.error(f"❌ Training data not found at {self.dataset_path}")
+            logger.error(f"Training data not found at {self.dataset_path}")
             return []
             
     def analyze_training_data(self, data):
         """Analyze the training data structure"""
-        logger.info("📊 Analyzing training data...")
+        logger.info("Analyzing training data...")
         
         if not data:
             logger.error("No data to analyze")
@@ -63,7 +63,7 @@ class SimpleGermanLegalTrainer:
         # Count document types
         prompt_types = {}
         for item in data:
-            prompt = item.get('prompt', '').lower()
+            prompt = item.get('input', '').lower()
             if 'klage' in prompt:
                 prompt_types['Klage'] = prompt_types.get('Klage', 0) + 1
             elif 'abmahnung' in prompt:
@@ -81,12 +81,12 @@ class SimpleGermanLegalTrainer:
             
     def create_training_prompts(self, data):
         """Create enhanced training prompts for German legal documents"""
-        logger.info("🔧 Creating enhanced training prompts...")
+        logger.info("Creating enhanced training prompts...")
         
         enhanced_prompts = []
         
         for i, item in enumerate(data):
-            prompt = item.get('prompt', '').strip()
+            prompt = item.get('input', '').strip()
             completion = item.get('completion', '').strip()
             
             # Create system prompt for German legal assistant
@@ -108,7 +108,7 @@ Ihre Antworten sind:
             
             enhanced_prompts.append(enhanced_prompt)
             
-        logger.info(f"✅ Created {len(enhanced_prompts)} enhanced training prompts")
+        logger.info(f"Created {len(enhanced_prompts)} enhanced training prompts")
         return enhanced_prompts
         
     def _classify_document(self, prompt):
@@ -130,7 +130,7 @@ Ihre Antworten sind:
             
     def create_model_configuration(self, enhanced_prompts):
         """Create a model configuration file for local deployment"""
-        logger.info("⚙️ Creating model configuration...")
+        logger.info("Creating model configuration...")
         
         # Group prompts by document type
         by_type = {}
@@ -155,7 +155,7 @@ Ihre Antworten sind:
         with open(config_path, 'w', encoding='utf-8') as f:
             json.dump(config, f, indent=2, ensure_ascii=False)
             
-        logger.info(f"✅ Model configuration saved to {config_path}")
+        logger.info(f"Model configuration saved to {config_path}")
         return config
         
     def _create_sample_responses(self, by_type):
@@ -215,7 +215,7 @@ Mit freundlichen Grüßen"""
         
     def train_model(self):
         """Execute the training process"""
-        logger.info("🚀 Starting local model training...")
+        logger.info("Starting local model training...")
         
         # Load and analyze data
         data = self.load_training_data()
@@ -237,13 +237,13 @@ Mit freundlichen Grüßen"""
             for prompt in enhanced_prompts:
                 f.write(json.dumps(prompt, ensure_ascii=False) + '\n')
                 
-        logger.info(f"✅ Training data saved to {training_path}")
+        logger.info(f"Training data saved to {training_path}")
         
         # Create deployment script
         self._create_deployment_script(config)
         
-        logger.info("🎉 Local model training completed successfully!")
-        logger.info(f"📁 Model files saved in: {self.output_dir}")
+        logger.info("Local model training completed successfully!")
+        logger.info(f"Model files saved in: {self.output_dir}")
         
         return True
         
@@ -301,11 +301,11 @@ if __name__ == "__main__":
         with open(script_path, 'w', encoding='utf-8') as f:
             f.write(script_content)
             
-        logger.info(f"✅ Deployment script created: {script_path}")
+        logger.info(f"Deployment script created: {script_path}")
 
 def main():
     """Main training function"""
-    print("🤖 Anwalts AI - Local Model Training")
+    print("Anwalts AI - Local Model Training")
     print("=" * 50)
     
     trainer = SimpleGermanLegalTrainer()
@@ -314,18 +314,18 @@ def main():
         success = trainer.train_model()
         
         if success:
-            print("\n🎉 Training completed successfully!")
-            print(f"📁 Model files saved in: {trainer.output_dir}")
-            print("\n📋 Next steps:")
+            print("\nTraining completed successfully!")
+            print(f"Model files saved in: {trainer.output_dir}")
+            print("\nNext steps:")
             print("1. Test the model with: python deploy_model.py")
             print("2. Integrate with existing infrastructure")
             print("3. Deploy to production environment")
         else:
-            print("\n❌ Training failed. Check logs for details.")
+            print("\nTraining failed. Check logs for details.")
             
     except Exception as e:
         logger.error(f"Training failed with error: {e}")
-        print(f"\n❌ Training failed: {e}")
+        print(f"\nTraining failed: {e}")
 
 if __name__ == "__main__":
     main()

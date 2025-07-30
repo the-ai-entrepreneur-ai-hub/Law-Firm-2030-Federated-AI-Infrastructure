@@ -1,0 +1,379 @@
+/* AnwaltsAI Professional Legal Theme */
+:root {
+  /* Legal Professional Color Palette */
+  --background: oklch(0.9900 0.0050 250.0000);
+  --foreground: oklch(0.1200 0.0200 260.0000);
+  --card: oklch(0.9850 0.0100 250.0000);
+  --card-foreground: oklch(0.1400 0.0200 260.0000);
+  --popover: oklch(0.9900 0.0050 250.0000);
+  --popover-foreground: oklch(0.1200 0.0200 260.0000);
+  
+  /* Primary Legal Blues */
+  --primary: oklch(0.4500 0.1800 260.0000); /* Deep professional blue */
+  --primary-foreground: oklch(0.9900 0.0050 250.0000);
+  --primary-hover: oklch(0.5200 0.1600 260.0000);
+  --primary-light: oklch(0.7500 0.1200 260.0000);
+  
+  /* Secondary Legal Purples */
+  --secondary: oklch(0.5500 0.1500 280.0000); /* Professional purple */
+  --secondary-foreground: oklch(0.9900 0.0050 250.0000);
+  --secondary-hover: oklch(0.6200 0.1300 280.0000);
+  --secondary-light: oklch(0.8000 0.1000 280.0000);
+  
+  /* Neutral Professional Grays */
+  --muted: oklch(0.9400 0.0100 250.0000);
+  --muted-foreground: oklch(0.4500 0.0150 260.0000);
+  --accent: oklch(0.9600 0.0100 250.0000);
+  --accent-foreground: oklch(0.2000 0.0200 260.0000);
+  
+  /* Legal Context Colors */
+  --success: oklch(0.6000 0.1500 140.0000); /* Legal approval green */
+  --success-foreground: oklch(0.9900 0.0050 140.0000);
+  --warning: oklch(0.7000 0.1500 60.0000); /* Legal caution amber */
+  --warning-foreground: oklch(0.1200 0.0200 60.0000);
+  --destructive: oklch(0.5500 0.2000 25.0000); /* Legal error red */
+  --destructive-foreground: oklch(0.9900 0.0050 25.0000);
+  
+  /* Border and Input Styling */
+  --border: oklch(0.8800 0.0150 260.0000);
+  --input: oklch(0.9600 0.0100 250.0000);
+  --ring: oklch(0.4500 0.1800 260.0000);
+  
+  /* Glassmorphism Effects */
+  --glass-bg: oklch(0.9800 0.0100 250.0000 / 0.7);
+  --glass-border: oklch(0.8500 0.0200 260.0000 / 0.3);
+  --glass-shadow: oklch(0.4500 0.1800 260.0000 / 0.1);
+  
+  /* Professional Typography */
+  --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  
+  /* Professional Spacing & Sizing */
+  --radius: 0.75rem;
+  --radius-sm: calc(var(--radius) - 0.25rem);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 0.25rem);
+  --radius-xl: calc(var(--radius) + 0.5rem);
+  
+  /* Professional Shadows */
+  --shadow-xs: 0 1px 2px 0px oklch(0.1200 0.0200 260.0000 / 0.05);
+  --shadow-sm: 0 1px 3px 0px oklch(0.1200 0.0200 260.0000 / 0.1), 0 1px 2px -1px oklch(0.1200 0.0200 260.0000 / 0.1);
+  --shadow: 0 1px 3px 0px oklch(0.1200 0.0200 260.0000 / 0.1), 0 1px 2px -1px oklch(0.1200 0.0200 260.0000 / 0.1);
+  --shadow-md: 0 4px 6px -1px oklch(0.1200 0.0200 260.0000 / 0.1), 0 2px 4px -2px oklch(0.1200 0.0200 260.0000 / 0.1);
+  --shadow-lg: 0 10px 15px -3px oklch(0.1200 0.0200 260.0000 / 0.1), 0 4px 6px -4px oklch(0.1200 0.0200 260.0000 / 0.1);
+  --shadow-xl: 0 20px 25px -5px oklch(0.1200 0.0200 260.0000 / 0.1), 0 8px 10px -6px oklch(0.1200 0.0200 260.0000 / 0.1);
+  --shadow-legal: 0 8px 32px oklch(0.4500 0.1800 260.0000 / 0.12);
+  
+  /* Professional Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+  --gradient-hero: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--primary-light) 100%);
+  --gradient-glass: linear-gradient(135deg, var(--glass-bg) 0%, oklch(0.9600 0.0150 250.0000 / 0.6) 100%);
+}
+
+/* Dark Mode Variations */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0.0800 0.0150 260.0000);
+    --foreground: oklch(0.9400 0.0100 250.0000);
+    --card: oklch(0.1000 0.0200 260.0000);
+    --card-foreground: oklch(0.9200 0.0150 250.0000);
+    --popover: oklch(0.0800 0.0150 260.0000);
+    --popover-foreground: oklch(0.9400 0.0100 250.0000);
+    
+    --primary: oklch(0.6500 0.1600 260.0000);
+    --primary-foreground: oklch(0.0800 0.0150 260.0000);
+    --primary-hover: oklch(0.7200 0.1400 260.0000);
+    --primary-light: oklch(0.5800 0.1800 260.0000);
+    
+    --secondary: oklch(0.7000 0.1300 280.0000);
+    --secondary-foreground: oklch(0.0800 0.0150 260.0000);
+    --secondary-hover: oklch(0.7700 0.1100 280.0000);
+    --secondary-light: oklch(0.6300 0.1500 280.0000);
+    
+    --muted: oklch(0.1500 0.0200 260.0000);
+    --muted-foreground: oklch(0.6500 0.0150 250.0000);
+    --accent: oklch(0.1800 0.0200 260.0000);
+    --accent-foreground: oklch(0.9000 0.0150 250.0000);
+    
+    --border: oklch(0.2500 0.0200 260.0000);
+    --input: oklch(0.1800 0.0200 260.0000);
+    --ring: oklch(0.6500 0.1600 260.0000);
+    
+    --glass-bg: oklch(0.1200 0.0200 260.0000 / 0.7);
+    --glass-border: oklch(0.3000 0.0200 260.0000 / 0.3);
+    --glass-shadow: oklch(0.0400 0.0150 260.0000 / 0.3);
+  }
+}
+
+/* Base Styling */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans) !important;
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Typography Hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading) !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  color: var(--foreground) !important;
+}
+
+h1 { font-size: 2.5rem !important; }
+h2 { font-size: 2rem !important; }
+h3 { font-size: 1.5rem !important; }
+h4 { font-size: 1.25rem !important; }
+h5 { font-size: 1.125rem !important; }
+h6 { font-size: 1rem !important; }
+
+/* Professional Button Styles */
+.btn-primary {
+  background: var(--gradient-primary) !important;
+  color: var(--primary-foreground) !important;
+  border: none !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: var(--radius) !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: var(--shadow-md) !important;
+  cursor: pointer !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-lg) !important;
+  background: var(--primary-hover) !important;
+}
+
+.btn-secondary {
+  background: var(--gradient-secondary) !important;
+  color: var(--secondary-foreground) !important;
+  border: none !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: var(--radius) !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: var(--shadow-md) !important;
+  cursor: pointer !important;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-lg) !important;
+  background: var(--secondary-hover) !important;
+}
+
+.btn-ghost {
+  background: transparent !important;
+  color: var(--foreground) !important;
+  border: 2px solid var(--border) !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: var(--radius) !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+}
+
+.btn-ghost:hover {
+  background: var(--accent) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+/* Professional Card Styles with Glassmorphism */
+.card-glass {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 2rem !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: var(--shadow-legal) !important;
+  transition: all 0.3s ease !important;
+}
+
+.card-glass:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-xl) !important;
+  border-color: var(--primary) !important;
+}
+
+.card-professional {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 2rem !important;
+  box-shadow: var(--shadow-md) !important;
+  transition: all 0.3s ease !important;
+}
+
+.card-professional:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* Professional Input Styles */
+.input-legal {
+  background: var(--input) !important;
+  border: 2px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  transition: all 0.3s ease !important;
+  width: 100% !important;
+  font-family: var(--font-sans) !important;
+}
+
+.input-legal:focus {
+  outline: none !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px oklch(var(--primary) / 0.1) !important;
+  background: var(--background) !important;
+}
+
+/* Navigation Styles */
+.nav-legal {
+  background: var(--glass-bg) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  padding: 1rem 0 !important;
+}
+
+.nav-item {
+  color: var(--muted-foreground) !important;
+  text-decoration: none !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: var(--radius-sm) !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+}
+
+.nav-item:hover, .nav-item.active {
+  color: var(--primary) !important;
+  background: var(--accent) !important;
+}
+
+/* Professional Gradient Text */
+.text-gradient-legal {
+  background: var(--gradient-hero) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 700 !important;
+}
+
+/* Legal Document Styling */
+.legal-document {
+  font-family: var(--font-mono) !important;
+  background: var(--muted) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+  padding: 1.5rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+}
+
+/* Professional Status Indicators */
+.status-success {
+  background: var(--success) !important;
+  color: var(--success-foreground) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+.status-warning {
+  background: var(--warning) !important;
+  color: var(--warning-foreground) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+.status-error {
+  background: var(--destructive) !important;
+  color: var(--destructive-foreground) !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+
+/* Professional Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out !important;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out !important;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Professional Layout Utilities */
+.container-legal {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 0 2rem !important;
+}
+
+.section-hero {
+  background: var(--gradient-hero) !important;
+  color: white !important;
+  padding: 4rem 0 !important;
+  text-align: center !important;
+}
+
+.section-professional {
+  padding: 4rem 0 !important;
+  background: var(--background) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container-legal {
+    padding: 0 1rem !important;
+  }
+  
+  h1 { font-size: 2rem !important; }
+  h2 { font-size: 1.75rem !important; }
+  
+  .card-glass, .card-professional {
+    padding: 1.5rem !important;
+  }
+  
+  .section-hero, .section-professional {
+    padding: 2rem 0 !important;
+  }
+}

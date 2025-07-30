@@ -1,124 +1,2204 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Law Firm 2030 | Secure Document Upload</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Anwalts-AI - Ihr KI-Partner für deutsche Rechtsdokumente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        /* TUNNEL SHADER BACKGROUND - AMAZING ANIMATION */
+        #shader-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+        
+        /* Enhanced Floating Glass Navbar - SAME AS PAGE BACKGROUND */
+        .floating-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: transparent;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+        }
+        
+        /* Scroll-based shadow class */
+        .floating-navbar.scrolled {
+            box-shadow: 
+                0 8px 32px rgba(67, 56, 202, 0.3),
+                0 4px 16px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-content {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0 8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .cloud-background::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
+            animation: cloudFloat 20s ease-in-out infinite;
+            transform: rotate(0deg);
+        }
+        
+        .cloud-background::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 60% 70%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
+            animation: cloudFloat 25s ease-in-out infinite reverse;
+            transform: rotate(45deg);
+        }
+        
+        @keyframes cloudFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            25% { transform: translate(-20px, -10px) rotate(1deg) scale(1.02); }
+            50% { transform: translate(-10px, -20px) rotate(-1deg) scale(0.98); }
+            75% { transform: translate(20px, -5px) rotate(0.5deg) scale(1.01); }
+        }
+        
+        /* ENHANCED STACKED CARDS ANIMATION */
+        .cards-section {
+            --_offset-steps: 2.5rem;
+            --_scale-steps: 6;
+            --_opacity-steps: 10;
+            --_offset-steps-two: calc(var(--_offset-steps) * -0.8);
+            --_offset-steps-three: calc(var(--_offset-steps) * -1.6);
+            --scale-steps-two: calc(1 - var(--_scale-steps) * 0.012);
+            --scale-steps-three: calc(1 - var(--_scale-steps) * 0.024);
+            --opacity-steps-two: calc(1 - var(--_opacity-steps) * 0.012);
+            --opacity-steps-three: calc(1 - var(--_opacity-steps) * 0.024);
+            display: grid;
+            grid-template-areas: "stack";
+            width: 100%;
+            max-width: 420px;
+            perspective: 1200px;
+            margin: 2rem 0;
+            margin-left: 4rem;
+        }
+        
+        .feature-card {
+            grid-area: stack;
+            transition: all 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            translate: var(--_offset) 0;
+            order: var(--_order);
+            z-index: var(--_order);
+            scale: var(--_scale);
+            opacity: var(--_opacity);
+            cursor: grab;
+            user-select: none;
+            transform-style: preserve-3d;
+            filter: blur(0px);
+        }
+        
+        .feature-card:active { cursor: grabbing; }
+        
+        .feature-card:nth-of-type(1) {
+            --_order: var(--_1-order);
+            --_scale: var(--_1-scale);
+            --_opacity: var(--_1-opacity);
+            --_offset: var(--_1-offset);
+        }
+        
+        .feature-card:nth-of-type(2) {
+            --_order: var(--_2-order);
+            --_scale: var(--_2-scale);
+            --_opacity: var(--_2-opacity);
+            --_offset: var(--_2-offset);
+        }
+        
+        .feature-card:nth-of-type(3) {
+            --_order: var(--_3-order);
+            --_scale: var(--_3-scale);
+            --_opacity: var(--_3-opacity);
+            --_offset: var(--_3-offset);
+        }
+        
+        .feature-card:nth-of-type(4) {
+            --_order: var(--_4-order);
+            --_scale: var(--_4-scale);
+            --_opacity: var(--_4-opacity);
+            --_offset: var(--_4-offset);
+        }
+        
+        .cards-section.feature-1-active {
+            --_1-order: 10; --_1-scale: 1; --_1-opacity: 1; --_1-offset: 0;
+            --_2-order: 9; --_2-scale: var(--scale-steps-two); --_2-opacity: var(--opacity-steps-two); --_2-offset: var(--_offset-steps-two);
+            --_3-order: 8; --_3-scale: var(--scale-steps-three); --_3-opacity: var(--opacity-steps-three); --_3-offset: var(--_offset-steps-three);
+            --_4-order: 7; --_4-scale: calc(1 - var(--_scale-steps) * 0.03); --_4-opacity: calc(1 - var(--_opacity-steps) * 0.04); --_4-offset: calc(var(--_offset-steps) * -2.2);
+        }
+        
+        .cards-section.feature-2-active {
+            --_2-order: 10; --_2-scale: 1; --_2-opacity: 1; --_2-offset: 0;
+            --_3-order: 9; --_3-scale: var(--scale-steps-two); --_3-opacity: var(--opacity-steps-two); --_3-offset: var(--_offset-steps-two);
+            --_4-order: 8; --_4-scale: var(--scale-steps-three); --_4-opacity: var(--opacity-steps-three); --_4-offset: var(--_offset-steps-three);
+            --_1-order: 7; --_1-scale: calc(1 - var(--_scale-steps) * 0.03); --_1-opacity: calc(1 - var(--_opacity-steps) * 0.04); --_1-offset: calc(var(--_offset-steps) * -2.2);
+        }
+        
+        .cards-section.feature-3-active {
+            --_3-order: 10; --_3-scale: 1; --_3-opacity: 1; --_3-offset: 0;
+            --_4-order: 9; --_4-scale: var(--scale-steps-two); --_4-opacity: var(--opacity-steps-two); --_4-offset: var(--_offset-steps-two);
+            --_1-order: 8; --_1-scale: var(--scale-steps-three); --_1-opacity: var(--opacity-steps-three); --_1-offset: var(--_offset-steps-three);
+            --_2-order: 7; --_2-scale: calc(1 - var(--_scale-steps) * 0.03); --_2-opacity: calc(1 - var(--_opacity-steps) * 0.04); --_2-offset: calc(var(--_offset-steps) * -2.2);
+        }
+        
+        .cards-section.feature-4-active {
+            --_4-order: 10; --_4-scale: 1; --_4-opacity: 1; --_4-offset: 0;
+            --_1-order: 9; --_1-scale: var(--scale-steps-two); --_1-opacity: var(--opacity-steps-two); --_1-offset: var(--_offset-steps-two);
+            --_2-order: 8; --_2-scale: var(--scale-steps-three); --_2-opacity: var(--opacity-steps-three); --_2-offset: var(--_offset-steps-three);
+            --_3-order: 7; --_3-scale: calc(1 - var(--_scale-steps) * 0.03); --_3-opacity: calc(1 - var(--_opacity-steps) * 0.04); --_3-offset: calc(var(--_offset-steps) * -2.2);
+        }
+        
+        .dragging-left { 
+            transform: translateX(-40px) rotateY(-8deg) scale(1.02);
+            filter: brightness(1.1);
+            box-shadow: 0 20px 60px rgba(67, 56, 202, 0.4);
+        }
+        .dragging-right { 
+            transform: translateX(40px) rotateY(8deg) scale(1.02);
+            filter: brightness(1.1);
+            box-shadow: 0 20px 60px rgba(67, 56, 202, 0.4);
+        }
+        
+        /* ENHANCED GLASSMORPHISM AND ANIMATIONS */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(67, 56, 202, 0.4), rgba(30, 27, 75, 0.25));
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(139, 92, 246, 0.5);
+            box-shadow: 0 25px 50px rgba(67, 56, 202, 0.3), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff, #e5e7eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* ENHANCED ANIMATIONS */
+        @keyframes slideInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeInScale {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes slideDownGlow {
+            from { 
+                transform: translateY(-30px); 
+                opacity: 0; 
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); 
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1; 
+                box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2); 
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0,-10px,0); }
+            70% { transform: translate3d(0,-5px,0); }
+            90% { transform: translate3d(0,-2px,0); }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 40px rgba(99, 102, 241, 0.6);
+                transform: scale(1.02);
+            }
+        }
+        
+        .slide-in-up { animation: slideInUp 0.8s ease-out; }
+        .fade-in-scale { animation: fadeInScale 0.6s ease-out; }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        .slide-down-glow { animation: slideDownGlow 1s ease-out; }
+        .bounce-animation { animation: bounce 2s ease-in-out infinite; }
+        .pulse-glow { animation: pulseGlow 3s ease-in-out infinite; }
+        
+        .legal-button {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.8), rgba(67, 56, 202, 0.6));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .legal-button:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(79, 70, 229, 0.7));
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+        
+        /* Subtle Running Lights Animation for CTAs */
+        .cta-with-lights {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-with-lights::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                rgba(255, 255, 255, 0.2),
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            animation: runningLight 3s linear infinite;
+            border-radius: inherit;
+        }
+        
+        @keyframes runningLight {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .cta-with-lights:hover::before {
+            animation-duration: 1.5s;
+        }
+        
+        /* Enhanced border glow for CTA buttons */
+        .cta-with-lights::after {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(139, 92, 246, 0.3),
+                transparent,
+                rgba(79, 70, 229, 0.3),
+                transparent
+            );
+            background-size: 200% 200%;
+            border-radius: inherit;
+            z-index: -1;
+            animation: borderGlow 4s linear infinite;
+            opacity: 0.7;
+        }
+        
+        @keyframes borderGlow {
+            0% { background-position: 0% 0%; }
+            25% { background-position: 100% 0%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+        
+        /* Scroll down indicator */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+        
+        .scroll-indicator svg {
+            stroke: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        
+        .scroll-indicator:hover svg {
+            stroke: white;
+            transform: scale(1.1);
+        }
+        
+        .feature-icon-gradient-1 { background: linear-gradient(135deg, #6366F1, #4338CA); }
+        .feature-icon-gradient-2 { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .feature-icon-gradient-3 { background: linear-gradient(135deg, #06B6D4, #0891B2); }
+        .feature-icon-gradient-4 { background: linear-gradient(135deg, #10B981, #059669); }
+        
+        /* SMOOTH SCROLL */
+        html { scroll-behavior: smooth; }
+        
+        /* TESTIMONIAL CARDS */
+        .testimonial-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* RESPONSIVE IMPROVEMENTS */
+        @media (max-width: 1024px) {
+            .cards-section {
+                margin-left: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .cards-section {
+                --_offset-steps: 2rem;
+                width: min(calc(100% - 1rem), 18rem);
+                margin-left: 0;
+                margin: 2rem auto 0;
+            }
+            
+            .floating-navbar {
+                padding: 12px 0;
+            }
+            
+            .navbar-content {
+                padding: 0 1.5rem;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .navbar-content > div:nth-child(2) { /* Center nav */
+                display: none !important;
+            }
+            
+            .navbar-content > div:nth-child(3) { /* Right section */
+                display: flex !important;
+            }
+            
+            .feature-card {
+                transition: all 500ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            }
+        }
+        
+        /* Additional visual enhancements */
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* AUTHENTICATION MODAL SYSTEM */
+        .auth-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .auth-modal {
+            background: linear-gradient(135deg, rgba(67, 56, 202, 0.15), rgba(30, 27, 75, 0.1));
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 
+                0 25px 50px rgba(67, 56, 202, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        
+        /* Removed problematic scrolling border animation */
+        
+        .auth-modal.active {
+            transform: scale(1) translateY(0);
+        }
+        
+        .auth-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .auth-modal-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .auth-modal-close:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* SOCIAL LOGIN BUTTONS */
+        .social-login-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .social-button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .social-button.google:hover {
+            border-color: rgba(66, 133, 244, 0.5);
+        }
+        
+        .social-button.twitter:hover {
+            border-color: rgba(29, 161, 242, 0.5);
+        }
+        
+        /* FORM DIVIDER */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.875rem;
+        }
+        
+        .auth-divider::before,
+        .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .auth-divider span {
+            padding: 0 1rem;
+        }
+        
+        /* FORM INPUTS */
+        .auth-form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .auth-form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .auth-form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .auth-form-input:focus {
+            outline: none;
+            border-color: rgba(139, 92, 246, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        
+        .auth-form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* FORM OPTIONS */
+        .auth-form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem 0;
+            font-size: 0.875rem;
+        }
+        
+        .auth-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .auth-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .auth-link {
+            color: rgba(139, 92, 246, 0.8);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .auth-link:hover {
+            color: rgba(139, 92, 246, 1);
+        }
+        
+        /* AUTH SUBMIT BUTTON */
+        .auth-submit-button {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.8), rgba(67, 56, 202, 0.6)) !important;
+            border: 1px solid rgba(139, 92, 246, 0.4) !important;
+            border-radius: 12px;
+            color: white !important;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-submit-button:focus,
+        .auth-submit-button:active {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.8), rgba(67, 56, 202, 0.6)) !important;
+            border: 1px solid rgba(139, 92, 246, 0.6) !important;
+            color: white !important;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        
+        .auth-submit-button.cta-with-lights::before {
+            animation: runningLight 3s linear infinite;
+        }
+        
+        .auth-submit-button:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(79, 70, 229, 0.7));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+        
+        /* FORM TOGGLE */
+        .auth-form-toggle {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+        
+        .auth-form-toggle button {
+            background: none;
+            border: none;
+            color: rgba(139, 92, 246, 0.8);
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .auth-form-toggle button:hover {
+            color: rgba(139, 92, 246, 1);
+        }
+        
+        /* ERROR AND SUCCESS STATES */
+        .auth-error {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+        
+        .auth-success {
+            color: #10b981;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+        
+        /* ENHANCED LOADING STATE */
+        .auth-loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: rgba(139, 92, 246, 0.8);
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+        
+        /* Loading overlay to indicate system is busy */
+        .auth-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            display: none;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Button pulse animation during loading */
+        .auth-submit-button.loading {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Enhanced responsive modal */
+        @media (max-width: 768px) {
+            .auth-modal {
+                width: 95%;
+                padding: 1.5rem;
+                max-height: 95vh;
+            }
+            
+            .social-login-section {
+                gap: 0.75rem;
+            }
+            
+            .social-button {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .navbar-content {
+                padding: 0 2rem;
+            }
+        }
+    </style>
 </head>
-<body>
-
-    <div class="container">
-        <div class="header">
-            <h1>Law Firm Vision 2030</h1>
-            <p class="subtitle">🇩🇪→🇺🇸 German Legal Document AI with Translation</p>
-        </div>
-
-        <form id="upload-form" novalidate>
-            <div class="file-upload-container">
-                <label for="file-input" class="upload-label">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    <span class="upload-text">Choose a German Legal Document</span>
-                    <span class="upload-subtext">PDF, PNG, JPG, TXT • Max 10MB</span>
-                </label>
-                <input type="file" id="file-input" name="file" accept=".pdf,.png,.jpg,.jpeg,.txt">
-                <p id="file-name-display"></p>
+<body class="text-white antialiased overflow-x-hidden">
+    <!-- TUNNEL SHADER BACKGROUND - AMAZING ANIMATION -->
+    <canvas id="shader-canvas"></canvas>
+    
+    <!-- Full Width Glass Navbar -->
+    <nav class="floating-navbar">
+        <div class="navbar-content">
+            <!-- Left Section: Logo only -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-400/40 to-blue-500/30 flex items-center justify-center border border-purple-300/40 relative overflow-hidden shadow-lg">
+                    <!-- Law + Brain Symbol -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                        <!-- Scales of Justice Base -->
+                        <path d="M12 3v18"/>
+                        <path d="M8 6l4-3 4 3"/>
+                        <!-- Brain Circuit Pattern (subtle) -->
+                        <circle cx="9" cy="9" r="1" opacity="0.7"/>
+                        <circle cx="15" cy="9" r="1" opacity="0.7"/>
+                        <circle cx="12" cy="12" r="1" opacity="0.7"/>
+                        <path d="M9 9L12 12L15 9" opacity="0.5"/>
+                        <!-- Scale Pans -->
+                        <path d="M6 8h4M14 8h4"/>
+                        <path d="M6 8v2a2 2 0 1 0 4 0v-2M14 8v2a2 2 0 1 0 4 0v-2"/>
+                    </svg>
+                    <!-- Enhanced glow effect -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-purple-400/15 to-blue-400/15 rounded-xl"></div>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-white font-['Playfair_Display'] 
+                       bg-gradient-to-r from-purple-200 via-white to-blue-200 bg-clip-text text-transparent
+                       drop-shadow-sm">Anwalts-AI</span>
             </div>
             
-            <button type="submit" id="submit-button">
-                <span class="button-text">Upload & Process</span>
-                <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17H7V7"/></svg>
-            </button>
-        </form>
-
-        <div id="status-message"></div>
-
-        <div id="results-container" class="results-container" style="display: none;">
-            <h3>📋 Processing Results</h3>
-            
-            <!-- Process Steps Tabs -->
-            <div class="tabs-container">
-                <div class="tabs">
-                    <button class="tab-button active" data-tab="analysis">Final Analysis</button>
-                    <button class="tab-button" data-tab="pii">PII Removal</button>
-                    <button class="tab-button" data-tab="process">Process Details</button>
-                    <button class="tab-button" data-tab="anonymized">Anonymized Text</button>
-                    <button class="tab-button" data-tab="original">Original Text</button>
-                </div>
-                
-                <!-- Final Analysis Tab -->
-                <div id="tab-analysis" class="tab-content active">
-                    <h4>🎯 Legal Analysis (English Translation)</h4>
-                    <div id="results-content" class="results-content"></div>
-                </div>
-                
-                <!-- PII Removal Tab -->
-                <div id="tab-pii" class="tab-content">
-                    <h4>🔒 PII Data Removed</h4>
-                    <div id="pii-stats" class="stats-grid"></div>
-                    <div id="pii-samples" class="pii-samples"></div>
-                </div>
-                
-                <!-- Process Details Tab -->
-                <div id="tab-process" class="tab-content">
-                    <h4>⚙️ Processing Statistics</h4>
-                    <div id="process-stats" class="stats-grid"></div>
-                </div>
-                
-                <!-- Anonymized Text Tab -->
-                <div id="tab-anonymized" class="tab-content">
-                    <h4>👤 Anonymized Text (English Translation)</h4>
-                    <div id="anonymized-content" class="text-content"></div>
-                </div>
-                
-                <!-- Original Text Tab -->
-                <div id="tab-original" class="tab-content">
-                    <h4>📄 Original German Text</h4>
-                    <div id="original-content" class="text-content"></div>
-                </div>
+            <!-- Center Section: Navigation -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#funktionen" class="text-sm font-medium text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/10">Funktionen</a>
+                <a href="#erfolgsgeschichten" class="text-sm font-medium text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/10">Erfolgsgeschichten</a>
+                <a href="#preise" class="text-sm font-medium text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/10">Preise</a>
             </div>
             
-            <div class="results-actions">
-                <button type="button" id="copy-results" class="action-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                    Copy Analysis
+            <!-- Right Section: Auth & CTA -->
+            <div class="hidden md:flex items-center gap-4">
+                <button class="text-sm font-medium text-gray-300 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/10">
+                    Anmelden
                 </button>
-                <button type="button" id="copy-all-data" class="action-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
-                    Copy All Data
-                </button>
-                <button type="button" id="new-document" class="action-button secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                    Process New Document
+                <button class="cta-with-lights bg-gradient-to-r from-purple-500/80 to-blue-500/80 hover:from-purple-500 hover:to-blue-500 text-white px-6 py-2.5 rounded-lg text-sm font-semibold border border-white/20 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02]">
+                    Jetzt starten
                 </button>
             </div>
         </div>
+    </nav>
 
-        <div class="how-it-works">
-            <h3>How It Works</h3>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-icon">1</div>
-                    <h4>Text Extraction</h4>
-                    <p>German text is extracted from your document using OCR or direct reading.</p>
+    <!-- AUTHENTICATION MODAL -->
+    <div class="auth-modal-overlay" id="authModal">
+        <div class="auth-modal" id="authModalContent">
+            <div class="auth-modal-header">
+                <h2 class="auth-modal-title" id="authModalTitle">Anmelden</h2>
+                <button class="auth-modal-close" id="authModalClose">×</button>
+            </div>
+
+            <!-- Social Login Section -->
+            <div class="social-login-section">
+                <button class="social-button google" id="googleLogin">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Mit Google anmelden
+                </button>
+                
+                <button class="social-button twitter" id="twitterLogin">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#1da1f2">
+                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                    </svg>
+                    Mit Twitter anmelden
+                </button>
+            </div>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+                <span>oder mit E-Mail</span>
+            </div>
+
+            <!-- Authentication Form -->
+            <form id="authForm">
+                <!-- Name field (only for sign up) -->
+                <div class="auth-form-group" id="nameGroup" style="display: none;">
+                    <label class="auth-form-label" for="authName">Vollständiger Name</label>
+                    <input type="text" id="authName" class="auth-form-input" placeholder="Ihr vollständiger Name">
+                    <div class="auth-error" id="nameError"></div>
                 </div>
-                <div class="step">
-                    <div class="step-icon">2</div>
-                    <h4>PII Anonymization</h4>
-                    <p>Sensitive data (names, addresses, IDs) is detected and replaced with placeholders.</p>
+
+                <!-- Email field -->
+                <div class="auth-form-group">
+                    <label class="auth-form-label" for="authEmail">E-Mail-Adresse</label>
+                    <input type="email" id="authEmail" class="auth-form-input" placeholder="ihre@email.com" required>
+                    <div class="auth-error" id="emailError"></div>
                 </div>
-                <div class="step">
-                    <div class="step-icon">3</div>
-                    <h4>AI Analysis & Translation</h4>
-                    <p>The anonymized text is analyzed by AI and results are translated to English.</p>
+
+                <!-- Password field -->
+                <div class="auth-form-group">
+                    <label class="auth-form-label" for="authPassword">Passwort</label>
+                    <input type="password" id="authPassword" class="auth-form-input" placeholder="Ihr Passwort" required>
+                    <div class="auth-error" id="passwordError"></div>
+                </div>
+
+                <!-- Confirm Password field (only for sign up) -->
+                <div class="auth-form-group" id="confirmPasswordGroup" style="display: none;">
+                    <label class="auth-form-label" for="authConfirmPassword">Passwort bestätigen</label>
+                    <input type="password" id="authConfirmPassword" class="auth-form-input" placeholder="Passwort bestätigen">
+                    <div class="auth-error" id="confirmPasswordError"></div>
+                </div>
+
+                <!-- Form Options -->
+                <div class="auth-form-options" id="authOptions">
+                    <label class="auth-checkbox-group" id="rememberMeGroup">
+                        <input type="checkbox" class="auth-checkbox" id="rememberMe">
+                        <span>Angemeldet bleiben</span>
+                    </label>
+                    <a href="#" class="auth-link" id="forgotPassword">Passwort vergessen?</a>
+                </div>
+
+                <!-- Terms checkbox (only for sign up) -->
+                <div class="auth-form-group" id="termsGroup" style="display: none;">
+                    <label class="auth-checkbox-group">
+                        <input type="checkbox" class="auth-checkbox" id="acceptTerms" name="acceptTerms">
+                        <span>Ich akzeptiere die <a href="#" class="auth-link">AGB</a> und <a href="#" class="auth-link">Datenschutzbestimmungen</a></span>
+                    </label>
+                    <div class="auth-error" id="termsError"></div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="auth-submit-button cta-with-lights" id="authSubmit">
+                    <span id="authSubmitText">Anmelden</span>
+                    <div class="auth-loading" id="authLoading" style="display: none;"></div>
+                </button>
+            </form>
+
+            <!-- Form Toggle -->
+            <div class="auth-form-toggle">
+                <span id="authToggleText">Noch kein Konto?</span>
+                <button type="button" id="authToggleButton">Jetzt registrieren</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="content min-h-screen flex items-center pt-24 relative">
+        <div class="max-w-7xl mx-auto px-6 py-12 z-10 relative">
+            <div class="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
+                <!-- Left Content -->
+                <div class="space-y-8 slide-down-glow">
+                    <div class="space-y-6">
+                        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm font-medium text-gray-200 tracking-wide">Es ist 23:47 Uhr. Ihr Mandant wartet auf den Vertrag. Kennen Sie das?</span>
+                        </div>
+                        
+                        <h1 class="text-4xl lg:text-6xl gradient-text tracking-tighter font-['Playfair_Display'] leading-tight">
+                            Schluss mit Überstunden.
+                            <span class="block">Hallo, <span class="font-black italic text-transparent bg-gradient-to-r from-purple-300 via-blue-300 to-indigo-300 bg-clip-text drop-shadow-lg font-['Playfair_Display']">Anwalts-AI</span>.</span>
+                        </h1>
+                        
+                        <p class="max-w-lg text-xl text-gray-200 leading-relaxed">
+                            Stellen Sie sich vor: Verträge in 3 Minuten statt 3 Stunden. E-Mails, die sich selbst beantworten. 
+                            Vorlagen, die schlauer sind als Ihr bester Referendar. <strong>Das ist keine Zukunftsmusik.</strong>
+                        </p>
+                    </div>
+                    
+                    <!-- Navigation Dots -->
+                    <div class="flex items-center gap-3">
+                        <button id="nav-1" class="w-3 h-3 rounded-full bg-white transition-all scale-125"></button>
+                        <button id="nav-2" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                        <button id="nav-3" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                        <button id="nav-4" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                    </div>
+                    
+                    <!-- Feature Highlights -->
+                    <div id="feature-details" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                            <span class="text-gray-200">Von 3 Stunden auf 3 Minuten - Vertragsprüfung</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                            <span class="text-gray-200">Perfekte NDAs in unter 2 Minuten</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full"></div>
+                            <span class="text-gray-200">Nie wieder eine Mandanten-Deadline verpassen</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-200">500+ Expertenvorlagen griffbereit</span>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="legal-button cta-with-lights px-8 py-4 rounded-lg text-white font-medium text-lg">
+                            Kostenlos testen
+                        </button>
+                        <button class="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-lg font-medium text-lg border border-white/20 transition-colors">
+                            5-Minuten Demo ansehen
+                        </button>
+                    </div>
+                    
+                    <!-- Social Proof -->
+                    <div class="text-sm text-gray-300">
+                        <p>Bereits über <strong>1.200+ deutsche Anwaltskanzleien</strong> vertrauen Anwalts-AI</p>
+                    </div>
+                </div>
+
+                <!-- Right Content - Interactive Stacked Cards -->
+                <div class="lg:pl-20 xl:pl-24 mt-12 lg:mt-0 relative">
+                    <!-- Visual separator -->
+                    <div class="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent hidden lg:block"></div>
+                    <div class="cards-section feature-1-active max-w-md mx-auto lg:mx-0">
+                        <!-- Document Processing Card -->
+                        <div class="feature-card glass-card rounded-2xl p-6 float-animation min-h-[32rem]">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-1 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7l-5-5z"/>
+                                            <path d="M14 2v4a2 2 0 0 0 2 2h4"/>
+                                            <path d="M10 9H8"/>
+                                            <path d="M16 13H8"/>
+                                            <path d="M16 17H8"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">Dokumentenanalyse</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Von 3 Stunden auf 3 Minuten</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6 leading-relaxed">
+                                    <strong>"Ich dachte, ich träume."</strong> Dr. Mueller aus Hamburg analysierte einen 40-seitigen 
+                                    Gesellschaftsvertrag. Was normalerweise seinen halben Tag kostete, erledigte Anwalts-AI in 3 Minuten. 
+                                    <em>Mit 99,2% Genauigkeit.</em>
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Zeitersparnis</span>
+                                        <span class="text-green-400 font-semibold">94%</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Dokumenttypen</span>
+                                        <span class="text-white font-medium">500+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Genauigkeit</span>
+                                        <span class="text-blue-400 font-semibold">99,2%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="space-y-1">
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-blue-400 rounded-full"></div>
+                                            Verträge, AGBs, Gesellschaftsverträge
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-blue-400 rounded-full"></div>
+                                            Automatische Risikoanalyse
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-blue-400 rounded-full"></div>
+                                            Sofortige Verbesserungsvorschläge
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="space-y-3">
+                                    <input type="file" id="document-upload" class="hidden" accept=".pdf,.txt,.png,.jpg,.jpeg">
+                                    <button onclick="document.getElementById('document-upload').click()" class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                        📄 Dokument hochladen
+                                    </button>
+                                    <button id="analyze-btn" class="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg font-medium transition-colors disabled:opacity-50" disabled>
+                                        🔍 Dokument analysieren lassen
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Legal Document Creation Card -->
+                        <div class="feature-card glass-card rounded-2xl p-6 min-h-[32rem]">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-2 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                            <polyline points="14,2 14,8 20,8"/>
+                                            <line x1="16" y1="13" x2="8" y2="13"/>
+                                            <line x1="16" y1="17" x2="8" y2="17"/>
+                                            <path d="M10 9H8"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">Dokumentenerstellung</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Perfekte NDAs in 2 Minuten</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6 leading-relaxed">
+                                    <strong>"Mein Referendar ist eifersüchtig."</strong> RA Schmidt aus München erstellt jetzt 
+                                    NDAs, Arbeitsverträge und Kaufverträge schneller als je zuvor. <em>Rechtssicher. Mandantenspezifisch. Perfektion in Minuten.</em>
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Erstellungszeit</span>
+                                        <span class="text-green-400 font-semibold">&lt;2 Min</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Vorlagen verfügbar</span>
+                                        <span class="text-white font-medium">500+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Rechtssicherheit</span>
+                                        <span class="text-purple-400 font-semibold">100%</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="space-y-1">
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-purple-400 rounded-full"></div>
+                                            NDAs, Arbeitsverträge, Kaufverträge
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-purple-400 rounded-full"></div>
+                                            Automatische Mandantendaten-Integration
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-purple-400 rounded-full"></div>
+                                            Aktuelle Rechtsprechung inklusive
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <textarea id="document-prompt" class="w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:border-blue-400 focus:outline-none" rows="4" placeholder="Beschreiben Sie das Dokument, das Sie erstellen möchten..."></textarea>
+                                    <button id="create-btn" class="w-full py-3 px-4 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 rounded-lg font-medium transition-colors">
+                                        ✨ Dokument erstellen
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Management Card -->
+                        <div class="feature-card glass-card rounded-2xl p-6 min-h-[32rem]">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-3 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                            <polyline points="22,6 12,13 2,6"/>
+                                            <path d="M16 10l-4 4-4-4"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">E-Mail-KI</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Nie wieder Deadline verpasst</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6 leading-relaxed">
+                                    <strong>"280 E-Mails am Tag? Kein Problem mehr."</strong> RA Weber aus Berlin lässt Anwalts-AI 
+                                    ihre Mandanten-E-Mails vorsortieren, Deadlines erkennen und Antworten vorschlagen. 
+                                    <em>Intelligent. Höflich. Immer pünktlich.</em>
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">E-Mails pro Tag</span>
+                                        <span class="text-cyan-400 font-semibold">Unbegrenzt</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Antwortzeit</span>
+                                        <span class="text-white font-medium">Sofort</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Deadline-Erkennung</span>
+                                        <span class="text-cyan-400 font-semibold">99,8%</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="space-y-1">
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-cyan-400 rounded-full"></div>
+                                            Automatische Mandanten-Zuordnung
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-cyan-400 rounded-full"></div>
+                                            Intelligente Antwort-Vorschläge
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-cyan-400 rounded-full"></div>
+                                            Deadline-Tracking & Erinnerungen
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    E-Mail-KI aktivieren
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Template System Card -->
+                        <div class="feature-card glass-card rounded-2xl p-6 min-h-[32rem]">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-4 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11z"/>
+                                            <path d="M12 11v6"/>
+                                            <path d="M9 14h6"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">Experten-Bibliothek</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">500+ Expertenvorlagen</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-lg text-gray-200 mb-6 flex-1 leading-relaxed">
+                                    <strong>"Wie ein Lexikon, das mitdenkt."</strong> Kanzlei Hoffmann & Partner nutzt die 
+                                    Vorlagen-Bibliothek von Anwalts-AI. Von Arbeitsrecht bis Zivilprozess - alle Vorlagen 
+                                    von führenden Experten erstellt. <em>Immer aktuell. Immer rechtssicher.</em>
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Verfügbare Vorlagen</span>
+                                        <span class="text-green-400 font-semibold">500+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Rechtsbereiche</span>
+                                        <span class="text-white font-medium">25+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Monatliche Updates</span>
+                                        <span class="text-green-400 font-semibold">50+</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="space-y-1">
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-green-400 rounded-full"></div>
+                                            Arbeits-, Zivil-, Gesellschaftsrecht
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-green-400 rounded-full"></div>
+                                            Automatische Rechtsprechungs-Updates
+                                        </li>
+                                        <li class="flex items-center gap-2">
+                                            <div class="w-1 h-1 bg-green-400 rounded-full"></div>
+                                            Kanzlei-spezifische Anpassungen
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    Vorlagen durchsuchen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="content py-20 relative" id="erfolgsgeschichten">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 slide-down-glow">
+                <h2 class="text-4xl font-['Playfair_Display'] gradient-text mb-4">
+                    Was deutsche Anwälte über Anwalts-AI sagen
+                </h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Echte Erfolgsgeschichten von Kanzleien, die bereits den Schritt in die Zukunft gewagt haben.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card rounded-xl p-6 bounce-animation">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                            DM
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Dr. Müller</h4>
+                            <p class="text-sm text-gray-300">Kanzlei Müller & Partner, Hamburg</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        "Nach 20 Jahren als Anwalt dachte ich, ich hätte alles gesehen. Anwalts-AI hat meine 
+                        Produktivität verdreifacht. Ich gehe wieder pünktlich nach Hause."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ★★★★★
+                    </div>
+                </div>
+                
+                <div class="testimonial-card rounded-xl p-6 bounce-animation">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-semibold">
+                            SW
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Sandra Weber</h4>
+                            <p class="text-sm text-gray-300">Weber Rechtsanwälte, Berlin</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        "280 E-Mails am Tag waren mein Albtraum. Jetzt sortiert Anwalts-AI alles vor und 
+                        schlägt sogar Antworten vor. Ich konzentriere mich wieder aufs Wesentliche."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ★★★★★
+                    </div>
+                </div>
+                
+                <div class="testimonial-card rounded-xl p-6 bounce-animation">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white font-semibold">
+                            HP
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">Hoffmann & Partner</h4>
+                            <p class="text-sm text-gray-300">Wirtschaftskanzlei, München</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-200 leading-relaxed">
+                        "Unsere Mandanten sind begeistert von der Geschwindigkeit. Was früher Tage dauerte, 
+                        erledigen wir jetzt in Stunden. Anwalts-AI ist unser Geheimnis."
+                    </p>
+                    <div class="flex text-yellow-400 mt-4">
+                        ★★★★★
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="content py-20 relative">
+        <div class="max-w-4xl mx-auto px-6 text-center slide-down-glow">
+            <h2 class="text-4xl lg:text-5xl font-['Playfair_Display'] gradient-text mb-6">
+                Bereit für den nächsten Schritt?
+            </h2>
+            <p class="text-xl text-gray-200 mb-8 leading-relaxed">
+                Über 1.200 deutsche Kanzleien haben bereits den Sprung gewagt. 
+                <strong>Testen Sie Anwalts-AI 30 Tage kostenlos.</strong> Ohne Risiko. Ohne Verpflichtung.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="legal-button cta-with-lights px-8 py-4 rounded-lg text-white font-medium text-lg">
+                    Kostenlos testen
+                </button>
+                <button class="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-lg font-medium text-lg border border-white/20 transition-colors">
+                    Persönliche Demo buchen
+                </button>
+            </div>
+            <p class="text-sm text-gray-400 mt-6">
+                Kreditkarte nicht erforderlich • DSGVO-konform • Jederzeit kündbar
+            </p>
+        </div>
+    </section>
+
+    <!-- Scroll Down Indicator -->
+    <div class="scroll-indicator" onclick="document.querySelector('#erfolgsgeschichten').scrollIntoView({behavior: 'smooth'})">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M5 12L12 19L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- ENHANCED JAVASCRIPT WITH 3D BALL FALLBACK -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // TUNNEL SHADER ANIMATION - AMAZING WEBGL BACKGROUND
+        const canvas = document.getElementById('shader-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+        // Set up shader material with blue/purple theme
+        const shaderMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                iTime: { value: 0 },
+                iResolution: { value: new THREE.Vector3(window.innerWidth, window.innerHeight, 1) },
+            },
+            vertexShader: `
+                void main() {
+                    gl_Position = vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float iTime;
+                uniform vec3 iResolution;
+
+                //Constants
+                #define TAU 6.2831853071795865
+
+                //Parameters - Updated colors for blue/purple theme
+                #define TUNNEL_LAYERS 96
+                #define RING_POINTS 128
+                #define POINT_SIZE 1.8
+                #define POINT_COLOR_A vec3(0.5, 0.3, 0.8)  // Purple
+                #define POINT_COLOR_B vec3(0.3, 0.4, 0.9)  // Blue
+                #define SPEED 0.4
+
+                //Square of x
+                float sq(float x) {
+                    return x*x;   
+                }
+
+                //Angular repeat
+                vec2 AngRep(vec2 uv, float angle) {
+                    vec2 polar = vec2(atan(uv.y, uv.x), length(uv));
+                    polar.x = mod(polar.x + angle / 2.0, angle) - angle / 2.0; 
+                    return polar.y * vec2(cos(polar.x), sin(polar.x));
+                }
+
+                //Signed distance to circle
+                float sdCircle(vec2 uv, float r) {
+                    return length(uv) - r;
+                }
+
+                //Mix a shape defined by a distance field 'sd' with a 'target' color using the 'fill' color.
+                vec3 MixShape(float sd, vec3 fill, vec3 target) {
+                    float blend = smoothstep(0.0, 1.0/iResolution.y, sd);
+                    return mix(fill, target, blend);
+                }
+
+                //Tunnel/Camera path
+                vec2 TunnelPath(float x) {
+                    vec2 offs = vec2(0, 0);
+                    
+                    offs.x = 0.2 * sin(TAU * x * 0.5) + 0.4 * sin(TAU * x * 0.2 + 0.3);
+                    offs.y = 0.3 * cos(TAU * x * 0.3) + 0.2 * cos(TAU * x * 0.1);
+                    
+                    offs *= smoothstep(1.0, 4.0, x);
+                    
+                    return offs;
+                }
+
+                void main() {
+                    vec2 res = iResolution.xy / iResolution.y;
+                    vec2 uv = gl_FragCoord.xy / iResolution.y;
+                    
+                    uv -= res/2.0;
+                    
+                    vec3 color = vec3(0);
+                    
+                    float repAngle = TAU / float(RING_POINTS);
+                    float pointSize = POINT_SIZE/2.0/iResolution.y;
+                    
+                    float camZ = iTime * SPEED;
+                    vec2 camOffs = TunnelPath(camZ);
+                    
+                    for(int i = 1; i <= TUNNEL_LAYERS; i++) {
+                        float pz = 1.0 - (float(i) / float(TUNNEL_LAYERS));
+                        
+                        //Scroll the points towards the screen
+                        pz -= mod(camZ, 4.0 / float(TUNNEL_LAYERS));
+                        
+                        //Layer x/y offset
+                        vec2 offs = TunnelPath(camZ + pz) - camOffs;
+                        
+                        //Radius of the current ring
+                        float ringRad = 0.15 * (1.0 / sq(pz * 0.8 + 0.4));
+                        
+                        //Only draw points when uv is close to the ring.
+                        if(abs(length(uv + offs) - ringRad) < pointSize * 1.5) {
+                            //Angular repeated uv coords
+                            vec2 aruv = AngRep(uv + offs, repAngle);
+
+                            //Distance to the nearest point
+                            float pdist = sdCircle(aruv - vec2(ringRad, 0), pointSize);
+
+                            //Stripes with blue/purple theme
+                            vec3 ptColor = (mod(float(i / 2), 2.0) == 0.0) ? POINT_COLOR_A : POINT_COLOR_B;
+                            
+                            //Distance fade
+                            float shade = (1.0-pz);
+
+                            color = MixShape(pdist, ptColor * shade, color);
+                        }
+                    }
+                    
+                    gl_FragColor = vec4(color, 1.0);
+                }
+            `
+        });
+
+        // Create a plane to render the shader on
+        const geometry = new THREE.PlaneGeometry(2, 2);
+        const mesh = new THREE.Mesh(geometry, shaderMaterial);
+        scene.add(mesh);
+
+        // Animation variables
+        let lastTime = 0;
+        const speedMultiplier = 0.15; // Much slower speed for elegance
+
+        // Animation loop
+        function animateTunnel(time) {
+            requestAnimationFrame(animateTunnel);
+            
+            time *= 0.001; // Convert to seconds
+            const deltaTime = time - lastTime;
+            lastTime = time;
+            
+            shaderMaterial.uniforms.iTime.value += deltaTime * speedMultiplier;
+            
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            shaderMaterial.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight, 1);
+        });
+
+        // Start tunnel animation
+        animateTunnel(0);
+        
+        // Scroll-based header shadow
+        const navbar = document.querySelector('.floating-navbar');
+        let scrolled = false;
+        
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > 50 && !scrolled) {
+                navbar.classList.add('scrolled');
+                scrolled = true;
+            } else if (scrollTop <= 50 && scrolled) {
+                navbar.classList.remove('scrolled');
+                scrolled = false;
+            }
+        });
+        
+        // AUTHENTICATION MODAL SYSTEM
+        const authModal = document.getElementById('authModal');
+        const authModalContent = document.getElementById('authModalContent');
+        const authModalClose = document.getElementById('authModalClose');
+        const authModalTitle = document.getElementById('authModalTitle');
+        const authForm = document.getElementById('authForm');
+        const authToggleButton = document.getElementById('authToggleButton');
+        const authToggleText = document.getElementById('authToggleText');
+        const authSubmitText = document.getElementById('authSubmitText');
+        const authSubmit = document.getElementById('authSubmit');
+        const authLoading = document.getElementById('authLoading');
+        
+        // Form elements
+        const nameGroup = document.getElementById('nameGroup');
+        const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
+        const termsGroup = document.getElementById('termsGroup');
+        const rememberMeGroup = document.getElementById('rememberMeGroup');
+        const forgotPassword = document.getElementById('forgotPassword');
+        
+        let isSignUpMode = false;
+        
+        // Open modal when "Anmelden" button is clicked
+        document.querySelector('.floating-navbar button:first-of-type').addEventListener('click', () => {
+            openAuthModal();
+        });
+        
+        // Add event listeners to ALL CTA buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all CTA buttons that should open the auth modal
+            const ctaButtons = document.querySelectorAll('.cta-with-lights, .legal-button');
+            
+            ctaButtons.forEach(button => {
+                // Only add listener if it's not the auth submit button
+                if (!button.classList.contains('auth-submit-button')) {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openAuthModal();
+                    });
+                }
+            });
+        });
+        
+        // Close modal functions
+        authModalClose.addEventListener('click', closeAuthModal);
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) closeAuthModal();
+        });
+        
+        // ESC key to close modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && authModal.classList.contains('active')) {
+                closeAuthModal();
+            }
+        });
+        
+        function openAuthModal() {
+            authModal.classList.add('active');
+            setTimeout(() => {
+                authModalContent.classList.add('active');
+            }, 10);
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeAuthModal() {
+            authModalContent.classList.remove('active');
+            setTimeout(() => {
+                authModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+        
+        // Toggle between Sign In and Sign Up
+        authToggleButton.addEventListener('click', () => {
+            isSignUpMode = !isSignUpMode;
+            updateAuthMode();
+        });
+        
+        function updateAuthMode() {
+            if (isSignUpMode) {
+                // Switch to Sign Up
+                authModalTitle.textContent = 'Registrieren';
+                authSubmitText.textContent = 'Registrieren';
+                authToggleText.textContent = 'Bereits registriert?';
+                authToggleButton.textContent = 'Anmelden';
+                
+                // Show sign up specific fields
+                nameGroup.style.display = 'block';
+                confirmPasswordGroup.style.display = 'block';
+                termsGroup.style.display = 'block';
+                
+                // Restore required attribute for visible checkbox
+                document.getElementById('acceptTerms').required = true;
+                
+                // Hide sign in specific elements
+                rememberMeGroup.style.display = 'none';
+                forgotPassword.style.display = 'none';
+            } else {
+                // Switch to Sign In
+                authModalTitle.textContent = 'Anmelden';
+                authSubmitText.textContent = 'Anmelden';
+                authToggleText.textContent = 'Noch kein Konto?';
+                authToggleButton.textContent = 'Jetzt registrieren';
+                
+                // Hide sign up specific fields
+                nameGroup.style.display = 'none';
+                confirmPasswordGroup.style.display = 'none';
+                termsGroup.style.display = 'none';
+                
+                // Remove required attribute from hidden checkbox to prevent validation error
+                document.getElementById('acceptTerms').required = false;
+                
+                // Show sign in specific elements
+                rememberMeGroup.style.display = 'flex';
+                forgotPassword.style.display = 'block';
+            }
+            clearFormErrors();
+        }
+        
+        // Form validation and submission
+        authForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validateForm()) {
+                submitForm();
+            }
+        });
+        
+        function validateForm() {
+            clearFormErrors();
+            let isValid = true;
+            
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            
+            // Email validation
+            if (!email) {
+                showError('emailError', 'E-Mail-Adresse ist erforderlich');
+                isValid = false;
+            } else if (!isValidEmail(email)) {
+                showError('emailError', 'Bitte geben Sie eine gültige E-Mail-Adresse ein');
+                isValid = false;
+            }
+            
+            // Password validation
+            if (!password) {
+                showError('passwordError', 'Passwort ist erforderlich');
+                isValid = false;
+            } else if (password.length < 8) {
+                showError('passwordError', 'Passwort muss mindestens 8 Zeichen lang sein');
+                isValid = false;
+            }
+            
+            if (isSignUpMode) {
+                const name = document.getElementById('authName').value;
+                const confirmPassword = document.getElementById('authConfirmPassword').value;
+                const acceptTerms = document.getElementById('acceptTerms').checked;
+                
+                // Name validation
+                if (!name) {
+                    showError('nameError', 'Name ist erforderlich');
+                    isValid = false;
+                }
+                
+                // Confirm password validation
+                if (!confirmPassword) {
+                    showError('confirmPasswordError', 'Passwort bestätigen ist erforderlich');
+                    isValid = false;
+                } else if (password !== confirmPassword) {
+                    showError('confirmPasswordError', 'Passwörter stimmen nicht überein');
+                    isValid = false;
+                }
+                
+                // Terms validation
+                if (!acceptTerms) {
+                    showError('termsError', 'Sie müssen die AGB akzeptieren');
+                    isValid = false;
+                }
+            }
+            
+            return isValid;
+        }
+        
+        function submitForm() {
+            // Show loading state
+            authSubmit.disabled = true;
+            authSubmitText.textContent = isSignUpMode ? 'Registrieren...' : 'Anmelden...';
+            authLoading.style.display = 'inline-block';
+            authSubmit.classList.add('loading');
+            
+            // Add loading overlay
+            if (!document.querySelector('.auth-loading-overlay')) {
+                const overlay = document.createElement('div');
+                overlay.className = 'auth-loading-overlay';
+                overlay.style.display = 'block';
+                document.body.appendChild(overlay);
+            }
+            
+            // Get form values
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            
+            // Check credentials
+            setTimeout(() => {
+                // Redirect to dashboard after successful login
+                window.location.href = 'http://127.0.0.1:5500/anwalts-ai-dashboard.html#generator';
+                
+                // Hide loading state
+                authSubmit.disabled = false;
+                authSubmitText.textContent = isSignUpMode ? 'Registrieren' : 'Anmelden';
+                authLoading.style.display = 'none';
+                authSubmit.classList.remove('loading');
+                
+                // Remove loading overlay
+                const overlay = document.querySelector('.auth-loading-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        if (overlay.parentNode) {
+                            overlay.parentNode.removeChild(overlay);
+                        }
+                    }, 200);
+                }
+                
+                // Check for default credentials
+                if (email === 'georgekioko9948@gmail.com' && password === 'georgekioko9948@gmail.com') {
+                    // Success - redirect to dashboard
+                    localStorage.setItem('anwalts_ai_user', JSON.stringify({
+                        email: email,
+                        name: isSignUpMode ? document.getElementById('authName').value : 'George Kioko',
+                        loginTime: new Date().toISOString()
+                    }));
+                    
+                    // Redirect to dashboard
+                    window.location.href = '../../anwalts-ai-dashboard.html';
+                } else {
+                    // Invalid credentials
+                    if (isSignUpMode) {
+                        alert('Registrierung erfolgreich! Sie können sich jetzt anmelden.');
+                        // Switch to sign in mode
+                        isSignUpMode = false;
+                        updateAuthMode();
+                    } else {
+                        showError('passwordError', 'Ungültige E-Mail-Adresse oder Passwort');
+                    }
+                }
+            }, 2000);
+        }
+        
+        // Social login handlers
+        document.getElementById('googleLogin').addEventListener('click', () => {
+            handleSocialLogin('google');
+        });
+        
+        document.getElementById('twitterLogin').addEventListener('click', () => {
+            handleSocialLogin('twitter');
+        });
+        
+        function handleSocialLogin(provider) {
+            // Show loading state
+            const button = document.getElementById(provider + 'Login');
+            button.disabled = true;
+            button.innerHTML = `<div class="auth-loading"></div> Wird geladen...`;
+            
+            // Simulate social login
+            setTimeout(() => {
+                alert(`${provider === 'google' ? 'Google' : 'Twitter'} Anmeldung erfolgreich!`);
+                closeAuthModal();
+                resetForm();
+            }, 1500);
+        }
+        
+        // Utility functions
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+        }
+        
+        function clearFormErrors() {
+            const errorElements = document.querySelectorAll('.auth-error');
+            errorElements.forEach(element => {
+                element.textContent = '';
+            });
+        }
+        
+        function resetForm() {
+            authForm.reset();
+            isSignUpMode = false;
+            updateAuthMode();
+            
+            // Reset social buttons
+            document.getElementById('googleLogin').innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                    <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Mit Google anmelden
+            `;
+            
+            document.getElementById('twitterLogin').innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#1da1f2">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+                Mit Twitter anmelden
+            `;
+            
+            document.getElementById('googleLogin').disabled = false;
+            document.getElementById('twitterLogin').disabled = false;
+        }
+        
+        // Card navigation system - EXACT COPY FROM ORIGINAL
+        const cardsContainer = document.querySelector('.cards-section');
+        const cards = document.querySelectorAll('.feature-card');
+        const navButtons = document.querySelectorAll('[id^="nav-"]');
+        let activeFeature = 1;
+        
+        // Touch/drag handling - EXACT COPY FROM ORIGINAL
+        cards.forEach((card, index) => {
+            let startX, isDragging = false;
+            
+            card.addEventListener('mousedown', e => initDrag(e, index + 1));
+            card.addEventListener('touchstart', e => {
+                e.preventDefault();
+                initDrag(e.touches[0], index + 1);
+            });
+            
+            function initDrag(e, featureId) {
+                if (featureId !== activeFeature) return;
+                isDragging = true;
+                startX = e.clientX;
+                
+                document.addEventListener('mousemove', handleDrag);
+                document.addEventListener('touchmove', e => handleDrag(e.touches[0]));
+                document.addEventListener('mouseup', endDrag);
+                document.addEventListener('touchend', endDrag);
+            }
+            
+            function handleDrag(e) {
+                if (!isDragging) return;
+                const diff = e.clientX - startX;
+                
+                if (diff > 20) {
+                    card.classList.add('dragging-right');
+                    card.classList.remove('dragging-left');
+                } else if (diff < -20) {
+                    card.classList.add('dragging-left');
+                    card.classList.remove('dragging-right');
+                } else {
+                    card.classList.remove('dragging-left', 'dragging-right');
+                }
+            }
+            
+            function endDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                
+                if (card.classList.contains('dragging-right')) {
+                    switchToFeature(activeFeature === 1 ? 4 : activeFeature - 1);
+                } else if (card.classList.contains('dragging-left')) {
+                    switchToFeature(activeFeature === 4 ? 1 : activeFeature + 1);
+                }
+                
+                card.classList.remove('dragging-left', 'dragging-right');
+                document.removeEventListener('mousemove', handleDrag);
+                document.removeEventListener('touchmove', handleDrag);
+                document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchend', endDrag);
+            }
+        });
+        
+        // Navigation button handling - EXACT COPY FROM ORIGINAL
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const featureId = parseInt(button.id.split('-')[1]);
+                switchToFeature(featureId);
+            });
+        });
+        
+        function switchToFeature(featureId) {
+            activeFeature = featureId;
+            cardsContainer.className = `cards-section feature-${featureId}-active`;
+            
+            // Update navigation buttons
+            navButtons.forEach((button, index) => {
+                if (index + 1 === featureId) {
+                    button.className = 'w-3 h-3 rounded-full bg-white transition-all scale-125';
+                } else {
+                    button.className = 'w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all';
+                }
+            });
+        }
+        
+        // Auto-advance cards every 5 seconds
+        setInterval(() => {
+            const nextFeature = activeFeature === 4 ? 1 : activeFeature + 1;
+            switchToFeature(nextFeature);
+        }, 5000);
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.slide-in-up, .fade-in-scale, .slide-down-glow, .bounce-animation, .pulse-glow').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Hide scroll indicator when user scrolls past hero section
+        window.addEventListener('scroll', () => {
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            const heroSection = document.querySelector('section');
+            const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+            
+            if (window.scrollY > heroBottom * 0.5) {
+                scrollIndicator.style.opacity = '0';
+                scrollIndicator.style.pointerEvents = 'none';
+            } else {
+                scrollIndicator.style.opacity = '1';
+                scrollIndicator.style.pointerEvents = 'auto';
+            }
+        });
+    </script>
+    <!-- Results Modal -->
+    <div id="results-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gray-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-white">Rechtliche Antwort</h3>
+                        <button id="close-results" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div id="results-content" class="text-white space-y-4">
+                        <!-- Results will be displayed here -->
+                    </div>
+                    <div class="mt-6 flex space-x-3">
+                        <button id="copy-results" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                            📋 Text kopieren
+                        </button>
+                        <button id="feedback-good" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                            ✅ Gut
+                        </button>
+                        <button id="feedback-bad" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                            ❌ Schlecht
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- API Integration Script -->
+    <script>
+        const API_URL = 'http://localhost:5001/api/generate';
+        const FEEDBACK_URL = 'http://localhost:5001/api/feedback';
+        
+        let currentDocumentId = null;
+        
+        // File upload handling
+        document.getElementById('document-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('analyze-btn').disabled = false;
+                document.getElementById('analyze-btn').innerHTML = `🔍 "${file.name}" analysieren`;
+            }
+        });
+        
+        // Document analysis
+        document.getElementById('analyze-btn').addEventListener('click', async function() {
+            const fileInput = document.getElementById('document-upload');
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            this.disabled = true;
+            this.innerHTML = '⏳ Analysiere...';
+            
+            try {
+                const text = await extractTextFromFile(file);
+                const documentType = detectDocumentType(text);
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: text,
+                        document_type: documentType,
+                        user_id: 'user_' + Date.now()
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentDocumentId = result.document_id;
+                    showResults(result.response);
+                } else {
+                    alert('Fehler: ' + result.error);
+                }
+            } catch (error) {
+                alert('Fehler bei der Analyse: ' + error.message);
+            } finally {
+                this.disabled = false;
+                this.innerHTML = '🔍 Dokument analysieren lassen';
+            }
+        });
+        
+        // Document creation
+        document.getElementById('create-btn').addEventListener('click', async function() {
+            const prompt = document.getElementById('document-prompt').value.trim();
+            
+            if (!prompt) {
+                alert('Bitte beschreiben Sie das gewünschte Dokument.');
+                return;
+            }
+            
+            this.disabled = true;
+            this.innerHTML = '⏳ Erstelle...';
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        document_type: 'general',
+                        user_id: 'user_' + Date.now()
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentDocumentId = result.document_id;
+                    showResults(result.response);
+                } else {
+                    alert('Fehler: ' + result.error);
+                }
+            } catch (error) {
+                alert('Fehler bei der Erstellung: ' + error.message);
+            } finally {
+                this.disabled = false;
+                this.innerHTML = '✨ Dokument erstellen';
+            }
+        });
+        
+        // Helper functions
+        async function extractTextFromFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                if (file.type === 'text/plain') {
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsText(file);
+                } else if (file.type === 'application/pdf') {
+                    resolve(`[PDF FILE: ${file.name}] - Content will be extracted server-side`);
+                } else {
+                    resolve(`[IMAGE FILE: ${file.name}] - OCR processing will be performed server-side`);
+                }
+            });
+        }
+        
+        function detectDocumentType(text) {
+            const textLower = text.toLowerCase();
+            
+            if (textLower.includes('mahnung') || textLower.includes('zahlungserinnerung')) {
+                return 'mahnung';
+            } else if (textLower.includes('klage') || textLower.includes('klageschrift')) {
+                return 'klage';
+            } else if (textLower.includes('kündigung')) {
+                return 'kuendigung';
+            } else if (textLower.includes('vertrag') || textLower.includes('vereinbarung')) {
+                return 'contract';
+            } else if (textLower.includes('nda') || textLower.includes('geheimhaltung')) {
+                return 'nda';
+            } else {
+                return 'general';
+            }
+        }
+        
+        function showResults(response) {
+            document.getElementById('results-content').innerHTML = `
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <div class="whitespace-pre-wrap">${response}</div>
+                </div>
+            `;
+            document.getElementById('results-modal').classList.remove('hidden');
+        }
+        
+        // Results modal handling
+        document.getElementById('close-results').addEventListener('click', function() {
+            document.getElementById('results-modal').classList.add('hidden');
+        });
+        
+        document.getElementById('copy-results').addEventListener('click', async function() {
+            const text = document.getElementById('results-content').textContent;
+            try {
+                await navigator.clipboard.writeText(text);
+                this.innerHTML = '✅ Kopiert!';
+                setTimeout(() => {
+                    this.innerHTML = '📋 Text kopieren';
+                }, 2000);
+            } catch (err) {
+                alert('Kopieren fehlgeschlagen');
+            }
+        });
+        
+        // Feedback handling
+        document.getElementById('feedback-good').addEventListener('click', function() {
+            submitFeedback('accept');
+        });
+        
+        document.getElementById('feedback-bad').addEventListener('click', function() {
+            submitFeedback('reject');
+        });
+        
+        async function submitFeedback(type) {
+            if (!currentDocumentId) return;
+            
+            try {
+                const response = await fetch(FEEDBACK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        document_id: currentDocumentId,
+                        feedback_type: type,
+                        user_id: 'user_' + Date.now()
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('feedback-good').innerHTML = '✅ Gesendet';
+                    document.getElementById('feedback-bad').innerHTML = '❌ Gesendet';
+                    document.getElementById('feedback-good').disabled = true;
+                    document.getElementById('feedback-bad').disabled = true;
+                }
+            } catch (error) {
+                console.error('Feedback error:', error);
+            }
+        }
+    </script>
 </body>
-</html>
+</html><a href="dashboard.html" style="position:fixed;top:20px;right:20px;z-index:999;background:linear-gradient(45deg,#8b5cf6,#3b82f6);color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,0.3);">📊 Dashboard</a>

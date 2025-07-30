@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anwalts-AI - KI-gestützte Rechtslösungen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        
+        /* EXACT STACKED CARDS ANIMATION - COPIED FROM ORIGINAL */
+        .cards-section {
+            --_offset-steps: 5rem;
+            --_scale-steps: 12;
+            --_opacity-steps: 18;
+            --_offset-steps-two: calc(var(--_offset-steps) * -1);
+            --_offset-steps-three: calc(var(--_offset-steps) * -2);
+            --scale-steps-two: calc(1 - var(--_scale-steps) * 0.01);
+            --scale-steps-three: calc(1 - var(--_scale-steps) * 0.02);
+            --opacity-steps-two: calc(1 - var(--_opacity-steps) * 0.015);
+            --opacity-steps-three: calc(1 - var(--_opacity-steps) * 0.03);
+            display: grid;
+            grid-template-areas: "stack";
+            width: min(calc(100% - 2rem), 28rem);
+            perspective: 1000px;
+        }
+        
+        .feature-card {
+            grid-area: stack;
+            transition: 600ms cubic-bezier(0.4, 0, 0.2, 1);
+            translate: var(--_offset) 0;
+            order: var(--_order);
+            z-index: var(--_order);
+            scale: var(--_scale);
+            opacity: var(--_opacity);
+            cursor: grab;
+            user-select: none;
+            transform-style: preserve-3d;
+        }
+        
+        .feature-card:active { cursor: grabbing; }
+        
+        .feature-card:nth-of-type(1) {
+            --_order: var(--_1-order);
+            --_scale: var(--_1-scale);
+            --_opacity: var(--_1-opacity);
+            --_offset: var(--_1-offset);
+        }
+        
+        .feature-card:nth-of-type(2) {
+            --_order: var(--_2-order);
+            --_scale: var(--_2-scale);
+            --_opacity: var(--_2-opacity);
+            --_offset: var(--_2-offset);
+        }
+        
+        .feature-card:nth-of-type(3) {
+            --_order: var(--_3-order);
+            --_scale: var(--_3-scale);
+            --_opacity: var(--_3-opacity);
+            --_offset: var(--_3-offset);
+        }
+        
+        .feature-card:nth-of-type(4) {
+            --_order: var(--_4-order);
+            --_scale: var(--_4-scale);
+            --_opacity: var(--_4-opacity);
+            --_offset: var(--_4-offset);
+        }
+        
+        .cards-section.feature-1-active {
+            --_1-order: 4; --_1-scale: 1; --_1-opacity: 1; --_1-offset: 0;
+            --_2-order: 3; --_2-scale: var(--scale-steps-two); --_2-opacity: var(--opacity-steps-two); --_2-offset: var(--_offset-steps-two);
+            --_3-order: 2; --_3-scale: var(--scale-steps-three); --_3-opacity: var(--opacity-steps-three); --_3-offset: var(--_offset-steps-three);
+            --_4-order: 1; --_4-scale: calc(1 - var(--_scale-steps) * 0.025); --_4-opacity: calc(1 - var(--_opacity-steps) * 0.045); --_4-offset: calc(var(--_offset-steps) * -2.5);
+        }
+        
+        .cards-section.feature-2-active {
+            --_2-order: 4; --_2-scale: 1; --_2-opacity: 1; --_2-offset: 0;
+            --_3-order: 3; --_3-scale: var(--scale-steps-two); --_3-opacity: var(--opacity-steps-two); --_3-offset: var(--_offset-steps-two);
+            --_4-order: 2; --_4-scale: var(--scale-steps-three); --_4-opacity: var(--opacity-steps-three); --_4-offset: var(--_offset-steps-three);
+            --_1-order: 1; --_1-scale: calc(1 - var(--_scale-steps) * 0.025); --_1-opacity: calc(1 - var(--_opacity-steps) * 0.045); --_1-offset: calc(var(--_offset-steps) * -2.5);
+        }
+        
+        .cards-section.feature-3-active {
+            --_3-order: 4; --_3-scale: 1; --_3-opacity: 1; --_3-offset: 0;
+            --_4-order: 3; --_4-scale: var(--scale-steps-two); --_4-opacity: var(--opacity-steps-two); --_4-offset: var(--_offset-steps-two);
+            --_1-order: 2; --_1-scale: var(--scale-steps-three); --_1-opacity: var(--opacity-steps-three); --_1-offset: var(--_offset-steps-three);
+            --_2-order: 1; --_2-scale: calc(1 - var(--_scale-steps) * 0.025); --_2-opacity: calc(1 - var(--_opacity-steps) * 0.045); --_2-offset: calc(var(--_offset-steps) * -2.5);
+        }
+        
+        .cards-section.feature-4-active {
+            --_4-order: 4; --_4-scale: 1; --_4-opacity: 1; --_4-offset: 0;
+            --_1-order: 3; --_1-scale: var(--scale-steps-two); --_1-opacity: var(--opacity-steps-two); --_1-offset: var(--_offset-steps-two);
+            --_2-order: 2; --_2-scale: var(--scale-steps-three); --_2-opacity: var(--opacity-steps-three); --_2-offset: var(--_offset-steps-three);
+            --_3-order: 1; --_3-scale: calc(1 - var(--_scale-steps) * 0.025); --_3-opacity: calc(1 - var(--_opacity-steps) * 0.045); --_3-offset: calc(var(--_offset-steps) * -2.5);
+        }
+        
+        .dragging-left { transform: translateX(-30px) rotateY(-5deg); }
+        .dragging-right { transform: translateX(30px) rotateY(5deg); }
+        
+        /* ANWALTS-AI THEME - EXACT COLORS FROM PNG */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #ffffff, #e5e7eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* EXACT COLORS FROM PNG FILES */
+        .hero-gradient {
+            background: linear-gradient(135deg, #4338CA 0%, #3730A3 50%, #312E81 100%);
+        }
+        
+        .legal-gradient {
+            background: linear-gradient(135deg, #6366F1 0%, #4338CA 50%, #3730A3 100%);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        
+        .legal-button {
+            background: linear-gradient(135deg, #6366F1, #4338CA);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .legal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+        
+        .feature-icon-gradient-1 { background: linear-gradient(135deg, #6366F1, #4338CA); }
+        .feature-icon-gradient-2 { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .feature-icon-gradient-3 { background: linear-gradient(135deg, #06B6D4, #0891B2); }
+        .feature-icon-gradient-4 { background: linear-gradient(135deg, #10B981, #059669); }
+    </style>
+</head>
+<body class="text-white antialiased">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 border-b border-white/10 backdrop-blur-md bg-slate-900/80">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14,2 14,8 20,8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                            <polyline points="10,9 9,9 8,9"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-semibold tracking-tight">Anwalts-AI</span>
+                </div>
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#funktionen" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Funktionen</a>
+                    <a href="#preise" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Preise</a>
+                    <a href="#über-uns" class="text-sm font-medium text-gray-300 hover:text-white transition-colors">Über uns</a>
+                    <button class="legal-button text-white px-4 py-2 rounded-lg text-sm font-medium">
+                        Demo starten
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient min-h-screen flex items-center pt-20">
+        <div class="max-w-7xl mx-auto px-6 py-12 z-10 relative">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Left Content -->
+                <div class="space-y-8">
+                    <div class="space-y-4">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-xs font-medium text-gray-200 uppercase tracking-wide">KI für Anwaltskanzleien</span>
+                        </div>
+                        <h1 class="text-5xl lg:text-7xl gradient-text tracking-tighter font-['Playfair_Display']">
+                            Revolutionäre KI für
+                            <span class="block tracking-tighter">deutsche Kanzleien</span>
+                        </h1>
+                        <p class="max-w-lg text-xl font-light text-gray-200">
+                            Automatisieren Sie Ihre Dokumentenerstellung, E-Mail-Verwaltung und Rechtsberatung mit modernster künstlicher Intelligenz.
+                        </p>
+                    </div>
+                    
+                    <!-- Navigation Dots -->
+                    <div class="flex items-center gap-3">
+                        <button id="nav-1" class="w-3 h-3 rounded-full bg-white transition-all scale-125"></button>
+                        <button id="nav-2" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                        <button id="nav-3" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                        <button id="nav-4" class="w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all"></button>
+                    </div>
+                    
+                    <!-- Feature Details -->
+                    <div id="feature-details" class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                            <span class="text-gray-200">KI-gestützte Dokumentenerstellung</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                            <span class="text-gray-200">Intelligente E-Mail-Verarbeitung</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full"></div>
+                            <span class="text-gray-200">Vorgefertigte Rechtsvorlagen</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                            <span class="text-gray-200">24/7 KI-Rechtsassistent</span>
+                        </div>
+                    </div>
+                    
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="legal-button px-8 py-4 rounded-lg text-white font-medium text-lg">
+                            Kostenlos testen
+                        </button>
+                        <button class="px-8 py-4 bg-white/10 hover:bg-white/20 rounded-lg font-medium text-lg border border-white/20 transition-colors">
+                            Demo anfordern
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Content - Interactive Stacked Cards -->
+                <div class="flex lg:justify-end justify-center" style="height: 36rem;">
+                    <div class="cards-section feature-1-active" style="height: 36rem;">
+                        <!-- Dokument Generator Card -->
+                        <div class="feature-card glass-card rounded-2xl p-8 float-animation" style="height: 36rem;">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-1 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                                            <polyline points="14,2 14,8 20,8"/>
+                                            <line x1="16" y1="13" x2="8" y2="13"/>
+                                            <line x1="16" y1="17" x2="8" y2="17"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">Dokumentenerstellung</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Dokument Generator</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6">
+                                    KI-gestützte Erstellung von Rechtsdokumenten. Erstellen Sie Verträge, Klageschriften und Mahnungen in Sekunden mit höchster rechtlicher Präzision.
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Dokumenttypen</span>
+                                        <span class="text-white font-medium">500+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Erstellungszeit</span>
+                                        <span class="text-white font-medium">&lt;30 Sek.</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Verträge und Vereinbarungen</li>
+                                        <li>Klageschriften und Anträge</li>
+                                        <li>Mahnungen und Abmahnungen</li>
+                                    </ul>
+                                </div>
+
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    Dokumente erstellen
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Management Card -->
+                        <div class="feature-card glass-card rounded-2xl p-8" style="height: 36rem;">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-2 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                            <polyline points="22,6 12,13 2,6"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">E-Mail Verwaltung</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Email Management</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6">
+                                    Intelligente E-Mail-Verarbeitung und automatische Antworten. Analysieren Sie eingehende Korrespondenz und generieren Sie professionelle Antworten.
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Antwortzeit</span>
+                                        <span class="text-white font-medium">Sofort</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Genauigkeit</span>
+                                        <span class="text-white font-medium">99.2%</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Automatische E-Mail-Klassifizierung</li>
+                                        <li>Intelligente Antwortgenerierung</li>
+                                        <li>Mandanten-Kommunikation</li>
+                                    </ul>
+                                </div>
+                                
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    E-Mails verwalten
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Template Library Card -->
+                        <div class="feature-card glass-card rounded-2xl p-8" style="height: 36rem;">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-3 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2v11z"/>
+                                            <path d="M12 11v6"/>
+                                            <path d="M9 14h6"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">Vorlagen</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">Template Bibliothek</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="flex-1 text-lg text-gray-200 mb-6">
+                                    Vorgefertigte Rechtsvorlagen für alle Rechtsbereiche. Zugriff auf eine umfassende Sammlung professioneller Dokumentvorlagen.
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Verfügbare Vorlagen</span>
+                                        <span class="text-white font-medium">500+</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Rechtsbereiche</span>
+                                        <span class="text-white font-medium">25+</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Zivilrecht und Vertragsrecht</li>
+                                        <li>Arbeitsrecht und Gesellschaftsrecht</li>
+                                        <li>Miet- und Immobilienrecht</li>
+                                    </ul>
+                                </div>
+                                
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    Vorlagen durchsuchen
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Assistant Card -->
+                        <div class="feature-card glass-card rounded-2xl p-8" style="height: 36rem;">
+                            <div class="flex flex-col h-full">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-12 h-12 rounded-xl feature-icon-gradient-4 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+                                            <path d="M12 8V4H8"/>
+                                            <rect width="16" height="12" x="4" y="8" rx="2"/>
+                                            <path d="M2 14h2"/>
+                                            <path d="M20 14h2"/>
+                                            <path d="M15 13v2"/>
+                                            <path d="M9 13v2"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs uppercase tracking-wide text-gray-300 font-medium">KI-Assistent</span>
+                                        <h3 class="text-2xl font-['Playfair_Display'] tracking-tighter text-white">KI Assistent</h3>
+                                    </div>
+                                </div>
+                                
+                                <p class="text-lg text-gray-200 mb-6 flex-1">
+                                    24/7 Rechtsberatung und Compliance-Prüfung. Ihr persönlicher KI-Assistent für rechtliche Fragen und Dokumentenprüfung.
+                                </p>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Verfügbarkeit</span>
+                                        <span class="text-white font-medium">24/7</span>
+                                    </div>
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-300">Rechtsbereiche</span>
+                                        <span class="text-white font-medium">Alle</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-6 text-gray-300 text-sm space-y-2">
+                                    <ul class="list-disc list-inside space-y-1">
+                                        <li>Rechtliche Beratung und Recherche</li>
+                                        <li>Compliance-Prüfung von Dokumenten</li>
+                                        <li>Fallanalyse und Strategieempfehlungen</li>
+                                    </ul>
+                                </div>
+                                
+                                <button class="w-full py-3 px-4 bg-white/20 hover:bg-white/30 rounded-lg font-medium transition-colors">
+                                    KI-Assistent starten
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXACT JAVASCRIPT FROM ORIGINAL FILE -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Card navigation system - EXACT COPY FROM ORIGINAL
+        const cardsContainer = document.querySelector('.cards-section');
+        const cards = document.querySelectorAll('.feature-card');
+        const navButtons = document.querySelectorAll('[id^="nav-"]');
+        let activeFeature = 1;
+        
+        // Touch/drag handling - EXACT COPY FROM ORIGINAL
+        cards.forEach((card, index) => {
+            let startX, isDragging = false;
+            
+            card.addEventListener('mousedown', e => initDrag(e, index + 1));
+            card.addEventListener('touchstart', e => {
+                e.preventDefault();
+                initDrag(e.touches[0], index + 1);
+            });
+            
+            function initDrag(e, featureId) {
+                if (featureId !== activeFeature) return;
+                isDragging = true;
+                startX = e.clientX;
+                
+                document.addEventListener('mousemove', handleDrag);
+                document.addEventListener('touchmove', e => handleDrag(e.touches[0]));
+                document.addEventListener('mouseup', endDrag);
+                document.addEventListener('touchend', endDrag);
+            }
+            
+            function handleDrag(e) {
+                if (!isDragging) return;
+                const diff = e.clientX - startX;
+                
+                if (diff > 20) {
+                    card.classList.add('dragging-right');
+                    card.classList.remove('dragging-left');
+                } else if (diff < -20) {
+                    card.classList.add('dragging-left');
+                    card.classList.remove('dragging-right');
+                } else {
+                    card.classList.remove('dragging-left', 'dragging-right');
+                }
+            }
+            
+            function endDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                
+                if (card.classList.contains('dragging-right')) {
+                    switchToFeature(activeFeature === 1 ? 4 : activeFeature - 1);
+                } else if (card.classList.contains('dragging-left')) {
+                    switchToFeature(activeFeature === 4 ? 1 : activeFeature + 1);
+                }
+                
+                card.classList.remove('dragging-left', 'dragging-right');
+                document.removeEventListener('mousemove', handleDrag);
+                document.removeEventListener('touchmove', handleDrag);
+                document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchend', endDrag);
+            }
+        });
+        
+        // Navigation button handling - EXACT COPY FROM ORIGINAL
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const featureId = parseInt(button.id.split('-')[1]);
+                switchToFeature(featureId);
+            });
+        });
+        
+        function switchToFeature(featureId) {
+            activeFeature = featureId;
+            cardsContainer.className = `cards-section feature-${featureId}-active`;
+            
+            // Update navigation buttons
+            navButtons.forEach((button, index) => {
+                if (index + 1 === featureId) {
+                    button.className = 'w-3 h-3 rounded-full bg-white transition-all scale-125';
+                } else {
+                    button.className = 'w-3 h-3 rounded-full bg-gray-400 hover:bg-gray-200 transition-all';
+                }
+            });
+        }
+        
+        // Auto-advance cards every 4 seconds - MODIFIED TIMING
+        setInterval(() => {
+            const nextFeature = activeFeature === 4 ? 1 : activeFeature + 1;
+            switchToFeature(nextFeature);
+        }, 4000);
+    </script>
+</body>
+</html>
