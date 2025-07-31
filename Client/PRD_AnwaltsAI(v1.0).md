@@ -172,3 +172,4 @@ This is the core feature of the application.
 - **E-Signature Integration:** Integrate with services like DocuSign to allow for a seamless "generate-and-send-for-signature" workflow.
 - **File Management System:** A more robust "Files" section to store and organize all generated and uploaded documents.
 ```
+

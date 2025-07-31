@@ -1,0 +1,42 @@
+agents:
+  bmad-orchestrator:
+    name: "BMAD Orchestrator"
+    description: "Master coordinator for BMAD development workflows"
+    file: "bmad-orchestrator.md"
+    category: "coordination"
+    
+  business-analyst:
+    name: "Business Analyst (Mary)"
+    description: "Market research, competitive analysis, and strategic planning"
+    file: "business-analyst.md"
+    category: "planning"
+    
+  technical-architect:
+    name: "Technical Architect (Alex)"
+    description: "System architecture, technology selection, and scalable design"
+    file: "technical-architect.md"
+    category: "planning"
+    
+  full-stack-developer:
+    name: "Full Stack Developer (James)"
+    description: "End-to-end implementation, debugging, and quality development"
+    file: "full-stack-developer.md"
+    category: "development"
+    
+  qa-engineer:
+    name: "QA Engineer (Lisa)"
+    description: "Quality assurance, testing strategies, and automation"
+    file: "qa-engineer.md"
+    category: "quality"
+    
+  ux-designer:
+    name: "UX Designer (Emma)"
+    description: "User experience design, research, and usability testing"
+    file: "ux-designer.md"
+    category: "design"
+    
+  security-reviewer:
+    name: "Security Reviewer"
+    description: "Defensive security practices and vulnerability assessment"
+    file: "security-reviewer.md"
+    category: "security"

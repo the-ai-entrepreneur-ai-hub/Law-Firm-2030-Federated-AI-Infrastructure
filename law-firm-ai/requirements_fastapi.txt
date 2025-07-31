@@ -1,0 +1,35 @@
+# FastAPI Backend Requirements for AnwaltsAI
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+aiofiles==23.2.1
+
+# Existing dependencies from requirements.txt
+Flask==2.3.2
+Flask-CORS==4.0.0
+requests==2.31.0
+
+# NLP and PII Detection
+spacy>=3.7.2
+thefuzz>=0.22.1
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# OCR and Document Processing
+pytesseract
+Pillow>=10.3.0
+pdfplumber
+PyPDF2
+python-docx
+
+# AI/ML Integration
+together
+googletrans==4.0.0rc1
+
+# Data validation and serialization
+pydantic==2.5.0
+
+# Additional utilities
+python-dotenv
+pathlib
